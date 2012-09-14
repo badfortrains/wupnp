@@ -1,0 +1,13 @@
+doctype 5
+html
+  head
+    title= title
+    link(rel='stylesheet', href='/stylesheets/style.css')
+    script(src='/javascripts/zepto.min.js')
+    script(src='/javascripts/category.js')
+  body
+    nav
+      a(href="#",class='active',cat="Artist") Artists
+      a(href="#",cat="Album") Albums
+      a(href="#",cat="Title") Tracks
+    block content
