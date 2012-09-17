@@ -2,6 +2,8 @@
   padding:0px;
   margin:0px;
 }
+
+@font-face { font-family: MyriadPro-light; src: url('/fonts/MyriadPro-Light.otf'); } 
 a, a:active{
   color:white;
   text-decoration:none;
@@ -9,7 +11,7 @@ a, a:active{
 }
 body{
   max-width:100%;
-  font-family:Helvetica;
+  font-family:MyriadPro-light,Helvetica;
   background-color:black;
   color:white;
   overflow-x:hidden;
@@ -39,9 +41,10 @@ nav a{
     position: relative;
   }
   .plus{
-    font-size: 2em;
+    font-size: 2.3em;
     background-color: blueViolet;
     padding-right: 5px;
+    padding-bottom: 2px;
   }
   #track-list{
     font-size:2em;
@@ -51,5 +54,41 @@ nav a{
 
   #track-list li{
     margin-bottom:12px;
+  }
+}
+.mask{
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 11;
+  top: 0px;
+  left: 0px;
+}
+
+.popup{
+  background-color: white;
+  width: 500px;
+  color: blueViolet;
+  position: absolute;
+  left: 8%;
+  z-index: 12;
+  font-size: 14px;
+  top: 11%;
+  font-weight: normal;
+  padding-left: 30px;
+  padding-top: 10px;
+  box-sizing: border-box;
+  padding-bottom: 10px;
+  .left-box{
+    border-right: 2px solid blueViolet;
+    float: left;
+    width: 50%;
+  }
+  .right-box{
+
+  }
+  h1{
+    font-weight: normal;
   }
 }

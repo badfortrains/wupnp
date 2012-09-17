@@ -1,4 +1,4 @@
-var db = require('mongojs').connect('test', ['tracks','playlist']),
+var db = require('mongojs').connect('test', ['tracks','playlist','lists']),
     assert = require('assert');
 
 
@@ -113,6 +113,17 @@ var playlist = {
       moveDown(id,count,position,function(){
         addTracks(id,position,filter,sort,cb);
       });
+    });
+  }
+}
+
+var lists = {
+  add: function(name){
+    db.lists.save({name:name});
+  },
+  lists: function(sort,cb){
+    db.lists.find().sort(sort,function(err,data){
+      cb(data);
     });
   }
 }

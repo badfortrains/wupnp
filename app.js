@@ -30,6 +30,9 @@ app.configure('development', function(){
   app.use(express.errorHandler());
 });
 
+app.get("/pop",function(req,res){
+  res.render('popup', { title: 'Express' });
+});
 app.get('/', routes.index);
 app.get('/tracklist', list.show);
 
