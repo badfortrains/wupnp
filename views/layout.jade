@@ -3,11 +3,25 @@ html
   head
     title= title
     link(rel='stylesheet', href='/stylesheets/style.css')
+    link(rel='stylesheet', href='/stylesheets/font-awesome.css')
+    meta(content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no",name="viewport")
+    meta(name="apple-mobile-web-app-capable",content="yes")  
+    meta(name="viewport",content="width=device-width");
     script(src='/javascripts/zepto.min.js')
+    script(src='/javascripts/drag.js')
     script(src='/javascripts/category.js')
   body
-    nav
-      a(href="#",class='active Artist',cat="Artist") Artists
-      a(href="#",cat="Album", class="Album") Albums
-      a(href="#",cat="Title", class="Title") Tracks
+    .nav-wrap
+      span.menuLink.icon-reorder
+      nav
+        a(href="#",class='active Artist',cat="Artist") Artists
+        a(href="#",cat="Album", class="Album") Albums
+        a(href="#",cat="Title", class="Title") Tracks
     block content
+    .popup
+    .mask
+    #pullTab
+      span.icon-music
+      .playing Now Playing
+        span.icon-pause
+        span.icon-chevron-right

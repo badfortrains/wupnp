@@ -4,7 +4,8 @@ if title
       =title 
     span.plus
       +
-#track-list
-  each item in list
-    li(track-id=item._id) 
-      = item.Title
+.category-list
+  ul.category
+    each item in list
+      li(track-id=item._id) 
+        = item.Title

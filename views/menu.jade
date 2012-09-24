@@ -1,0 +1,9 @@
+.category-list.menu
+  ul
+    li.music Music
+    li.playlists 
+      span Playlists
+      ul
+        each item in list
+          li(item_id=item._id)
+            = item.name

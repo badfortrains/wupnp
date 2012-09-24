@@ -7,7 +7,8 @@ var express = require('express')
   , routes = require('./routes')
   , list = require('./routes/playlists')
   , http = require('http')
-  , path = require('path');
+  , path = require('path')
+  , mw = require('./watcher.js')
 
 var app = express();
 
@@ -34,7 +35,11 @@ app.get("/pop",function(req,res){
   res.render('popup', { title: 'Express' });
 });
 app.get('/', routes.index);
+app.get('/Artist', routes.index);
 app.get('/tracklist', list.show);
+app.get('/lists',list.lists);
+app.get('/playlist',list.playlist);
+app.get('/menu',list.menu);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));

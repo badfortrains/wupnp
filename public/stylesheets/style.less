@@ -1,6 +1,7 @@
 *{
   padding:0px;
   margin:0px;
+  -webkit-tap-highlight-color: rgba(255, 255, 255, 0); 
 }
 
 @font-face { font-family: MyriadPro-light; src: url('/fonts/MyriadPro-Light.otf'); } 
@@ -14,25 +15,43 @@ body{
   font-family:MyriadPro-light,Helvetica;
   background-color:black;
   color:white;
-  overflow-x:hidden;
 }
-nav{
-  a, a:active{
-    color:#696565;
+.nav-wrap{
+  width:100%;
+  background-color:black;
+  white-space: nowrap;
+  padding:10px;
+  padding-left:50px;
+  box-sizing: border-box;
+  font-size:2em;
+  .menuLink{
+    background-color:black;
+    position:absolute;
+    left:10px;
+    display: inline-block;
+    margin-right: 10px;
+    
   }
-  width:700px;
-  display: inline-block;
-  margin:10px;
-  font-size:2.5em;
-  a.active{
-    color:white;
+  nav{
+    a, a:active{
+      color:#696565;
+      margin-right:30px
+    }
+
+    overflow:scroll;
+    a.active{
+      color:white;
+    }
   }
-}
-nav a{
-  margin-right:40px
 }
 
-#category{
+#category,.list-view{
+  position: absolute;
+  top:60px;
+  bottom:0px;
+  overflow-y: auto;
+  width: 100%;
+  -webkit-overflow-scrolling: touch;
   .title{
     padding: 0px 10px 0px 10px;
     font-size: 2em;
@@ -46,14 +65,26 @@ nav a{
     padding-right: 5px;
     padding-bottom: 2px;
   }
-  #track-list{
+  .category-list{
     font-size:2em;
     list-style:none;
-    margin:10px 0px 6px 40px;
+    margin:10px 0px 56px 40px;
   }
 
   #track-list li{
     margin-bottom:12px;
+  }
+  ul{
+    list-style: none;
+  }
+  .playlists{
+    span{
+      font-size: 20px;
+      text-transform: uppercase;
+    }
+    ul{
+      margin-left: 10px;
+    }
   }
 }
 .mask{
@@ -64,31 +95,90 @@ nav a{
   z-index: 11;
   top: 0px;
   left: 0px;
+  display: none;
 }
 
 .popup{
+  display: none;
   background-color: white;
-  width: 500px;
+
+
+  max-width: 500px;
+  width:100%;
   color: blueViolet;
   position: absolute;
-  left: 8%;
   z-index: 12;
-  font-size: 14px;
+  font-size: 15px;
   top: 11%;
   font-weight: normal;
   padding-left: 30px;
   padding-top: 10px;
   box-sizing: border-box;
   padding-bottom: 10px;
-  .left-box{
-    border-right: 2px solid blueViolet;
-    float: left;
-    width: 50%;
-  }
-  .right-box{
 
+  .top-box{
+    padding: 5px;
+  }
+  .bottom-box{
+    margin:10px 0px 10px 10px;
+    color: black;
+    line-height: 27px;
+    font-size: 20px;
+    ul{
+      list-style: none;
+    }
+    input{
+      font-size: 20px;
+      margin-right: 15px;
+    }
   }
   h1{
+    line-height: 1.3em;
     font-weight: normal;
   }
 }
+
+#pullTab{
+  -webkit-transition: left .5s;
+  position:fixed;
+  bottom:0px;
+  color:black;
+  background-color: white;
+  width:100%;
+  height:40px;
+  left: 100%;
+  margin-left: -50px;
+  padding-left: 50px;
+  div{
+    margin-top: 8px;
+    font-size: 20px;
+    margin-left: 10px;
+  }
+  .playing{
+    float:left;
+    padding-right: 30px;
+    span{
+      margin:10px;
+      font-size: 17px
+    }
+  }
+  .icon-music{
+    position: absolute;
+    left: 7px;
+    top: 3px;
+    font-size: 35px;
+  }
+}
+@-webkit-keyframes flyOver {
+  0%{
+    -webkit-transform: translate(0px,0px);
+  }
+  70%{
+    -webkit-transform: translate(-100px,-130px);
+  }
+  100%{
+    -webkit-transform: translate(-90px,-90px);
+  }
+}
+
+@-webkit-keyframes bounce {0%, 20%, 50%, 80%, 100% {-webkit-transform: translateY(0);}40% {-webkit-transform: translateY(-30px);}60% {-webkit-transform: translateY(-15px);}}

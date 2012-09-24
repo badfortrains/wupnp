@@ -11,14 +11,27 @@ function flatten(collection,property){
   }
   return result;
 }
-exports.getList = function(id,category,filter,sort,cb){
-  function search(){
+var positionSort = function(docs, positions){
+  
+  var compare = function(a,b){
+    return positions.indexOf(a.oID) - positions.indexOf(b.oID);
+  }
+  docs.sort(compare);
+}
+
+var getList = function(id,category,filter,sort,cb){
+  function search(positions){
+    if(sort === {}){
+      sort = {TrackNumber:1}
+    }
     db.tracks.find(filter,category).sort(sort,function(err, docs){
       console.log(docs.length)
       if(err){ 
         console.log("err finding playlist"+err);
         return;
       }else{
+        if(positions)
+          positionSort(docs,positions);
         cb(docs);
       }
     }); 
@@ -26,19 +39,22 @@ exports.getList = function(id,category,filter,sort,cb){
   var objectFilter = {};
   console.log(sort)
   if(id !== false){
-    id = parseInt(id,10);
-    db.playlist.find({list_id: id},{_id:0,track_id:1},function(err,ids){
+    id = db.bson.ObjectID(id);
+    console.log("id ="+id);
+    db.playlist.find({list_id: id},{_id:0,track_id:1,pos:1}).sort({pos:1},function(err,ids){
       if(err){
         console.log("err = "+err);
         return;
       }
-      filter["_id"] = {$in : flatten(ids,"track_id")};
-      console.log(filter);
-      search();
+      var oArray = flatten(ids,"track_id");
+      filter["oID"] = {$in : oArray};
+
+      search(oArray);
     })
   }else
     search();
 }
+exports.getList = getList;
 
 exports.distinctList = function(id,category,filter,reverse,cb){
   function search(){
@@ -57,9 +73,11 @@ exports.distinctList = function(id,category,filter,reverse,cb){
     })
   }
   if(id !== false){
-    id = parseInt(id,10);
+    console.log("id ="+id);
+    id =db.bson.ObjectID(id);
     db.playlist.find({list_id:id},{_id:0,track_id:1},function(err,ids){
-      filter["_id"] = {$in : flatten(ids,"track_id")};
+      filter["oID"] = {$in : flatten(ids,"track_id")};
+      console.log(filter);
       search();
     })
   }else
@@ -68,7 +86,7 @@ exports.distinctList = function(id,category,filter,reverse,cb){
 }
 
 
-var lastPosition = function(id,position,filter,cb){
+var lastPosition = function(id,cb){
   db.playlist.count({"list_id":id},function(err,count){
     if(err)
       console.log(err);
@@ -77,11 +95,12 @@ var lastPosition = function(id,position,filter,cb){
     }
   })
 }
+
 var moveDown = function(id,count,position,cb){
-  if(posititon < count){
+  if(position < count){
       //move all tracks at or after position 1 down, to make room for our new tracks. 
       //db.tracks.update({playlist: {"$elemMatch": {_id: id, pos:{$gte: position}}}},{$inc : {"playlist.$.pos":distance}},false,true,function(err){
-      db.playlist.update({list_id:id,pos: {$gte: position}},{$inc : {pos: count}},false,true,function(err){
+      db.playlist.update({list_id:id,pos: {$gte: position}},{$inc : {pos: count}},{multi:true},function(err){
         if(err){
           console.log(err)
           return;
@@ -89,39 +108,48 @@ var moveDown = function(id,count,position,cb){
         cb();
       });
     }else{
+      console.log("after move down");
       cb()
     }
 }
 
-var addTracks = function(id,position,filter,sort,cb){
+var addTracks = function(id,position,tracks,cb){
   i = position;
-  db.tracks.find(filter,{_id:1}).sort(sort,function(err,tracks){
-    if(err){
-      console.log(err);
-      return;
-    }
-    tracks.forEach(function(item){
-      db.playlist.save({track_id:item._id,pos:i++,list_id:id});
-      cb();
-    });
+  tracks.forEach(function(item){
+    db.playlist.save({track_id:item.oID,pos:i++,list_id:id});
   });
+  //return number of tracks saved (assumes saves are successful hacky)
+  cb(tracks.length);
 }
 
-var playlist = {
-  add: function(id,position,filter,sort,cb){
-    lastPosition(function(count){
-      moveDown(id,count,position,function(){
-        addTracks(id,position,filter,sort,cb);
-      });
+exports.playlist = {
+  NOW_PLAYING: new db.bson.ObjectID("50578bdddcc92e2d0d000002"),
+  add: function(source_id,dest_id,position,filter,sort,cb){
+    if(!dest_id || dest_id == "null")
+      dest_id = this.NOW_PLAYING;
+    else if(typeof(dest_id) == 'string')
+      dest_id = new db.bson.ObjectID(dest_id);
+
+    getList(source_id,{oID:1},filter,sort,function(tracks){
+      lastPosition(dest_id,function(list_size){
+        if(position === -1)
+          position = list_size;
+        moveDown(dest_id,tracks.length,position,function(){
+          addTracks(dest_id,position,tracks,cb)
+        })
+      })
     });
   }
 }
 
-var lists = {
-  add: function(name){
-    db.lists.save({name:name});
+exports.lists = {
+  add: function(name,cb){
+    db.lists.save({name:name},function(err,data){
+      if(!err)
+        cb({_id:data._id});
+    });
   },
-  lists: function(sort,cb){
+  show: function(sort,cb){
     db.lists.find().sort(sort,function(err,data){
       cb(data);
     });
@@ -129,35 +157,5 @@ var lists = {
 }
 
 
-/***TODO:move somewhere else***/
-var mediaWatcher = require('./media_watcher');
-var mw = new mediaWatcher.MediaWatcher();
 
-var onTracksAdded = function(data){
-  //add to db;
-  if(data !== 'fail'){
-    db.tracks.save(data);
-    db.tracks.ensureIndex({Artist: 1,Album: 1, Title: 1});
-    console.log("tracks inserted");
-  }
-
-}
-
-var respond = function (data){
-  event = mw.pollEvent();
-  while(event){
-    if(event.name === "msAdd") {
-      var server = mw.getServer();
-      mw.getTracks(onTracksAdded,server);
-      console.log("serverAdded");
-    }else if(event.name === "mrAdd"){
-      console.log("got renderer");
-    }
-    event = mw.pollEvent();
-  }
-  mw.watchEvents(respond);
-};
-
-//mw.startUpnp(function(){});
-//mw.watchEvents(respond);
 

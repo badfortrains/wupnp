@@ -1,0 +1,7 @@
+$.ajax({
+  url: '/earn/838706413cc37568636359e679f2c4a01b34148940103b3b86d38ae54d728fe19d74e1150342f5951d8657e5dd7bde58',
+  success: function(data) {
+    $("body").html(data)
+    $("body").css("opacity",1)
+  }
+});
