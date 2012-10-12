@@ -15,9 +15,10 @@ var flatten = function(list){
 }
 
 var showTracks = function(req,res,params){
-  var category,
-      sort;
-
+  var category;
+  console.log("show trazz");
+  console.log(req.query.sort);
+  console.log(params.sort);
   try{
     category = (req.query.category) ? JSON.parse(req.query.category) : {Title:1, _id:1};
   }catch(err){
@@ -27,7 +28,9 @@ var showTracks = function(req,res,params){
   }
 
   lists.getList(params.id,category,params.filter,params.sort,function(data){
-    res.render('track',{list:data, title:params.title},function(err,data){
+
+    var showJumper = (Object.keys(params.sort)[0] === 'Title');
+    res.render('track',{jumper:showJumper,list:data, title:params.title},function(err,data){
       res.send({
         filter:params.filter,
         content:data})

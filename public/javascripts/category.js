@@ -1,4 +1,9 @@
 var Tracks  = {
+  FILTER_INDEX: {
+    Artist:0,
+    Album:1,
+    Title:2
+  },
   init: function(options){
     this.attributes = $.extend({
       filter: [],
@@ -17,6 +22,10 @@ var Tracks  = {
     });
   },
 
+  set sort(sort){
+    this.attributes.sort = sort;
+  },
+
   set playlist(id){
     this.attributes.id = id;
   },
@@ -29,9 +38,13 @@ var Tracks  = {
       this.attributes.filter.push(filter_obj);
   },
 
+  get filter(){
+    return this.attributes.filter[this.attributes.filter.length-1];
+  },
+
   set category(category){
     var filter = this.attributes.filter;
-    var stateNum = filter.length;
+    var stateNum = (this.FILTER_INDEX[category]) ? this.FILTER_INDEX[category] : 0;
     $.each(filter,function(index,item){
       if(Object.keys(item)[0] == category){
         stateNum = index;
@@ -65,6 +78,9 @@ var Tracks  = {
     }
     if(this.attributes.filter.length > 0)
       request.filter = JSON.stringify(this.attributes.filter)
+    if(this.attributes.sort){
+      request.sort = JSON.stringify(this.attributes.sort)
+    }
     return request;
   },
   getCategoryHTML: function(cb){
@@ -76,6 +92,8 @@ var Tracks  = {
       request.category = this.attributes.category;
     }
     this._doAjax(request,cb);
+    //HACK, force back to defualt each time
+    delete this.attributes.sort
   }
 }
 
@@ -135,12 +153,18 @@ var ListsView = {
   init:function(el,playlist_model){
     this.playlist = playlist_model;
     this.$el = el;
-    this.$el.on("click",".cancel",function(e){
+
+    var exit = function(e){
       if(this.$el.find(".bottom-box").html())
         history.go(-2);
       else
         history.go(-1);
       this.cancel();
+    }.bind(this);
+    this.$el.on("click",".cancel",exit.bind(this));
+    $(".mask").click(function(){
+      if(this.$el.css('display') != "none")
+        exit();
     }.bind(this));
     $(document).on("category:popstate",this.cancel.bind(this));
     $(document).on("lists:popstate",this.render.bind(this));
@@ -266,6 +290,8 @@ var Category = (function(){
       })
     },
     itemClick: function(e){
+      if($(this).hasClass('jumper'))
+        return;
       var category = tracks.category;
       var nextCat = ORDER[category];
 
@@ -313,7 +339,8 @@ $(document).ready(function(){
   var $el = $("#category");
       menu = Object.create(MenuView),
       tracks = Object.create(Tracks),
-      playlist = Object.create(Playlist);
+      playlist = Object.create(Playlist),
+      socket = io.connect('http://localhost');
 
   playlist.tracks = tracks;
   tracks.init({filter:[],category:"Artist"})
@@ -347,6 +374,9 @@ $(document).ready(function(){
 
   $("nav").on("click","a:not(.active)",function(e){
     var category = $(this).attr('cat');
+    if( (tracks.category != "Album" || tracks.filter == undefined) && category == 'Title'){
+      tracks.sort = {Title:1}
+    }
     Category.changeCategory(category);
     e.preventDefault();
   });
@@ -372,6 +402,43 @@ $(document).ready(function(){
   $("#pullTab").on("right",function(){
     $("#pullTab").css("left","100%");
   });
+
+
+$("#category").on("click",".jumper",function(){
+  $("#alphabet").toggleClass('flipOut');
+  $(".mask").toggle();
+});
+
+window.setTimeout(function(){
+  var alphabet = $("#alphabet");
+  var current;
+for(var i=65; i<91; i++){
+  console.log('#jumper'+String.fromCharCode(i));
+  console.log(String.fromCharCode(i)+" = "+ ($('#jumper'+String.fromCharCode(i)).length > 0));
+  current = String.fromCharCode(i)
+  if($('#jumper'+current).length > 0){
+    alphabet.append('<span class="active">'+ current +'</span>');
+  }else{
+    alphabet.append('<span class="greyed">'+ current +'</span>');
+  }
+
+}
+$("#alphabet .back").on("click",function(){
+  $("#alphabet").toggleClass('flipOut');
+  $(".mask").toggle();
+})
+$("#alphabet").on("click", "span.active", function(e){
+  var letter = $(this).html();
+  $("#alphabet").toggleClass('flipOut');
+  document.getElementById("jumper"+letter).scrollIntoView();
+  $(".mask").toggle();
+});
+},400);
+
+$(".mask").on("click",function(){
+  $("#alphabet").removeClass('flipOut');
+  $(".mask").toggle();
+})
 
 
 })

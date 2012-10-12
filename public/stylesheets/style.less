@@ -17,13 +17,12 @@ body{
   color:white;
 }
 .nav-wrap{
-  width:100%;
   background-color:black;
   white-space: nowrap;
   padding:10px;
   padding-left:50px;
   box-sizing: border-box;
-  font-size:2em;
+  font-size:1.5em;
   .menuLink{
     background-color:black;
     position:absolute;
@@ -34,11 +33,9 @@ body{
   }
   nav{
     a, a:active{
-      color:#696565;
+      color:#838383;
       margin-right:30px
     }
-
-    overflow:scroll;
     a.active{
       color:white;
     }
@@ -47,34 +44,37 @@ body{
 
 #category,.list-view{
   position: absolute;
-  top:60px;
+  top:41px;
   bottom:0px;
   overflow-y: auto;
   width: 100%;
   -webkit-overflow-scrolling: touch;
   .title{
-    padding: 0px 10px 0px 10px;
-    font-size: 2em;
+    padding: 6px 10px 0px 10px;
+    font-size: 1.8em;
     background-color: blueViolet;
     display: inline-block;
     position: relative;
+    margin-bottom: 14px;
   }
-  .plus{
-    font-size: 2.3em;
-    background-color: blueViolet;
-    padding-right: 5px;
-    padding-bottom: 2px;
+  .title:after{
+    //non breaking space
+    content: "\00a0+";
   }
   .category-list{
-    font-size:2em;
-    list-style:none;
-    margin:10px 0px 56px 40px;
+    font-size: 1.7em;
+    list-style: none;
+    margin: 0px 0px 60px 16px;
+    line-height: 1em;
   }
 
   #track-list li{
     margin-bottom:12px;
   }
   ul{
+    li{
+      margin-bottom:10px;
+    }
     list-style: none;
   }
   .playlists{
@@ -168,6 +168,57 @@ body{
     top: 3px;
     font-size: 35px;
   }
+}
+
+.jumper{
+  width:30px;
+  height:30px;
+  background-color: blueviolet;
+}
+
+#alphabet{
+  position: fixed;
+  top: 0px;
+  width: 100%;
+  height: 100%;
+  background-color: white;
+  padding:10px 30px;
+  color: blueViolet;
+  max-width: 340px;
+  opacity: .8;
+  box-sizing:border-box;
+  z-index: 13;
+  font-size: 25px; 
+  -webkit-transition: -webkit-transform .3s, opacity .3s;
+  -webkit-backface-visibility:hidden;
+  -webkit-transform-origin:0 0;
+  -webkit-transform: rotateY(90deg) translate3d(0,0,0);
+
+  -moz-transition: -moz-transform .3s;
+  -moz-backface-visibility:hidden;
+  -moz-transform-origin:0 0;
+  -moz-transform: rotateY(90deg) translate3d(0,0,0);
+}
+
+#alphabet span{
+  padding:0px 10px;
+  font-size: 40px;
+  line-height: 70px;
+  display: inline-table;
+}
+
+#alphabet span .greyed{
+  color: grey;
+}
+
+#alphabet.back{
+  display: inline-block;
+}
+
+#alphabet.flipOut{
+  opacity: 1;
+   -webkit-transform: rotateY(0deg);
+   -moz-transform: rotateY(0deg);
 }
 @-webkit-keyframes flyOver {
   0%{

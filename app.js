@@ -3,14 +3,15 @@
  * Module dependencies.
  */
 
-var express = require('express')
-  , routes = require('./routes')
-  , list = require('./routes/playlists')
-  , http = require('http')
-  , path = require('path')
-  , mw = require('./watcher.js')
-
-var app = express();
+var express = require('express'),
+    app = express(),
+    server = require('http').createServer(app),
+    routes = require('./routes'),
+    list = require('./routes/playlists'),
+    http = require('http'),
+    path = require('path'),
+    mw = require('./watcher.js'),
+    io = require('socket.io').listen(server);
 
 app.configure(function(){
   app.set('port', process.env.PORT || 3000);
@@ -41,6 +42,6 @@ app.get('/lists',list.lists);
 app.get('/playlist',list.playlist);
 app.get('/menu',list.menu);
 
-http.createServer(app).listen(app.get('port'), function(){
+server.listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));
 });

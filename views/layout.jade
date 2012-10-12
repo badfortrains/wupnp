@@ -9,8 +9,11 @@ html
     meta(name="viewport",content="width=device-width");
     script(src='/javascripts/zepto.min.js')
     script(src='/javascripts/drag.js')
+    script(src="/socket.io/socket.io.js")
     script(src='/javascripts/category.js')
   body
+    #alphabet
+      .back.icon-chevron-left
     .nav-wrap
       span.menuLink.icon-reorder
       nav
@@ -21,7 +24,7 @@ html
     .popup
     .mask
     #pullTab
-      span.icon-music
+      span
       .playing Now Playing
         span.icon-pause
         span.icon-chevron-right

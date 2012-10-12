@@ -21,7 +21,7 @@ var positionSort = function(docs, positions){
 
 var getList = function(id,category,filter,sort,cb){
   function search(positions){
-    if(sort === {}){
+    if(Object.keys(sort).length === 0){
       sort = {TrackNumber:1}
     }
     db.tracks.find(filter,category).sort(sort,function(err, docs){
@@ -32,6 +32,7 @@ var getList = function(id,category,filter,sort,cb){
       }else{
         if(positions)
           positionSort(docs,positions);
+
         cb(docs);
       }
     }); 
