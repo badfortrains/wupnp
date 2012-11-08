@@ -14,6 +14,12 @@ function flatten(collection,property){
 var positionSort = function(docs, positions){
   
   var compare = function(a,b){
+    console.log(positions[0]);
+    console.log(a.oID);
+    console.log(b.oID);
+    console.log(positions.indexOf(a.oID));
+    console.log(positions.indexOf(b.oID));
+    console.log("NET")
     return positions.indexOf(a.oID) - positions.indexOf(b.oID);
   }
   docs.sort(compare);
@@ -24,14 +30,21 @@ var getList = function(id,category,filter,sort,cb){
     if(Object.keys(sort).length === 0){
       sort = {TrackNumber:1}
     }
+    category.oID = 1;
     db.tracks.find(filter,category).sort(sort,function(err, docs){
       console.log(docs.length)
       if(err){ 
         console.log("err finding playlist"+err);
         return;
       }else{
-        if(positions)
+        if(positions){
           positionSort(docs,positions);
+          console.log("positions =");
+          console.log(positions);
+          console.log(docs)
+          console.log("position sorted");
+          console.log(docs);
+        }
 
         cb(docs);
       }

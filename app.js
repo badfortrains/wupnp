@@ -42,6 +42,12 @@ app.get('/lists',list.lists);
 app.get('/playlist',list.playlist);
 app.get('/menu',list.menu);
 
+mw.listen(io);
+
+io.sockets.on('connection', function (socket) {
+  socket.join(mw.getRenderer());
+});
+
 server.listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));
 });
