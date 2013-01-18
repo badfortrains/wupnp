@@ -39,7 +39,8 @@ var Tracks  = {
   },
 
   get filter(){
-    return this.attributes.filter[this.attributes.filter.length-1];
+    var filter = this.attributes.filter[this.attributes.filter.length-1];
+    return (filter !== undefined) ? Object.keys(filter)[0] : false;
   },
 
   set category(category){
@@ -281,13 +282,39 @@ var Category = (function(){
       HistoryManager.replaceState(tracks.state, "category", tracks.URL);
       $(document).on("category:popstate", handlePop);
       $el.on("click","ul.category li",Category.itemClick);
+
+      $("#alphabet").on("click", ".back",function(){
+        $("#alphabet").toggleClass('flipOut');
+        $(".mask").toggle();
+      })
+      $("#alphabet").on("click", "span.active", function(e){
+        var letter = $(this).html();
+        $("#alphabet").toggleClass('flipOut');
+        document.getElementById("jumper"+letter).scrollIntoView();
+        $(".mask").toggle();
+      });
     },
     render: function(){
       tracks.getCategoryHTML(function(data){
         $("nav").show();
         $el.html(data.content);
         $el[0].scrollTop = 0;
+        Category.setupJumper();
       })
+    },
+    setupJumper: function(){
+      var alphabet = $("#alphabet"),
+          current,
+          html = "<div class='back icon-chevron-left'></div>";
+      for(var i=65; i<91; i++){
+        current = String.fromCharCode(i)
+        if($('#jumper'+current).length > 0){
+          html += '<span class="active">'+ current +'</span>';
+        }else{
+          html += '<span class="greyed">'+ current +'</span>';
+        }
+      }
+      alphabet.html(html);
     },
     itemClick: function(e){
       if($(this).hasClass('jumper'))
@@ -312,6 +339,32 @@ var Category = (function(){
     }
   }
 })();
+
+var playerModel = {
+  update:function(data){
+    this.attributes = data;
+    $(document).trigger("player:stateChange",this.attributes);
+  },
+  init:function(socket){
+    this.socket = socket;
+    socket.emit("refreshPlayer");
+    socket.on("stateChange",$.proxy(this.update,this));
+  },
+};
+
+var playerView = {
+  init:function(model,el){
+    this.$el = $(el);
+    this.model = model;
+    $(document).on("player:stateChange",$.proxy(this.render,this));
+  },
+  render:function(e,data){
+    this.$el.find(".playing").hmtl(data.playing);
+    this.$el.find(".playButton").attr("class","playButton "+data.playing.playState);
+    (data.next) ? this.$el.find(".next").addClass('active') : this.$el.find(".next").removeClass('active');
+
+  }
+}
 
 var HistoryManager = {
   pushState: function(state,channel,URL){
@@ -340,7 +393,7 @@ $(document).ready(function(){
       menu = Object.create(MenuView),
       tracks = Object.create(Tracks),
       playlist = Object.create(Playlist),
-      socket = io.connect('http://localhost');
+      socket = io.connect('http://localhost:3000');
 
   playlist.tracks = tracks;
   tracks.init({filter:[],category:"Artist"})
@@ -348,6 +401,11 @@ $(document).ready(function(){
   ListsView.init($(".popup"),playlist);
   Category.render();
   menu.init({el:$("#category")});
+
+
+  socket.on("stateChange",function(event){
+    console.log(event);
+  });
 
   $(".menuLink").on("click",function(){
     menu.render();
@@ -374,11 +432,14 @@ $(document).ready(function(){
 
   $("nav").on("click","a:not(.active)",function(e){
     var category = $(this).attr('cat');
-    if( (tracks.category != "Album" || tracks.filter == undefined) && category == 'Title'){
+    if( (tracks.category != "Album" || tracks.filter != 'Album') && category == 'Title'){
       tracks.sort = {Title:1}
     }
+    var position = $(this).index() *  -1 * $("body").width();
+    $("body").css("background-position-x",position+'px');
     Category.changeCategory(category);
     e.preventDefault();
+    
   });
 
   $el.on("click",".add",function(e){
@@ -409,31 +470,6 @@ $("#category").on("click",".jumper",function(){
   $(".mask").toggle();
 });
 
-window.setTimeout(function(){
-  var alphabet = $("#alphabet");
-  var current;
-for(var i=65; i<91; i++){
-  console.log('#jumper'+String.fromCharCode(i));
-  console.log(String.fromCharCode(i)+" = "+ ($('#jumper'+String.fromCharCode(i)).length > 0));
-  current = String.fromCharCode(i)
-  if($('#jumper'+current).length > 0){
-    alphabet.append('<span class="active">'+ current +'</span>');
-  }else{
-    alphabet.append('<span class="greyed">'+ current +'</span>');
-  }
-
-}
-$("#alphabet .back").on("click",function(){
-  $("#alphabet").toggleClass('flipOut');
-  $(".mask").toggle();
-})
-$("#alphabet").on("click", "span.active", function(e){
-  var letter = $(this).html();
-  $("#alphabet").toggleClass('flipOut');
-  document.getElementById("jumper"+letter).scrollIntoView();
-  $(".mask").toggle();
-});
-},400);
 
 $(".mask").on("click",function(){
   $("#alphabet").removeClass('flipOut');

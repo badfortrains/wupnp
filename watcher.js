@@ -1,6 +1,12 @@
 var db = require('mongojs').connect('test', ['tracks','playlist']),
     mediaWatcher = require('./media_watcher'),
-    mw = new mediaWatcher.MediaWatcher();
+    mw = new mediaWatcher.MediaWatcher(),
+    models = require('./models.js'),
+    socketIO;
+
+
+
+
 
 
 var updateFromObjID = function(){
@@ -31,6 +37,24 @@ var updateFromObjID = function(){
   });
 }
 
+var watcherInterface = {
+  play:function(trackItem,callback){
+    mw.stop(function(resS){
+      console.log("resS")
+      console.log(resS)
+      mw.open(function(resO){
+        console.log("resO")
+        console.log(resO)
+        mw.play(function(resP){
+          console.log("resP")
+          console.log(resP)
+          return callback({res: resP});
+        });
+      },trackItem);
+    });
+  }
+};
+
 
 var onTracksAdded = function(data){
   //add to db;
@@ -52,6 +76,122 @@ var onTracksAdded = function(data){
 
 }
 
+var nowPlaying = function(uuid,name){
+  if(!this.NOW_PLAYING[uuid]){
+    this.playlist = name + " Now Playing";
+    this.NOW_PLAYING[uuid] = this;
+  }
+  return this.NOW_PLAYING[uuid];
+}
+
+nowPlaying.prototype = {
+  NOW_PLAYING:{},
+  position: 0,
+  set playlist(name){
+    models.lists.add(name,function(data){
+      this._playlist = {list_id:data._id};
+    })
+  },
+  _getTrack: function(position,num_tracks,categories,cb){
+    var getProperties = {};
+    if(typeof(num_tracks) == 'function'){
+      cb = num_tracks;
+      categories = {};
+      num_tracks = 1;
+    }
+    else if(typeof(categories) == 'function'){
+      cb = categories;
+      categories = {}
+    }
+    models.getList(this._playlist.list_id,categories,{},{},function(docs){
+
+    })
+    /*
+    db.playlist.find(this._playlist,{}).sort(this.sort).skip(position).limit(2,function(err,data){
+        console.log(data);
+        if(data && data[0]){
+          var hasNext = (typeof data[1] !== 'undefined');
+          db.tracks.find({oID:data[0].track_id},categories,function(err,data){
+            cb(err,data,hasNext);
+          });
+        }else
+          cb(err,data);
+    });*/
+  },
+  getNext: function(cb){
+    this._getTrack(++this.position,cb);
+  },
+  getPrevious: function(cb){
+    this._getTrack(--this.position,cb);
+  },
+  getCurrent: function(num_tracks,cb){
+
+  }  
+}
+
+var renderer = function(mw){
+  this.renderers = {};
+  this.mw = mw;
+}
+renderer.prototype = {
+  logErr:function(fn,err){
+    console.log(err + " from : "+fn);
+  },
+  exists:function(id){
+    if(!this.renderers[id]){
+      return false;
+    }else
+      return true;
+  },
+  add:function(id,name){
+    console.log("adding " + id + " " + name);
+    this.renderers[id] = {
+      name:name,
+      list: new nowPlaying(id,name),
+      state: {}
+    };
+
+
+
+    console.log(this.renderers);
+    console.log(this);
+  },
+  next:function(id){
+    if(!this.exists(id)){
+      this.logErr("next","media renderer no longer exists");
+      return;
+    }
+    this.renderers[id].list.getNext(function(err,data,hasNext){
+      if(data){
+        console.log(data[0]);
+        this.mw.play(data[0],function(result){
+          socketIO.sockets.in(id).emit('playResult',{
+            result: result,
+            track: data[0]
+          })
+        });
+        this.stateChange({name:"hasNext",value:hasNext});
+      }else{
+        this.logErr('next',"error finding next track");
+      }
+    }.bind(this))
+  },
+  stateChange:function(event){
+    if(!this.exists(event.uuid)){
+      return;
+    }
+    if(event.value === "PLAYING" || event.value === "PAUSED_PLAYBACK" || event.name === "Mute" || event.name === "Volume" || event.name === "hasNext"){
+      if(this.renderers[event.uuid][event.name] !== event.value){
+        this.renderers[event.uuid][event.name] = event.value
+        socketIO.sockets.in(event.uuid).emit("stateChange",event);
+      }
+    }
+  }
+}
+
+var render = new renderer(watcherInterface);
+//var playing = new nowPlaying("50578bdddcc92e2d0d000002");
+
 var respond = function (data){
   event = mw.pollEvent();
   while(event){
@@ -60,50 +200,26 @@ var respond = function (data){
       mw.getTracks(onTracksAdded,server);
       console.log("serverAdded");
     }else if(event.name === "mrAdd"){
-      console.log("got renderer");
-    }
+      console.log("RENDERER ADDED");
+      mw.setRenderer(event.uuid)
+      render.add(event.uuid,event.value);
+    }else
+      render.stateChange(event);
     event = mw.pollEvent();
   }
   mw.watchEvents(respond);
 };
 
-var nowPlaying = {
-  position: 0,
-  set playlist(id){
-    this._playlist = {list_id:new db.bson.ObjectID(id)};
-  },
-  _getTrack: function(position,categories,cb){
-    var getProperties = {};
-    if(typeof(categories) == 'function'){
-      cb = categories;
-      categories = {}
-    }
-    db.playlist.find(this._playlist,{}).sort(this.sort).skip(position).limit(1,function(err,data){
-        console.log(data);
-        if(data && data[0]){
-          db.tracks.find({oID:data[0].track_id},categories,function(err,data){
-            cb(err,data)
-          });
-        }else
-          cb(err,data);
-    });
-  },
-  getNext: function(cb){
-    this._getTrack(++this.position,cb);
-  },
-  getPrevious: function(cb){
-    this._getTrack(--this.position,cb);
-  }  
+db.tracks.remove();
+
+
+exports.renderer = render;
+exports.getRenderer = function(){
+  return Object.keys(render.renderers)[0];
 }
 
-var renderer = {
-  init: function(){
-    this.list = Object.create(nowPlaying);
-    this.list.playlist = "50578bdddcc92e2d0d000002";//HACK for now playing;
-  }
+exports.listen = function(io){
+  mw.startUpnp(function(){});
+  mw.watchEvents(respond);
+  socketIO = io;
 }
-
-//renderer.init();
-//db.tracks.remove();
-//mw.startUpnp(function(){});
-//mw.watchEvents(respond);

@@ -42,6 +42,21 @@ app.get('/lists',list.lists);
 app.get('/playlist',list.playlist);
 app.get('/menu',list.menu);
 
+mw.listen(io);
+
+io.sockets.on('connection', function (socket) {
+  socket.join(mw.getRenderer());
+  //Set current renderer
+  socket.set("renderer",mw.getRenderer());
+
+  //emit current state of renderer
+  
+  socket.on('play', function(id){
+    console.log("PLAY" + id)
+    mw.renderer.next(id);
+  })
+});
+
 server.listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));
 });

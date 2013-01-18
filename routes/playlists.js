@@ -26,11 +26,14 @@ var showTracks = function(req,res,params){
     res.send("BAD JSON:" +err );
     return;
   }
+  var date = Date.now();
 
   lists.getList(params.id,category,params.filter,params.sort,function(data){
-
+    console.log("list in",Date.now() - date);
+    date = Date.now();
     var showJumper = (Object.keys(params.sort)[0] === 'Title');
     res.render('track',{jumper:showJumper,list:data, title:params.title},function(err,data){
+      console.log("render in",Date.now()-date);
       res.send({
         filter:params.filter,
         content:data})
@@ -45,8 +48,12 @@ var show = function(req,res,params){
   category = (req.query.category) ? req.query.category : 'Artist';
   //sort alphabetically by category if no sort order supplied
   reverse = (req.query.reverse == "true") ? true : false;
+  var date = Date.now();
   lists.distinctList(params.id,category,params.filter,reverse,function(data){
+    console.log("distinctList in",Date.now() - date);
+    date = Date.now();
     res.render('category',{list:data, title:params.title},function(err,data){
+      console.log("render in",Date.now()-date);
       res.send({
         filter:params.filter,
         content:data
