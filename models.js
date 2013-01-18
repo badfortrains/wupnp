@@ -14,12 +14,6 @@ function flatten(collection,property){
 var positionSort = function(docs, positions){
   
   var compare = function(a,b){
-    console.log(positions[0]);
-    console.log(a.oID);
-    console.log(b.oID);
-    console.log(positions.indexOf(a.oID));
-    console.log(positions.indexOf(b.oID));
-    console.log("NET")
     return positions.indexOf(a.oID) - positions.indexOf(b.oID);
   }
   docs.sort(compare);
@@ -155,6 +149,10 @@ exports.playlist = {
     });
   }
 }
+
+id =db.bson.ObjectID("50cb71919a9a002420001f6b");
+console.log("LLOOKING");
+console.log(db.playlist.find())
 
 exports.lists = {
   add: function(name,cb){

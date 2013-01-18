@@ -46,6 +46,15 @@ mw.listen(io);
 
 io.sockets.on('connection', function (socket) {
   socket.join(mw.getRenderer());
+  //Set current renderer
+  socket.set("renderer",mw.getRenderer());
+
+  //emit current state of renderer
+  
+  socket.on('play', function(id){
+    console.log("PLAY" + id)
+    mw.renderer.next(id);
+  })
 });
 
 server.listen(app.get('port'), function(){

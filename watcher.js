@@ -92,12 +92,21 @@ nowPlaying.prototype = {
       this._playlist = {list_id:data._id};
     })
   },
-  _getTrack: function(position,categories,cb){
+  _getTrack: function(position,num_tracks,categories,cb){
     var getProperties = {};
-    if(typeof(categories) == 'function'){
+    if(typeof(num_tracks) == 'function'){
+      cb = num_tracks;
+      categories = {};
+      num_tracks = 1;
+    }
+    else if(typeof(categories) == 'function'){
       cb = categories;
       categories = {}
     }
+    models.getList(this._playlist.list_id,categories,{},{},function(docs){
+
+    })
+    /*
     db.playlist.find(this._playlist,{}).sort(this.sort).skip(position).limit(2,function(err,data){
         console.log(data);
         if(data && data[0]){
@@ -107,13 +116,16 @@ nowPlaying.prototype = {
           });
         }else
           cb(err,data);
-    });
+    });*/
   },
   getNext: function(cb){
     this._getTrack(++this.position,cb);
   },
   getPrevious: function(cb){
     this._getTrack(--this.position,cb);
+  },
+  getCurrent: function(num_tracks,cb){
+
   }  
 }
 
@@ -135,19 +147,29 @@ renderer.prototype = {
     console.log("adding " + id + " " + name);
     this.renderers[id] = {
       name:name,
-      list: new nowPlaying(id,name)
+      list: new nowPlaying(id,name),
+      state: {}
     };
+
+
+
     console.log(this.renderers);
     console.log(this);
   },
   next:function(id){
     if(!this.exists(id)){
       this.logErr("next","media renderer no longer exists");
+      return;
     }
     this.renderers[id].list.getNext(function(err,data,hasNext){
       if(data){
         console.log(data[0]);
-        this.mw.play(data[0]);
+        this.mw.play(data[0],function(result){
+          socketIO.sockets.in(id).emit('playResult',{
+            result: result,
+            track: data[0]
+          })
+        });
         this.stateChange({name:"hasNext",value:hasNext});
       }else{
         this.logErr('next',"error finding next track");
@@ -175,7 +197,7 @@ var respond = function (data){
   while(event){
     if(event.name === "msAdd") {
       var server = mw.getServer();
-      //mw.getTracks(onTracksAdded,server);
+      mw.getTracks(onTracksAdded,server);
       console.log("serverAdded");
     }else if(event.name === "mrAdd"){
       console.log("RENDERER ADDED");
@@ -188,10 +210,10 @@ var respond = function (data){
   mw.watchEvents(respond);
 };
 
-//db.tracks.remove();
+db.tracks.remove();
 
 
-
+exports.renderer = render;
 exports.getRenderer = function(){
   return Object.keys(render.renderers)[0];
 }
