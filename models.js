@@ -24,14 +24,21 @@ var getList = function(id,category,filter,sort,cb){
     if(Object.keys(sort).length === 0){
       sort = {TrackNumber:1}
     }
+    category.oID = 1;
     db.tracks.find(filter,category).sort(sort,function(err, docs){
       console.log(docs.length)
       if(err){ 
         console.log("err finding playlist"+err);
         return;
       }else{
-        if(positions)
+        if(positions){
           positionSort(docs,positions);
+          console.log("positions =");
+          console.log(positions);
+          console.log(docs)
+          console.log("position sorted");
+          console.log(docs);
+        }
 
         cb(docs);
       }
@@ -142,6 +149,10 @@ exports.playlist = {
     });
   }
 }
+
+id =db.bson.ObjectID("50cb71919a9a002420001f6b");
+console.log("LLOOKING");
+console.log(db.playlist.find())
 
 exports.lists = {
   add: function(name,cb){

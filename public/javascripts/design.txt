@@ -9,6 +9,11 @@ routes-internal:
   addList[name]
 
 
+good:
+Cleatus - 15+
+AnimalCollective -Feels
+
+
 
 client Models:
   tracks:
@@ -96,13 +101,19 @@ Playlists
 Settings
 
 
+playing tracks:
+ -each renderer has a now playing playlist (can be saved off to user playlist, or cloned over to other renderer)
+ -play position / play next / play previous
+
+ -NowPlaying model -> playlistModel
+ 
 
 Steps(Un-ordered)
 1.Renderer picker
   shaking icon
-2.Alphabet jumper
-3.track ordering
-4.player controls
+2.Alphabet jumper 
+3.track ordering X
+4.player controls 
 
 later
 1.now playing screen
