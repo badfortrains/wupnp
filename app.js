@@ -11,7 +11,10 @@ var express = require('express'),
     http = require('http'),
     path = require('path'),
     mw = require('./watcher.js'),
-    io = require('socket.io').listen(server);
+    categories = require('./controllers/categories_controller.js');
+    io = require('socket.io').listen(server),
+    wu = require('./routes/wu.js');
+    JST = require('./helpers/JST');
 
 app.configure(function(){
   app.set('port', process.env.PORT || 3000);
@@ -35,12 +38,27 @@ app.configure('development', function(){
 app.get("/pop",function(req,res){
   res.render('popup', { title: 'Express' });
 });
+/*
 app.get('/', routes.index);
 app.get('/Artist', routes.index);
 app.get('/tracklist', list.show);
 app.get('/lists',list.lists);
 app.get('/playlist',list.playlist);
 app.get('/menu',list.menu);
+*/
+
+/*NEW ROUTES*/
+app.get('/', wu.index);
+app.get('/categories/:category', categories.show);
+app.get('/JST.js', function(req,res){
+  JST.render(function(result){
+    console.log(result)
+    res.send(result);
+  })
+});
+
+
+/**********/
 
 mw.listen(io);
 

@@ -197,7 +197,7 @@ var respond = function (data){
   while(event){
     if(event.name === "msAdd") {
       var server = mw.getServer();
-      mw.getTracks(onTracksAdded,server);
+      //mw.getTracks(onTracksAdded,server);
       console.log("serverAdded");
     }else if(event.name === "mrAdd"){
       console.log("RENDERER ADDED");
@@ -210,7 +210,7 @@ var respond = function (data){
   mw.watchEvents(respond);
 };
 
-db.tracks.remove();
+//db.tracks.remove();
 
 
 exports.renderer = render;

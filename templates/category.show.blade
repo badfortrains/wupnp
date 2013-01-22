@@ -1,0 +1,16 @@
+- var title = model.get('title');
+- var docs = model.get('docs');
+
+-if(title)
+  a(href='#', class='add')
+    span.title
+      =title 
+-var current = (docs.length > 20) ? ' ' : 'Z';
+.category-list
+  ul.category
+    foreach docs as item
+      -if(item.toUpperCase()[0] > current){
+        -current= item.toUpperCase()[0];
+        li.jumper(id='jumper'+current)
+      -}
+      li= item
