@@ -1,14 +1,14 @@
 Wu.Routers.Categories = Backbone.Router.extend({
   routes: {
-    ''               : 'index',
-    'categories/:id'  : 'show'
+    ''              : 'index',
+    'category/:id'  : 'show'
   },
 
   index: function(){
     this.show('Artist');
   },
 
-  show: function(id){
+  show: function(id,params){
     var category = Wu.Cache.Models.category;
     category.set("id",id);
     category.fetch({

@@ -12,7 +12,7 @@ Wu = {
     })
     Wu.Cache.Categories = new Wu.Routers.Categories();
 
-    Backbone.history.start({pushstate: true});
+    Backbone.history.start({pushState: true});
   }
 }
 

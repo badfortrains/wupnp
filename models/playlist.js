@@ -52,7 +52,8 @@ playlist.prototype.add = function(filter,callback){
           ++count;
           db.tracks.update({_id:doc._id},{$addToSet : {playlist : listId, position: count} })
         }else{
-          db.lists.update({_id:listId},{count: count},callback);
+          db.lists.update({_id:listId},{count: count});
+          callback(null,count);
         }
       });
     }
@@ -100,6 +101,14 @@ playlist.prototype.getCount = function(callback){
       callback(false,doc.count);
     }
   })
+}
+
+playlist.prototype.attributes = function(cb){
+  return this.findList({_id: this.id},cb);
+}
+
+playlist.prototype.findList = function(){
+  return db.lists.find.apply(db.lists,arguments);
 }
 
 exports.playlist = playlist;

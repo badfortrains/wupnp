@@ -11,9 +11,10 @@ var express = require('express'),
     http = require('http'),
     path = require('path'),
     mw = require('./watcher.js'),
-    categories = require('./controllers/categories_controller.js');
+    categories = require('./controllers/categories_controller.js'),
     io = require('socket.io').listen(server),
-    wu = require('./routes/wu.js');
+    wu = require('./routes/wu.js'),
+    playlists = require('./controllers/playlist_controller.js'),
     JST = require('./helpers/JST');
 
 app.configure(function(){
@@ -49,7 +50,14 @@ app.get('/menu',list.menu);
 
 /*NEW ROUTES*/
 app.get('/', wu.index);
-app.get('/categories/:category', categories.show);
+app.get('/category/:category', wu.index);
+
+app.get("/api/playlists",playlists.index);
+app.post("/api/playlists",playlists.new);
+app.get("/api/playlists/:id/add", playlists.add);
+app.get("/api/playlists/:id", playlists.show);
+
+app.get('/api/categories/:category', categories.show);
 app.get('/JST.js', function(req,res){
   JST.render(function(result){
     console.log(result)

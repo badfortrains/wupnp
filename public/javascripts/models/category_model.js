@@ -2,7 +2,7 @@ Wu.Models.category = Backbone.Model.extend({
 
   ORDER: ["Artist","Album","Title"],
 
-  urlRoot: '/categories',
+  urlRoot: '/api/categories',
 
   fetch: function(options){
     options = options || {};
