@@ -11,6 +11,7 @@ Wu = {
       id : "Artist"
     })
     Wu.Cache.Categories = new Wu.Routers.Categories();
+    Wu.Cache.playlists = new Wu.Collections.playlists();
 
     Backbone.history.start({pushState: true});
   }
