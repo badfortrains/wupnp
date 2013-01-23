@@ -17,7 +17,12 @@ html
     script(src='/JST.js')
 
     //views
+    script(src='/javascripts/views/list.js')
+    script(src='/javascripts/views/list-jumper.js')
+    script(src='/javascripts/views/category-nav.js')
+    script(src='/javascripts/views/category-list.js')
     script(src='/javascripts/views/categories.js')
+
 
     //models
     script(src='/javascripts/models/category_model.js')
@@ -29,11 +34,6 @@ html
   body
     #alphabet
     .nav-wrap
-      span.menuLink.icon-reorder
-      nav
-        a(href="#",class='active Artist',cat="Artist") Artists
-        a(href="#",cat="Album", class="Album") Albums
-        a(href="#",cat="Title", class="Title") Tracks
     #category
     .popup
     .mask

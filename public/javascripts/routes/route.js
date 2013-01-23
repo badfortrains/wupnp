@@ -14,8 +14,7 @@ Wu.Routers.Categories = Backbone.Router.extend({
     category.fetch({
       success: function(){
         new Wu.Views.categories({
-          model: category,
-          el: $("#category")
+          model: category
         }).render();
       }
     });

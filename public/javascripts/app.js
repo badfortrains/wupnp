@@ -8,7 +8,7 @@ Wu = {
   Routers: {},
   init: function(){
     this.Cache.Models.category = new Wu.Models.category({
-      category : "Artist"
+      id : "Artist"
     })
     Wu.Cache.Categories = new Wu.Routers.Categories();
 
