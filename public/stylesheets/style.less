@@ -61,6 +61,7 @@ body{
     display: inline-block;
     position: relative;
     margin-bottom: 14px;
+    cursor: pointer;
   }
   .title:after{
     //non breaking space
@@ -92,7 +93,7 @@ body{
     }
   }
 }
-.mask{
+#mask{
   width: 100%;
   height: 100%;
   position: absolute;
@@ -124,11 +125,16 @@ body{
   .top-box{
     padding: 5px;
   }
+  span,h1,li{
+    cursor: pointer;
+  }
   .bottom-box{
     margin:10px 0px 10px 10px;
     color: black;
     line-height: 27px;
     font-size: 20px;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
     display: none;
     ul{
       list-style: none;
@@ -144,22 +150,15 @@ body{
   }
 }
 
-.popup.add{
-  .add{
-    display: block;
-  }
-  .top-box h1{
+.popup.expand .top-box h1{
     display: none;
-  }
+}
+.popup.add .add{
+    display: block !important;
 }
 
-.popup.new{
-  .new{
-    display: block;
-  }
-  .top-box h1{
-    display: none;
-  }
+.popup.new .new{
+    display: block !important;
 }
 
 #pullTab{
@@ -192,6 +191,38 @@ body{
     top: 3px;
     font-size: 35px;
   }
+}
+
+#menu{
+  position: fixed;
+  width: 280px;
+  z-index: 12;
+  padding: 10px 0px 10px 10px;
+  color: black;
+  background-color: white;
+  top: 0px;
+  bottom: 0px;
+}
+
+.hide{
+  display: none;
+}
+
+.toast{
+  position: absolute;
+  top: 20%;
+  z-index:13;
+  color: white;
+  background-color: rgb(19, 24, 44);
+  border: 1px solid rgb(194, 194, 194);
+  padding: 15px;
+  font-size: 1em;
+  left: 50px;
+  display: none;
+  letter-spacing: 1px;
+}
+.toast.error{
+  border: 2px solid rgb(243, 103, 103);
 }
 
 .jumper{

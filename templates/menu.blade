@@ -1,0 +1,8 @@
+.playTo
+  h1 Play To
+  ul.renderers
+    -renderers.each(function(item){
+      -var uuid = item.get("uuid")
+      li(uuid=uuid)
+        =item.get("name")
+    -})

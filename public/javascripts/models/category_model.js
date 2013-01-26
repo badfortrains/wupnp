@@ -10,7 +10,7 @@ Wu.Models.category = Backbone.Model.extend({
     Backbone.Model.prototype.fetch.call(this,options);
   },
 
-  select: function(value){
+  filter: function(value){
     var filter = this.get("filter") || {},
         id = this.get('id'),
         index = _.indexOf(this.ORDER,id);
@@ -19,8 +19,8 @@ Wu.Models.category = Backbone.Model.extend({
     if(index < this.ORDER.length){
       filter[id] = value;
       this.set("filter",filter)
-      this.set("id",this.ORDER[index]);
     }
+    return this.ORDER[index];
   },
   setCategory: function(category){
     var filter = this.get("filter") || {},

@@ -3,6 +3,7 @@ Wu.Views.categories = Backbone.View.extend({
   template: JST['category.show'],
 
   initialize: function(){
+    this.hasRendered = false;
     this.nav = new Wu.Views.categoriesNav({
       model: this.model,
       el: $(".nav-wrap")
@@ -13,21 +14,22 @@ Wu.Views.categories = Backbone.View.extend({
       el: $("#category")
     })
 
-    this.popup = new Wu.Views.categoryPopup({
-      collection: Wu.Cache.playlists,
-      el: $(".popup")
-    })
-
-    this.model.on("change:id",function(){
+    this.model.on("change:id",function(model,id){
       this.model.fetch();
     },this);
-    this.model.on("change:docs",this.list.render,this.list);
+    this.model.on("change:docs",function(){
+      if(!this.hasRendered){
+        this.render();
+      }else{
+        this.list.render();
+      }
+    },this);
   },
 
   render: function(){
     this.list.render();
     this.nav.render();
-    this.popup.render();
+    this.hasRendered = true;
     return this;
   },
   unrender: function(){

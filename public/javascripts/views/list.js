@@ -3,7 +3,7 @@ Wu.Views.list = Backbone.View.extend({
   template: JST['category.show'],
 
   initialize: function(params){
-    if(!params.noJumper){
+    if(!params || !params.noJumper){
       this.jumper = new Wu.Views.listJumper({
         list: this.$el,
         el: $("#alphabet")

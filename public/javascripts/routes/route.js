@@ -10,13 +10,11 @@ Wu.Routers.Categories = Backbone.Router.extend({
 
   show: function(id,params){
     var category = Wu.Cache.Models.category;
-    category.set("id",id);
-    category.fetch({
-      success: function(){
-        new Wu.Views.categories({
-          model: category
-        }).render();
-      }
-    });
+    category.setCategory(id);
+    if(!Wu.Cache.Views.categories){
+      Wu.Cache.Views.categories = new Wu.Views.categories({
+        model: category
+      }).render();
+    }    
   }
 });

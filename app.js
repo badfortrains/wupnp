@@ -54,8 +54,12 @@ app.get('/category/:category', wu.index);
 
 app.get("/api/playlists",playlists.index);
 app.post("/api/playlists",playlists.new);
-app.get("/api/playlists/:id/add", playlists.add);
+app.put("/api/playlists/:id", playlists.add);
 app.get("/api/playlists/:id", playlists.show);
+
+app.get("/api/renderers", function(req,res){
+   res.send(mw.renderer.getRenderers());
+});
 
 app.get('/api/categories/:category', categories.show);
 app.get('/JST.js', function(req,res){
@@ -77,10 +81,25 @@ io.sockets.on('connection', function (socket) {
 
   //emit current state of renderer
   
-  socket.on('play', function(id){
-    console.log("PLAY" + id)
-    mw.renderer.next(id);
+  socket.on('play', function(){
+    socket.get("renderer",function(err,uuid){
+      var renderer = mw.renderer.getRenderer(uuid);
+      renderer && renderer.play();
+    })
   })
+  socket.on('setList', function(id){
+    socket.get("renderer",function(err,uuid){
+      var renderer = mw.renderer.getRenderer(uuid);
+      renderer && renderer.setPlaylist(id);
+    })
+  })
+  socket.on('next',function(){
+    socket.get("renderer",function(err,uuid){
+      var renderer = mw.renderer.getRenderer(uuid);
+      renderer && renderer.next();
+    })
+  })
+
 });
 
 server.listen(app.get('port'), function(){

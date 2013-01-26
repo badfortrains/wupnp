@@ -2,6 +2,7 @@ var db = require('mongojs').connect('test', ['tracks','playlist']),
     mediaWatcher = require('./media_watcher'),
     mw = new mediaWatcher.MediaWatcher(),
     models = require('./models.js'),
+    Playlist = require("./models/playlist").playlist,
     socketIO;
 
 
@@ -39,6 +40,8 @@ var updateFromObjID = function(){
 
 var watcherInterface = {
   play:function(trackItem,callback){
+    //console.log("watch play")
+    console.log(trackItem)
     mw.stop(function(resS){
       console.log("resS")
       console.log(resS)
@@ -54,6 +57,60 @@ var watcherInterface = {
     });
   }
 };
+
+
+var rendy = function(name,uuid){
+  var self = this;
+  this.position = 1;
+  this.uuid = uuid;
+  this.state = {};
+  this.playlist = new Playlist(name +" quickList",uuid,function(id){
+    self.id = id;
+    self.play();
+  })
+} 
+rendy.prototype = {
+  play: function(cb){
+    self = this;
+    console.log("TRY PLAY")
+    mw.setRenderer(this.uuid);
+    this.playlist.findAt(this.position,function(err,docs){
+      console.log("GOT DOCS");
+      console.log(docs);
+      if(!err && docs[0]){
+        watcherInterface.play(docs[0],function(err){
+          if(!err)
+            self.position++;
+          typeof(cb) === 'function' && cb(err);
+        });
+        self.state.currentTrack = docs[0];
+      }
+      self.nextTrack = docs && docs[1];      
+    })
+  },
+  next: function(cb){
+    if(!this.nextTrack){
+      typeof(cb) == 'function' && cb("No next track");
+      return;
+    }else{
+      this.position++;
+      this.play();
+    }
+  },
+  previous: function(cb){
+    if(this.position === 1){
+      cb("No previous track");
+      return;
+    }else{
+      this.position--;
+      this.play();
+    }
+  },
+  setPlaylist: function(id){
+    this.playlist.id = id;
+    this.position = 1;
+  }
+}
 
 
 var onTracksAdded = function(data){
@@ -76,59 +133,6 @@ var onTracksAdded = function(data){
 
 }
 
-var nowPlaying = function(uuid,name){
-  if(!this.NOW_PLAYING[uuid]){
-    this.playlist = name + " Now Playing";
-    this.NOW_PLAYING[uuid] = this;
-  }
-  return this.NOW_PLAYING[uuid];
-}
-
-nowPlaying.prototype = {
-  NOW_PLAYING:{},
-  position: 0,
-  set playlist(name){
-    models.lists.add(name,function(data){
-      this._playlist = {list_id:data._id};
-    })
-  },
-  _getTrack: function(position,num_tracks,categories,cb){
-    var getProperties = {};
-    if(typeof(num_tracks) == 'function'){
-      cb = num_tracks;
-      categories = {};
-      num_tracks = 1;
-    }
-    else if(typeof(categories) == 'function'){
-      cb = categories;
-      categories = {}
-    }
-    models.getList(this._playlist.list_id,categories,{},{},function(docs){
-
-    })
-    /*
-    db.playlist.find(this._playlist,{}).sort(this.sort).skip(position).limit(2,function(err,data){
-        console.log(data);
-        if(data && data[0]){
-          var hasNext = (typeof data[1] !== 'undefined');
-          db.tracks.find({oID:data[0].track_id},categories,function(err,data){
-            cb(err,data,hasNext);
-          });
-        }else
-          cb(err,data);
-    });*/
-  },
-  getNext: function(cb){
-    this._getTrack(++this.position,cb);
-  },
-  getPrevious: function(cb){
-    this._getTrack(--this.position,cb);
-  },
-  getCurrent: function(num_tracks,cb){
-
-  }  
-}
-
 var renderer = function(mw){
   this.renderers = {};
   this.mw = mw;
@@ -137,24 +141,21 @@ renderer.prototype = {
   logErr:function(fn,err){
     console.log(err + " from : "+fn);
   },
+  getRenderer: function(uuid){
+    return this.renderers[uuid];
+  },
+  getRenderers: function(){
+    return mw.getRenderers();
+  },
   exists:function(id){
     if(!this.renderers[id]){
       return false;
     }else
       return true;
   },
-  add:function(id,name){
-    console.log("adding " + id + " " + name);
-    this.renderers[id] = {
-      name:name,
-      list: new nowPlaying(id,name),
-      state: {}
-    };
-
-
-
-    console.log(this.renderers);
-    console.log(this);
+  add:function(uuid,name){
+    console.log("adding " + uuid + " " + name);
+    this.renderers[id] = new rendy(name,uuid)
   },
   next:function(id){
     if(!this.exists(id)){
@@ -181,8 +182,8 @@ renderer.prototype = {
       return;
     }
     if(event.value === "PLAYING" || event.value === "PAUSED_PLAYBACK" || event.name === "Mute" || event.name === "Volume" || event.name === "hasNext"){
-      if(this.renderers[event.uuid][event.name] !== event.value){
-        this.renderers[event.uuid][event.name] = event.value
+      if(this.renderers[event.uuid][state][event.name] !== event.value){
+        this.renderers[event.uuid][state][event.name] = event.value
         socketIO.sockets.in(event.uuid).emit("stateChange",event);
       }
     }
@@ -191,6 +192,8 @@ renderer.prototype = {
 
 var render = new renderer(watcherInterface);
 //var playing = new nowPlaying("50578bdddcc92e2d0d000002");
+//
+var test;
 
 var respond = function (data){
   event = mw.pollEvent();

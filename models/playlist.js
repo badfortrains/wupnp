@@ -7,9 +7,22 @@ var db = require('mongojs').connect('test', ['tracks','playlist','lists']),
  * playlist object initalized with an id (existing playlist) or name (new playlist)
  * @param  {id string | objectId | name string } id 
  */
-var playlist = function(id){
+var playlist = function(id,uuid,cb){
+  //if uuid, check if a playlist already exists for that uuid otherwise create one
+  if(uuid){
+    this.uuid = uuid;
+    db.lists.findOne({uuid: uuid},function(err,doc){
+      if(!err && doc){
+        this.id = doc._id; 
+      }else{
+        this.id = db.bson.ObjectID();
+        this._create(id);
+      }
+      cb(this.id);
+    }.bind(this));
+  }
   //Hack: assume id is already an objectID if it has toString and is 24 characters
-  if(typeof(id) === "object" && id.toString().length  === 24)
+  else if(typeof(id) === "object" && id.toString().length  === 24)
     this.id = id;
   else if(typeof(id) === 'string' && id.length === 24)
     this.id = db.bson.ObjectID(id)
@@ -42,18 +55,19 @@ playlist.prototype.add = function(filter,callback){
   assert(typeof(filter) == "object");
   listId = this.id
   this.getCount(function(err,count){
+    var oldCount = count
     if(err){
       callback(err);
     }else{
-      db.tracks.find(filter).forEach(function(err,doc){
+      db.tracks.find(filter).sort({TrackNumber:1}).forEach(function(err,doc){
         if(err){
           callback(err)
         }else if(doc !== null){
           ++count;
-          db.tracks.update({_id:doc._id},{$addToSet : {playlist : listId, position: count} })
+          db.tracks.update({_id:doc._id},{$addToSet : {playlist : {playlist : listId, position: count} } })
         }else{
-          db.lists.update({_id:listId},{count: count});
-          callback(null,count);
+          db.lists.update({_id:listId},{$set:{count: count}});
+          callback(null,count-oldCount);
         }
       });
     }
@@ -89,7 +103,13 @@ playlist.prototype.drop = function(callback){
  * @param  {Function} callback 
  */
 playlist.prototype._create = function(name){
-    return db.lists.insert({name:name,_id:this.id,count:0});
+  var list = {
+    name:name,
+    _id:this.id,
+    count:0,
+  }
+  this.uuid && (list.uuid = this.uuid);
+  return db.lists.insert(list);
 }
 
 playlist.prototype.getCount = function(callback){
@@ -109,6 +129,33 @@ playlist.prototype.attributes = function(cb){
 
 playlist.prototype.findList = function(){
   return db.lists.find.apply(db.lists,arguments);
+}
+
+playlist.prototype.findAt = function(position,cb){
+  console.log(this.id)
+  console.log("position",position)
+  console.log({playlist: this.id,position:position})
+  console.log("cb",cb);
+  var objects = [
+    {playlist: this.id,position:position},
+    {playlist: this.id,position:position+1}
+  ]
+  //db.tracks.find({playlist: objects[0]},cb)
+  var id = this.id;
+  db.tracks.find({playlist : {$in:objects} },function(err,docs){
+    if(docs.length < 2 || err)
+      cb(err,docs);
+    else{
+      var reverse = false;
+      docs[1].playlist.forEach(function(el){
+        if(el.playlist === id && el.position === position){
+          cb(err,docs.reverse());
+          return;
+        }
+      });
+      cb(err,docs);
+    }
+  });
 }
 
 exports.playlist = playlist;

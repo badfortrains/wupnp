@@ -2,10 +2,6 @@ Wu.Views.categoriesNav = Backbone.View.extend({
 
   template: JST['category.nav'],
 
-  events: {
-    "click a" : "setActive"
-  },
-
   initialize: function(){
     this.model.on("change:id",this.updateActive,this);
   },
@@ -19,9 +15,6 @@ Wu.Views.categoriesNav = Backbone.View.extend({
   },
   unrender:function(){
     this.model.off("change:id",setActive);
-  },
-  setActive: function(e){
-    this.model.setCategory($(e.target).attr("cat"));
   },
   updateActive: function(model,category){
     this.$(".active").removeClass('active');

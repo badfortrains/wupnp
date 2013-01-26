@@ -24,23 +24,36 @@ html
     script(src='/javascripts/views/category-list.js')
     script(src='/javascripts/views/category-popup.js')
     script(src='/javascripts/views/categories.js')
-
+    script(src='/javascripts/views/menu.js')
+    script(src='/javascripts/views/player-tab.js')
 
     //models
     script(src='/javascripts/models/category_model.js')
     script(src='/javascripts/models/playlist_model.js')
+    script(src='/javascripts/models/renderer_model.js')
+
+    //collections
     script(src='/javascripts/collections/playlists.js')
+    script(src='/javascripts/collections/renderers.js')
 
     //routes
     script(src='/javascripts/routes/route.js')
 
+    //helpers
+    script(src='/javascripts/helpers/helpers.js')
 
   body
+    .toast
     #alphabet
     .nav-wrap
     #category
     .popup
-    .mask
+    #mask
+    #menu.hide
+      .playTo
+        h1 Play To
+        .renderers
+
     #pullTab
       span
       .playing Now Playing
