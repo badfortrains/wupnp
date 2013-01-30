@@ -3,6 +3,7 @@ Wu.Views.categoryPopup = Backbone.View.extend({
   template: JST['category.popup'],
 
   events: {
+    "click h1.play"               : "playNow",
     "click h1.add"                : "showAddTo",
     "click h1.new"                : "showCreate",
     "click .cancel"               : "back",
@@ -91,35 +92,50 @@ Wu.Views.categoryPopup = Backbone.View.extend({
       list.save(null,{
         success:function(model){
           var message = 'Playlist "'+name+'" created with '+model.get("added")+' tracks';
-          Wu.Helpers.Toast.message(message);
+          Wu.Cache.Views.toastMaster.message(message);
         },
         error:function(model,xhr){
           var message = xhr.responseText;
-          Wu.Helpers.Toast.error(message);
+          Wu.Cache.Views.toastMaster.error(message);
         }
       });
       list.set('filter',false);
       this.hide();
     }
   },
+  playNow:function(){
+    var id = Wu.Cache.Models.player.get("quickList"),
+        list = this.collection.get(id);
+
+    list.set("clearFirst",true);
+    this._add(list,function(){
+      Socket.emit("play");
+    });
+  },
 
   addToList:function(e){
     var id = $(e.target).attr('listId'),
-        list = this.collection.get(id),
-        filter = this.model.get("filter");
+        list = this.collection.get(id);
+    this._add(list);
+  },
+
+  _add: function(list,cb){
+    var filter = this.model.get("filter");
 
     list.set("filter",filter);
     list.save(null,{
       success:function(model){
-        var message = model.get("added")+' tracks added to "'+$(e.target).html()+'" playlist';
-        Wu.Helpers.Toast.message(message);
-      },
+        var message = model.get("added")+' tracks added to "'+list.get('name')+'" playlist';
+        Wu.Cache.Views.toastMaster.message(message);
+        typeof(cb) === 'function' && cb();
+       },
       error:function(model,xhr){
         var message = xhr.responseText;
-        Wu.Helpers.Toast.error(message);
+        Wu.Cache.Views.toastMaster.error(message);
       }
     });
-    list.set('filter',false);
+    list.unset('filter');
+    list.unset('clearFirst');
     this.hide();
   }
 

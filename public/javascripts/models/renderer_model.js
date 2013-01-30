@@ -1,4 +1,6 @@
 Wu.Models.renderer = Backbone.Model.extend({
-  urlRoot: '/api/renderers',
+
+  idAttribute: "uuid",
+  urlRoot: '/api/renderers'
 
 });

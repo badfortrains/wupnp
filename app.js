@@ -15,6 +15,7 @@ var express = require('express'),
     io = require('socket.io').listen(server),
     wu = require('./routes/wu.js'),
     playlists = require('./controllers/playlist_controller.js'),
+    renderers = require('./controllers/renderer_controller.js')
     JST = require('./helpers/JST');
 
 app.configure(function(){
@@ -56,10 +57,13 @@ app.get("/api/playlists",playlists.index);
 app.post("/api/playlists",playlists.new);
 app.put("/api/playlists/:id", playlists.add);
 app.get("/api/playlists/:id", playlists.show);
+app.get("/api/playlists/:id/tracks", playlists.showTracks);
+
 
 app.get("/api/renderers", function(req,res){
    res.send(mw.renderer.getRenderers());
 });
+app.get("/api/renderers/:id", renderers.show);
 
 app.get('/api/categories/:category', categories.show);
 app.get('/JST.js', function(req,res){
@@ -78,9 +82,38 @@ io.sockets.on('connection', function (socket) {
   socket.join(mw.getRenderer());
   //Set current renderer
   socket.set("renderer",mw.getRenderer());
+  if(mw.getRenderer()){
+    socket.emit("setRendererResult",null,mw.getRenderer());
+  }
 
-  //emit current state of renderer
+  socket.on("setRenderer",function(uuid){
+    console.log("IN setRenderer",uuid);
+    var renderer = mw.renderer.exists(uuid);
+    if(!renderer){
+      socket.emit("setRendererResult","Renderer no longer exists");
+    }else {
+      socket.get("renderer",function(err,oldUUID){
+        if(oldUUID === uuid){
+          return
+        }else{
+          socket.set("renderer",uuid);
+          socket.leave(oldUUID);
+          socket.emit("setRendererResult",null,uuid);
+          socket.join(uuid);
+          
+        }
+      });
+    }
+  })
   
+  socket.on('pause',function(){
+    console.log("PAUSE")
+    socket.get("renderer",function(err,uuid){
+      var renderer = mw.renderer.getRenderer(uuid);
+      renderer && renderer.pause();
+    })
+  })
+
   socket.on('play', function(){
     socket.get("renderer",function(err,uuid){
       var renderer = mw.renderer.getRenderer(uuid);
@@ -99,6 +132,12 @@ io.sockets.on('connection', function (socket) {
       renderer && renderer.next();
     })
   })
+
+  socket.on('doPlay',mw.doPlay);
+  socket.on('doStop',mw.doStop);
+  socket.on("doPoll",mw.doPoll);
+  socket.on("doGetInfo",mw.doGetInfo);
+
 
 });
 

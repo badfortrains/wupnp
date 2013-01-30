@@ -11,15 +11,19 @@ Wu = {
   init: function(){
     window.Socket = io.connect('http://localhost:3000');
     this.Cache.Models.category = new Wu.Models.category();
+    this.Cache.Models.player = new Wu.Models.player();
     this.Cache.Collections.renderers = new Wu.Collections.renderers();
     Wu.Cache.Categories = new Wu.Routers.Categories();
     Wu.Cache.playlists = new Wu.Collections.playlists();
+
+    Wu.Cache.Views.toastMaster = new Wu.Views.toastMaster();
 
     Wu.Cache.Views.categories = new Wu.Views.categories({
       model: this.Cache.Models.category
     })
 
     Wu.Cache.Views.playerTab = new Wu.Views.playerTab({
+      model: Wu.Cache.Models.player,
       el: $("#pullTab")
     }).render();
     
@@ -42,6 +46,7 @@ Wu = {
       $("#pullTab").css("left","100%");
     });
     Backbone.history.start({pushState: true});
+
   }
 }
 

@@ -39,9 +39,38 @@ module.exports = {
   add: function(req,res){
     var filter = req.body.filter || {},
         id = req.params.id,
-        pl = new Playlists(id);
-    pl.add(filter,function(err,count){
-      res.send({err:err,added:count});
-    })
+        pl = new Playlists(id),
+        clear = req.body.clearFirst;
+
+    var addTracks  = function(){
+      pl.add(filter,function(err,count){
+        res.send({err:err,added:count});
+      })
+    };
+
+    console.log("IN ADD")
+    if(clear){
+      console.log("REMOVE THE TRACKS")
+      pl.remove({},addTracks);
+    }else{
+      addTracks();
+    }
+
+  },
+  showTracks:function(req,res){
+    var id = req.params.id,
+        pl = new Playlists(id),
+        categories = {
+          Artist: 1,
+          Album:  1,
+          Title:  1
+        };
+
+    pl.findAt(1,{limit:false, categories:categories},function(err,docs){
+      if(err)
+        res.send(500,"failed to retrieve tracks");
+      else
+        res.send(docs);
+    });
   }
 }

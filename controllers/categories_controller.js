@@ -1,16 +1,20 @@
 var Tracks = require('../models/tracks.js');
 
-var parseFilter = function(req){
-  var filter = req.query.filter || {};
-  return filter;
-}
 
 module.exports = {
   //category/:id
   show: function(req, res){
-    var filter = parseFilter(req);
-    Tracks.distinct(req.params.category,filter,function(err,docs){
-      res.send({err:err,docs:docs.sort()});
-    })
+    var filter = req.query.filter || {}
+        ,category = req.params.category;
+
+    if(category !== 'Title' || !filter.Album){
+      Tracks.distinct(category,filter,function(err,docs){
+        res.send({err:err,docs:docs.sort()});
+      })      
+    }else{
+      Tracks.find(filter,{Title:1}).sort({Album:1,TrackNumber:1},function(err,docs){
+        res.send({err:err,docs:docs});
+      })   
+    }
   }
 }

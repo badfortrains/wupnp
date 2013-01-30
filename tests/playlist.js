@@ -1,13 +1,14 @@
 var db = require('mongojs').connect('test', ['tracks','playlist','lists']),
     assert = require('assert'),
-    playlist = require('../models/playlist').playlist;
+    playlist = require('../models/playlist').playlist,
+    _ = require('underscore');
 
 module.exports = {
   setUp: function(callback){
     this.ids = [
-      {playlist: db.bson.ObjectID(), position: 1},
-      {playlist: db.bson.ObjectID(), position: 2},
-      {playlist: db.bson.ObjectID(), position: 5}
+      {db.bson.ObjectID().toString(), position: 1},
+      {db.bson.ObjectID().toString(), position: 2},
+      {db.bson.ObjectID().toString(), position: 5}
     ]
     this.testTracks = [
       {Artist : "test1", playlist : [this.ids[0],this.ids[1]],testTrack :true},

@@ -1,5 +1,6 @@
 - var title = model.getTitle();
 - var docs = model.get('docs');
+- var name;
 
 -if(title)
   span.title
@@ -8,8 +9,9 @@
 .category-list
   ul.category
     foreach docs as item
-      -if(item.toUpperCase()[0] > current){
-        -current= item.toUpperCase()[0];
+      - name = item.Title || item;
+      -if(name.toUpperCase()[0] > current){
+        -current= name.toUpperCase()[0];
         li.jumper(id='jumper'+current)
       -}
-      li= item
+      li= name

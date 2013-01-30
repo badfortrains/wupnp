@@ -18,7 +18,7 @@ var playlist = function(id,uuid,cb){
         this.id = db.bson.ObjectID();
         this._create(id);
       }
-      cb(this.id);
+      cb(this.id,this);
     }.bind(this));
   }
   //Hack: assume id is already an objectID if it has toString and is 24 characters
@@ -41,7 +41,7 @@ var playlist = function(id,uuid,cb){
 playlist.prototype.find = function(){
   //limit our search to tracks in our playlist
   if(typeof(arguments[0]) === "object"){
-    arguments[0]["playlist.playlist"] = this.id;
+    arguments[0]["playlist."+this.id.toString()] = {$exists:1};
   }
   return db.tracks.find.apply(db.tracks,arguments);
 }
@@ -59,12 +59,14 @@ playlist.prototype.add = function(filter,callback){
     if(err){
       callback(err);
     }else{
-      db.tracks.find(filter).sort({TrackNumber:1}).forEach(function(err,doc){
+      db.tracks.find(filter).sort({Album:1,TrackNumber:1}).forEach(function(err,doc){
         if(err){
           callback(err)
         }else if(doc !== null){
           ++count;
-          db.tracks.update({_id:doc._id},{$addToSet : {playlist : {playlist : listId, position: count} } })
+          var obj = {};
+          obj['playlist.'+listId.toString()] = count;
+          db.tracks.update({_id:doc._id},{$set : obj })
         }else{
           db.lists.update({_id:listId},{$set:{count: count}});
           callback(null,count-oldCount);
@@ -81,11 +83,14 @@ playlist.prototype.add = function(filter,callback){
  */
 playlist.prototype.remove = function(filter,callback){
   assert(typeof(filter) == "object");
-  filter["playlist.playlist"] =  this.id;
-  db.tracks.find(filter,function(err,docs){
-    console.log(docs);
-  })
-  return db.tracks.update(filter,{$pull : {playlist : {playlist: this.id} }}, {multi : true},callback);
+  filter["playlist."+this.id] =  {$exists:1};
+  var obj =  {};
+  obj['playlist.'+this.id] = 1;
+  db.tracks.update(filter,{$unset : obj }, {multi : true, safe:true},function(err,count){
+    db.lists.update({_id:this.id},{$inc : {count: -count}},{safe:true},callback);
+  });
+    
+
 }
 /**
  * Delete playlist form list db, and remove all tracks
@@ -131,31 +136,34 @@ playlist.prototype.findList = function(){
   return db.lists.find.apply(db.lists,arguments);
 }
 
-playlist.prototype.findAt = function(position,cb){
-  console.log(this.id)
-  console.log("position",position)
-  console.log({playlist: this.id,position:position})
-  console.log("cb",cb);
-  var objects = [
-    {playlist: this.id,position:position},
-    {playlist: this.id,position:position+1}
-  ]
-  //db.tracks.find({playlist: objects[0]},cb)
-  var id = this.id;
-  db.tracks.find({playlist : {$in:objects} },function(err,docs){
-    if(docs.length < 2 || err)
+//options: 
+// limit: number || false for no limit  : default = 2
+// categories: defualt {}
+playlist.prototype.findAt = function(position,settings,cb){
+  var id = this.id
+      ,obj = {}
+      ,sort = {}
+      ,options = {};
+
+  if(typeof(settings) === "function"){
+    cb = settings;
+  }else if(typeof(settings) === "object"){
+    //options = _.extend({limit :2, categories: {}},settings);
+    options.limit = (settings.limit === undefined) ? 2 : settings.limit;
+    options.categories = (settings.categories === undefined) ? {} : settings.categories;
+  }
+
+  obj['playlist.'+this.id] = {$gte : position};
+  sort['playlist.'+this.id] = 1;
+  if(options.limit === false){
+    db.tracks.find(obj,options.categories).sort(sort,function(err,docs){
       cb(err,docs);
-    else{
-      var reverse = false;
-      docs[1].playlist.forEach(function(el){
-        if(el.playlist === id && el.position === position){
-          cb(err,docs.reverse());
-          return;
-        }
-      });
+    });
+  }else{
+    db.tracks.find(obj).sort(sort).limit(options.limit,function(err,docs){
       cb(err,docs);
-    }
-  });
+    });
+  }
 }
 
 exports.playlist = playlist;

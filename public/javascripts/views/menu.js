@@ -8,7 +8,7 @@ Wu.Views.menu = Backbone.View.extend({
 
   initialize: function(){
     $(document).on("click",".menuLink",$.proxy(this.show,this))
-    this.collection.on("reset",this.render,this);
+    this.collection.on("add remove reset",this.render,this);
   },
   render: function(){
     var self = this;
@@ -17,7 +17,7 @@ Wu.Views.menu = Backbone.View.extend({
     });
   },
   unrender: function(){
-    this.collection.off("change",this.render);
+    this.collection.off("add remove reset",this.render);
   },
   show: function(){
     this.$el.removeClass("hide");
@@ -29,8 +29,9 @@ Wu.Views.menu = Backbone.View.extend({
     $("#mask").hide()
     .off("click",$.proxy(this.hide,this));
   },
-  setRenderer: function(){
-
+  setRenderer: function(e){
+    var uuid = $(e.target).attr("uuid");
+    Wu.Cache.Models.player.setRenderer(uuid);
   }
 
 });
