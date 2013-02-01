@@ -2,17 +2,18 @@ var Playlists = require('../models/playlist').playlist;
 
 module.exports = {
   //playlist/:id
+  /*
   show: function(req, res){
     var id = req.params.id,
         pl = new Playlists(id);
 
     pl.attributes(function(err,doc){
-      if(!err && doc[0])
+      if(!err && doc)
         res.send(doc[0])
       else
         res.send({err:err})
     })
-  },
+  },*/
   index: function(req,res){
     var filter = req.query.filter || {};
     Playlists.prototype.findList(filter,{name:1},function(err,docs){
@@ -57,7 +58,7 @@ module.exports = {
     }
 
   },
-  showTracks:function(req,res){
+  show:function(req,res){
     var id = req.params.id,
         pl = new Playlists(id),
         categories = {
@@ -66,11 +67,21 @@ module.exports = {
           Title:  1
         };
 
-    pl.findAt(1,{limit:false, categories:categories},function(err,docs){
-      if(err)
-        res.send(500,"failed to retrieve tracks");
-      else
-        res.send(docs);
-    });
+    pl.attributes(function(err,attributes){
+      if(err || !attributes){
+        res.send(500,"error finding playlist")
+        return;
+      }
+      pl.findAt(1,{limit:false, categories:categories},function(err,docs){
+        if(err){
+          res.send(500,"failed to retrieve tracks");
+        }else{
+          console.log("DOCS =",docs)
+          attributes.docs = docs;
+          console.log(attributes);
+          res.send(attributes);
+        }
+      });
+    })
   }
 }

@@ -1,0 +1,13 @@
+- var title = model.get('name');
+- var docs = model.get('docs');
+
+-if(title)
+  span.title
+    =title 
+.track-list
+  ul
+    foreach docs as item
+      li
+        .track-title=item.Title
+        .more
+          =item.Artist + " - " + item.Album

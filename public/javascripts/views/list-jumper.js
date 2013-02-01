@@ -14,6 +14,7 @@ Wu.Views.listJumper = Backbone.View.extend({
     return this;
   },
   unrender:function(){
+    $("#mask").off("click",$.proxy(this.hide,this));
   },
   setupJumper:function(){
     var current,

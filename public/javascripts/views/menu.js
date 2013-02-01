@@ -7,8 +7,8 @@ Wu.Views.menu = Backbone.View.extend({
   },
 
   initialize: function(){
-    $(document).on("click",".menuLink",$.proxy(this.show,this))
-    this.collection.on("add remove reset",this.render,this);
+    this.listenTo(Wu.Layout.header,"menuClick",this.show);
+    this.listenTo(this.collection,"add remove reset",this.render);
   },
   render: function(){
     var self = this;
@@ -17,7 +17,8 @@ Wu.Views.menu = Backbone.View.extend({
     });
   },
   unrender: function(){
-    this.collection.off("add remove reset",this.render);
+    $("#mask").off("click",$.proxy(this.hide,this));
+    this.stopListening();
   },
   show: function(){
     this.$el.removeClass("hide");

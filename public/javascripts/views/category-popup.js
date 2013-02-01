@@ -10,10 +10,7 @@ Wu.Views.categoryPopup = Backbone.View.extend({
     "submit .bottom-box.new form" : "createList",
     "click .bottom-box.add li"    : "addToList"
   },
-
-  initialize: function(){
-  },
-
+  
   render: function(){
     var self = this;
     this.template({},function(err,html){
@@ -24,7 +21,7 @@ Wu.Views.categoryPopup = Backbone.View.extend({
   },
 
   unrender: function(){
-
+    $("#mask").off("click",$.proxy(this.hide,this));
   },
 
   setHeight: function(){

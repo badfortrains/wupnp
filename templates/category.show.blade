@@ -5,7 +5,7 @@
 -if(title)
   span.title
     =title 
--var current = (docs.length > 20) ? ' ' : 'Z';
+-var current = (docs && docs.length > 20) ? ' ' : 'Z';
 .category-list
   ul.category
     foreach docs as item

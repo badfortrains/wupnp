@@ -24,7 +24,9 @@ html
     script(src='/javascripts/views/category-list.js')
     script(src='/javascripts/views/category-popup.js')
     script(src='/javascripts/views/categories.js')
+    script(src='/javascripts/views/track-list.js')
     script(src='/javascripts/views/menu.js')
+    script(src='/javascripts/views/header.js')
     script(src='/javascripts/views/player-tab.js')
     script(src='/javascripts/views/toast-master.js')
 
@@ -43,21 +45,12 @@ html
 
     //helpers
     script(src='/javascripts/helpers/helpers.js')
+    script(src='/javascripts/layout.js')
 
   body
     .toast
     #alphabet
-    .nav-wrap
-    #category
-    .popup
+    #header
+    #page
     #mask
     #menu.hide
-      .playTo
-        h1 Play To
-        .renderers
-
-    #pullTab
-      span
-      .playing Now Playing
-        span.icon-pause
-        span.icon-chevron-right

@@ -85,7 +85,7 @@ rendy.prototype = {
         watcherInterface.play(docs[0],function(err){
           typeof(cb) === 'function' && cb(err);
         });
-        self.state.currentTrack = docs[0];
+        self.state.currentPlayingTrack = docs[0];
       }
       self.nextTrack = docs && docs[1];      
     })
@@ -143,8 +143,8 @@ rendy.prototype = {
     console.log("GET INFO")
     db.tracks.findOne({'Resources.Uri':uri},function(err,doc){
       if(!err && doc){
-        self.state.currentTrack = doc;
-        socketIO.sockets.in(self.uuid).emit("stateChange",{name:"currentTrack",value:doc});
+        self.state.currentPlayingTrack = doc;
+        socketIO.sockets.in(self.uuid).emit("stateChange",{name:"currentPlayingTrack",value:doc});
       }
 
     })
@@ -285,7 +285,7 @@ var respond = function (data){
   while(event){
     if(event.name === "msAdd") {
       var server = mw.getServer();
-      mw.getTracks(onTracksAdded,server);
+      //mw.getTracks(onTracksAdded,server);
       console.log("SERVER ADDED GETTING TRACKS,",event.uuid);
     }else if(event.name === "mrAdd"){
       console.log("RENDERER ADDED");
@@ -300,7 +300,7 @@ var respond = function (data){
   mw.watchEvents(respond);
 };
 
-db.tracks.remove();
+//db.tracks.remove();
 
 
 exports.renderer = render;

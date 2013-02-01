@@ -129,7 +129,7 @@ playlist.prototype.getCount = function(callback){
 }
 
 playlist.prototype.attributes = function(cb){
-  return this.findList({_id: this.id},cb);
+  return db.lists.findOne({_id: this.id},cb);
 }
 
 playlist.prototype.findList = function(){
