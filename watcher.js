@@ -297,7 +297,7 @@ var respond = function (data){
       
     event = mw.pollEvent();
   }
-  mw.watchEvents(respond);
+  //mw.watchEvents(respond);
 };
 
 //db.tracks.remove();

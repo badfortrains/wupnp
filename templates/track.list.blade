@@ -7,7 +7,7 @@
 .track-list
   ul
     foreach docs as item
-      li
+      li(id=item._id)
         .track-title=item.Title
         .more
           =item.Artist + " - " + item.Album

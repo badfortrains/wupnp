@@ -19,6 +19,7 @@ Wu = {
     Wu.Cache.Views.toastMaster = new Wu.Views.toastMaster();
     
     this.Cache.Collections.renderers.fetch();
+    this.Cache.Collections.playlists.fetch();
 
     $(document).on("click","a:not(.data-bypass)",function(e){
       e.preventDefault();

@@ -9,12 +9,14 @@ Wu.Views.menu = Backbone.View.extend({
   initialize: function(){
     this.listenTo(Wu.Layout.header,"menuClick",this.show);
     this.listenTo(this.collection,"add remove reset",this.render);
+    this.listenTo(Wu.Cache.Collections.playlists,"add remove reset",this.render);
   },
   render: function(){
     var self = this;
-    this.template({renderers: this.collection},function(err,html){
+    this.template({playlists:Wu.Cache.Collections.playlists, renderers: this.collection},function(err,html){
       self.$el.html(html);
     });
+    return this;
   },
   unrender: function(){
     $("#mask").off("click",$.proxy(this.hide,this));

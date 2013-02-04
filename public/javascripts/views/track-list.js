@@ -22,13 +22,7 @@ Wu.Views.trackList = Backbone.View.extend({
     var track = Wu.Cache.Models.player.get("currentPlayingTrack"),
         id = (track) ? track._id : false;
     this.$("li").removeClass("active");
-    if(id){
-      this.$("li").each(function(){
-        if($(this).attr('id') === id){
-          $(this).addClass("active");
-        }
-      });
-    }
+    this.$("#"+id).addClass('active');
   }
 
 });

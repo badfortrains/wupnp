@@ -16,6 +16,7 @@ Wu.Layout = {
   },
   setPage: function(view){
     this.page && this.page.unrender();
+    this.menu.hide();
     $("#mask").hide();
     $("#page").html(view.render().$el);
     view.trigger('inserted');
