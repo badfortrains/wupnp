@@ -5,12 +5,17 @@ Wu.Models.category = Backbone.Model.extend({
   urlRoot: '/api/categories',
 
   fetch: function(options){
+    var filter = this.get('filter');
     options = options || {};
-    options.data = _.extend({},options.data,{'filter':this.get('filter')})
+    options.data = _.extend({},options.data,{'filter':filter})
     Backbone.Model.prototype.fetch.call(this,options);
+    //remove _id, since we only added it to add a track
+    if(filter && filter._id)
+      delete filter._id;
+
   },
 
-  filter: function(value){
+  filter: function(value,_id){
     var filter = this.get("filter") || {},
         id = this.get('id'),
         index = _.indexOf(this.ORDER,id);
@@ -19,6 +24,8 @@ Wu.Models.category = Backbone.Model.extend({
     if(index < this.ORDER.length){
       filter[id] = value;
       this.set("filter",filter)
+    }else if(id === "Title"){
+      filter._id = _id;
     }
     return this.ORDER[index];
   },
@@ -27,7 +34,11 @@ Wu.Models.category = Backbone.Model.extend({
         id = this.get('id'),
         currentIndex = _.indexOf(this.ORDER,id);
         newIndex = _.indexOf(this.ORDER,category);
-
+    
+    //remove _id, since we only added it to add a track
+    if(filter && filter._id)
+      delete filter._id;
+    
     while(newIndex <= currentIndex){
       filter[this.ORDER[currentIndex]] && delete filter[this.ORDER[currentIndex]];
       currentIndex--;

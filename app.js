@@ -52,6 +52,7 @@ app.get('/menu',list.menu);
 /*NEW ROUTES*/
 app.get('/', wu.index);
 app.get('/category/:category', wu.index);
+app.get('/playlist/:id', wu.index);
 
 app.get("/api/playlists",playlists.index);
 app.post("/api/playlists",playlists.new);
@@ -105,33 +106,44 @@ io.sockets.on('connection', function (socket) {
       });
     }
   })
-  
-  socket.on('pause',function(){
-    console.log("PAUSE")
+  var getRenderer = function(cb){
     socket.get("renderer",function(err,uuid){
       var renderer = mw.renderer.getRenderer(uuid);
-      renderer && renderer.pause();
+      if(err || !renderer){
+        socket.emit("error","renderer not found");
+      }else{
+        cb(renderer);
+      }
     })
+  }
+  var doCommand = function(command){
+    getRenderer(function(renderer){
+      var args = Array.prototype.slice.call(arguments,1);
+      renderer[command].apply(renderer,args);
+    })
+  }
+  socket.on('pause',function(){
+    doCommand('pause');
   })
 
   socket.on('play', function(){
-    socket.get("renderer",function(err,uuid){
-      var renderer = mw.renderer.getRenderer(uuid);
-      renderer && renderer.play();
-    })
+    doCommand('play');
   })
   socket.on('setList', function(id){
-    socket.get("renderer",function(err,uuid){
-      var renderer = mw.renderer.getRenderer(uuid);
-      renderer && renderer.setPlaylist(id);
-    })
+    doCommand('setPlaylist',id)
   })
   socket.on('next',function(){
-    socket.get("renderer",function(err,uuid){
-      var renderer = mw.renderer.getRenderer(uuid);
-      renderer && renderer.next();
+    doCommand('next');
+  })
+  socket.on('playById',function(id,playlistId){
+    getRenderer(function(renderer){
+      if(playlistId){
+        renderer.setPlaylist(playlistId);
+      }
+      renderer.playById(id);
     })
   })
+
 
   socket.on('doPlay',mw.doPlay);
   socket.on('doStop',mw.doStop);

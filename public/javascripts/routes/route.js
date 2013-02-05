@@ -39,7 +39,7 @@ Wu.Routers.Categories = Backbone.Router.extend({
     if(playlist){
       var view = new Wu.Views.trackList({
           model:playlist,
-          el: $("#category")
+          className: "category"
         });
       Wu.Layout.state = 'playlist';
       if(playlist.get("docs")){

@@ -9,6 +9,12 @@ Wu.Layout = {
       el: $("#menu")
     }).render();
 
+    this.footer = new Wu.Views.playerTab({
+      model: Wu.Cache.Models.player,
+      el:$("#pullTab")
+    }).render();
+    this.footer.trigger("inserted");
+
   },
   setSubHeader : function(view){
     this.header.setSubHeader(view);

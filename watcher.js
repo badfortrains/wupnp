@@ -71,6 +71,7 @@ var rendy = function(name,uuid){
   this.playlist = new Playlist(name +" quickList",uuid,function(id){
     self.id = id;
     self.state.quickList = id;
+    self.state.playlist = id;
   })
 } 
 rendy.prototype = {
@@ -116,6 +117,7 @@ rendy.prototype = {
   setPlaylist: function(id){
     this.playlist.id = id;
     this.position = 1;
+    this.setState({name:"playlist",value:id});
   },
   setState: function(event){
     if(this.state[event.name] !== event.value){
@@ -131,11 +133,6 @@ rendy.prototype = {
     if(event.name === "CurrentTrackURI"){
       this._onTrackChange(event.value);
     }
-
-    //console.log("GMediaRender-1_0-000-000-002");
-    //if(event.value === "PLAYING" && this.uuid != "GMediaRender-1_0-000-000-002"){
-    //  mw.getMediaInfo(this._onTrackChange.bind(this));
-    //}
 
   },
   _onTrackChange:function(uri){
@@ -174,6 +171,16 @@ rendy.prototype = {
       });
     }
   },
+  playById: function(id){
+    var self = this;
+    this.playlist.getPosition(id,function(err,position){
+      if(!err && position !== null && position !== undefined){
+        console.log("here, position is",position)
+        self.position = position;
+        self.play();
+      }
+    })
+  },
   pause:function(){
     mw.pause(function(){});
   },
@@ -197,7 +204,8 @@ var onTracksAdded = function(data){
         console.log("error inserting initial data");
         console.log(err);
       }
-      //updateFromObjID();
+      console.log("HEREREEEEEEEEEEEEEEEEE")
+      updateFromObjID();
       db.tracks.ensureIndex({Artist: 1,Album: 1, Title: 1},function(){
         console.log("tracks inserted");
       });
@@ -285,7 +293,7 @@ var respond = function (data){
   while(event){
     if(event.name === "msAdd") {
       var server = mw.getServer();
-      //mw.getTracks(onTracksAdded,server);
+      mw.getTracks(onTracksAdded,server);
       console.log("SERVER ADDED GETTING TRACKS,",event.uuid);
     }else if(event.name === "mrAdd"){
       console.log("RENDERER ADDED");
@@ -297,10 +305,10 @@ var respond = function (data){
       
     event = mw.pollEvent();
   }
-  //mw.watchEvents(respond);
+  mw.watchEvents(respond);
 };
 
-//db.tracks.remove();
+db.tracks.remove();
 
 
 exports.renderer = render;

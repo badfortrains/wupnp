@@ -20,12 +20,17 @@ Wu.Views.categoryList = Wu.Views.list.extend({
   },
 
   unrender:function(){
+    Wu.Views.list.prototype.unrender.call(this);
+    this.$el.off();
     this.stopListening();
   },
 
   select: function(e){
-    var category = this.model.filter($(e.target).html());
-    Backbone.history.navigate('category/'+category,{trigger:true});
+    var category = this.model.filter($(e.target).html(),e.target.id);
+    if(category)
+      Backbone.history.navigate('category/'+category,{trigger:true});
+    else
+      this.trigger("showPopup")
   },
   showPopup:function(e){
     e.preventDefault();

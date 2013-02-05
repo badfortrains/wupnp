@@ -164,6 +164,26 @@ playlist.prototype.findAt = function(position,settings,cb){
       cb(err,docs);
     });
   }
+},
+playlist.prototype.getPosition = function(id,cb){
+  console.log("in get position");
+  try{
+    var _id = (typeof(id) === "string") ? db.bson.ObjectID(id) : id,
+        listId = this.id;
+  }catch(err){
+    cb(err,null);
+    return;
+  }
+  console.log("got _id",id)
+
+  this.find({_id:_id},{playlist:1},function(err,docs){
+    if(err || !docs[0]){
+      cb(err,null);
+    }else{
+      var position = docs[0].playlist[listId];
+      cb(null,position);
+    }
+  })
 }
 
 exports.playlist = playlist;

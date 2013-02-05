@@ -1,4 +1,5 @@
-var Playlists = require('../models/playlist').playlist;
+var Playlists = require('../models/playlist').playlist,
+    db = require('mongojs').connect('test');
 
 module.exports = {
   //playlist/:id
@@ -42,6 +43,10 @@ module.exports = {
         id = req.params.id,
         pl = new Playlists(id),
         clear = req.body.clearFirst;
+
+    if(typeof(filter._id) === 'string'){
+      filter._id = db.bson.ObjectID(filter._id)
+    }
 
     var addTracks  = function(){
       pl.add(filter,function(err,count){

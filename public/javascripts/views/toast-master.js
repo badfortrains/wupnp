@@ -9,7 +9,7 @@ Wu.Views.toastMaster = Backbone.View.extend({
       this.message('Media renderer "'+model.get("name")+'" removed');
     },this);
     this.listenTo(Wu.Cache.Models.player,"change:currentPlayingTrack",function(model,value){
-      this.message('Now playing '+value.Title);
+      this.title(value.Title);
     },this);
     this.listenTo(Wu.Cache.Models.player,"change:uuid",function(model,value){
       var renderer = Wu.Cache.Collections.renderers.get(value);
@@ -20,6 +20,13 @@ Wu.Views.toastMaster = Backbone.View.extend({
     },this);
 
     this.messageStack = [];
+  },
+  title: function(text){
+    window.clearTimeout(this.titleTimeout);
+    $("title").html(text);
+    this.titleTimeout = window.setTimeout(function(){
+      $("title").html("Wu");
+    },4000)
   },
   message: function(text){
     this.messageStack.push({text:text,type:'message'});
