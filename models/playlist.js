@@ -25,14 +25,18 @@ var playlist = function(id,uuid,cb){
   else if(typeof(id) === "object" && id.toString().length  === 24)
     this.id = id;
   else if(typeof(id) === 'string' && id.length === 24)
-    this.id = db.bson.ObjectID(id)
+    try{
+      this.id = db.bson.ObjectID(id)
+    }catch(err){
+      this.id = db.bson.ObjectID();
+      this._create(id);
+    }
   else{
     this.id = db.bson.ObjectID();
     //create the new playlist with name (id)
     this._create(id);
   }
 }
-
 /**
  * mongojs find applied to only tracks in the playlist
  * arguments: filter(required - can be empty object) [categories][callback]
@@ -129,7 +133,7 @@ playlist.prototype.getCount = function(callback){
 }
 
 playlist.prototype.attributes = function(cb){
-  return this.findList({_id: this.id},cb);
+  return db.lists.findOne({_id: this.id},cb);
 }
 
 playlist.prototype.findList = function(){
@@ -164,6 +168,26 @@ playlist.prototype.findAt = function(position,settings,cb){
       cb(err,docs);
     });
   }
+},
+playlist.prototype.getPosition = function(id,cb){
+  console.log("in get position");
+  try{
+    var _id = (typeof(id) === "string") ? db.bson.ObjectID(id) : id,
+        listId = this.id;
+  }catch(err){
+    cb(err,null);
+    return;
+  }
+  console.log("got _id",id)
+
+  this.find({_id:_id},{playlist:1},function(err,docs){
+    if(err || !docs[0]){
+      cb(err,null);
+    }else{
+      var position = docs[0].playlist[listId];
+      cb(null,position);
+    }
+  })
 }
 
 exports.playlist = playlist;

@@ -1,0 +1,9 @@
+- var docs = model.get('docs');
+
+.track-list
+  ul
+    foreach docs as item
+      li(id=item._id)
+        .track-title=item.Title
+        .more
+          =item.Artist + " - " + item.Album

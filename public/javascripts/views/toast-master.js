@@ -8,8 +8,8 @@ Wu.Views.toastMaster = Backbone.View.extend({
     this.listenTo(Wu.Cache.Collections.renderers,"add",function(model){
       this.message('Media renderer "'+model.get("name")+'" removed');
     },this);
-    this.listenTo(Wu.Cache.Models.player,"change:currentTrack",function(model,value){
-      this.message('Now playing '+value.Title);
+    this.listenTo(Wu.Cache.Models.player,"change:currentPlayingTrack",function(model,value){
+      this.title(value.Title);
     },this);
     this.listenTo(Wu.Cache.Models.player,"change:uuid",function(model,value){
       var renderer = Wu.Cache.Collections.renderers.get(value);
@@ -19,7 +19,18 @@ Wu.Views.toastMaster = Backbone.View.extend({
         this.message("No media renderer selected");
     },this);
 
+    Socket.on("error",$.proxy(function(err){
+      this.error(err);
+    },this));
+
     this.messageStack = [];
+  },
+  title: function(text){
+    window.clearTimeout(this.titleTimeout);
+    $("title").html(text);
+    this.titleTimeout = window.setTimeout(function(){
+      $("title").html("Wu");
+    },4000)
   },
   message: function(text){
     this.messageStack.push({text:text,type:'message'});
@@ -31,19 +42,22 @@ Wu.Views.toastMaster = Backbone.View.extend({
   },
   _add: function(text){
     this.messageStack.push(text);
-    $(".toast").html(text).show();
+    $(".toast").html(text)
+    $(".toast-wrap").show();
     window.setTimeout(function(){
-      $(".toast").hide();
+      $(".toast-wrap").hide();
     },4000);
   },
   _show: function(){
-    if($(".toast").css("display") === "none" && this.messageStack.length){
+    if($(".toast-wrap").css("display") === "none" && this.messageStack.length){
       var toast = this.messageStack.shift();
-      $(".toast")[toast.type === 'error' ? 'addClass' : 'removeClass']("error")
-      .html(toast.text).show();
+      $(".toast-wrap")[toast.type === 'error' ? 'addClass' : 'removeClass']("error")
+      .show();
+      
+      $(".toast").html(toast.text)
 
       window.setTimeout($.proxy(function(){
-        $(".toast").hide();
+        $(".toast-wrap").hide();
         this._show();
       },this),4000);
     }

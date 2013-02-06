@@ -1,8 +1,19 @@
-.playTo
+.musicLink
+  i.icon-chevron-left
+  | Music 
+.lists
   h1 Play To
   ul.renderers
     -renderers.each(function(item){
       -var uuid = item.get("uuid")
       li(uuid=uuid)
         =item.get("name")
+    -})
+  h1 Playlists
+  ul.playlists
+    -playlists.each(function(item){
+      -var id = item.get("_id")
+      li
+        a(href="/playlist/"+id)
+          =item.get("name")
     -})

@@ -10,10 +10,7 @@ Wu.Views.categoryPopup = Backbone.View.extend({
     "submit .bottom-box.new form" : "createList",
     "click .bottom-box.add li"    : "addToList"
   },
-
-  initialize: function(){
-  },
-
+  
   render: function(){
     var self = this;
     this.template({},function(err,html){
@@ -24,7 +21,9 @@ Wu.Views.categoryPopup = Backbone.View.extend({
   },
 
   unrender: function(){
-
+    var filter = this.model.get("filter");
+    filter && delete filter._id;
+    $("#mask").off("click",$.proxy(this.hide,this));
   },
 
   setHeight: function(){
@@ -76,6 +75,8 @@ Wu.Views.categoryPopup = Backbone.View.extend({
     $("#mask").off("click",$.proxy(this.hide,this));
     this.$el.hide();
     this.$el.removeClass("new add expand");
+    var filter = this.model.get("filter");
+    filter && delete filter._id;
   },
 
   createList:function(e){
@@ -88,12 +89,12 @@ Wu.Views.categoryPopup = Backbone.View.extend({
           filter = this.model.get("filter");
 
       list.set("filter",filter);
-      this.collection.add(list);
       list.save(null,{
-        success:function(model){
+        success:$.proxy(function(model){
           var message = 'Playlist "'+name+'" created with '+model.get("added")+' tracks';
+          this.collection.add(model);
           Wu.Cache.Views.toastMaster.message(message);
-        },
+        },this),
         error:function(model,xhr){
           var message = xhr.responseText;
           Wu.Cache.Views.toastMaster.error(message);
@@ -106,6 +107,11 @@ Wu.Views.categoryPopup = Backbone.View.extend({
   playNow:function(){
     var id = Wu.Cache.Models.player.get("quickList"),
         list = this.collection.get(id);
+
+    if(!list){
+      Wu.Cache.Views.toastMaster.error("Must select a media renderer first");
+      return;
+    }
 
     list.set("clearFirst",true);
     this._add(list,function(){

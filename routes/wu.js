@@ -1,3 +1,13 @@
+var Playlists = require('../models/playlist').playlist;
 exports.index = function(req, res){
-  res.render('Wu', { title: 'Wu' });
+  Playlists.prototype.findList({},{name:1},function(err,docs){
+    var lists = "";
+    if(!err && docs){
+      lists = "var bootstrapPlaylists = " + JSON.stringify(docs);
+    }
+    res.render('Wu', { 
+      title: 'Wu',
+      playlists: lists
+    });
+  });
 };

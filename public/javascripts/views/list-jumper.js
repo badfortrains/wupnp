@@ -7,6 +7,7 @@ Wu.Views.listJumper = Backbone.View.extend({
 
   initialize: function(params){
     this.$listEl = $(params.list);
+    this.secret = Math.random();
   },
 
   render: function(){
@@ -14,6 +15,8 @@ Wu.Views.listJumper = Backbone.View.extend({
     return this;
   },
   unrender:function(){
+    this.$el.off();
+    $("#mask").off("click",$.proxy(this.hide,this));
   },
   setupJumper:function(){
     var current,
@@ -29,6 +32,7 @@ Wu.Views.listJumper = Backbone.View.extend({
     return html;
   },
   jump:function(e){
+    console.log(this.secret);
     var letter = $(e.target).html();
     this.$listEl.find("#jumper"+letter)[0].scrollIntoView();
     this.hide();

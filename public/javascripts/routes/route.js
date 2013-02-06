@@ -1,20 +1,62 @@
 Wu.Routers.Categories = Backbone.Router.extend({
   routes: {
     ''              : 'index',
-    'category/:id'  : 'show'
+    'category/:id'  : 'show',
+    'playlist/:id'  : 'showList'
   },
 
   index: function(){
     this.show('Artist');
   },
 
-  show: function(id,params){
+  show: function(id){
     var category = Wu.Cache.Models.category;
     category.setCategory(id);
-    if(!Wu.Cache.Views.categories){
-      Wu.Cache.Views.categories = new Wu.Views.categories({
+
+    if(Wu.Layout.state != 'categories'){
+      var nav = new Wu.Views.categoriesNav({
         model: category
-      }).render();
+      });
+      var page = new Wu.Views.categories({
+        model: category
+      });
+      Wu.Layout.menu.trigger("hideMusic");
+      category.fetch({
+        success:function(){
+          Wu.Layout.setSubHeader(nav);
+          Wu.Layout.setPage(page);
+          Wu.Layout.state = 'categories';
+        },
+        error:function(){
+          Wu.Cache.Views.toastMaster.error("failed to get category");
+        }
+      });
     }    
+  },
+
+  showList: function(id){
+    var playlist = Wu.Cache.Collections.playlists.get(id);
+    if(playlist){
+      var dropDown = new Wu.Views.playlistDropdown({
+        model: playlist
+      });
+      var view = new Wu.Views.trackList({
+          model:playlist,
+          className: "category"
+        });
+      Wu.Layout.state = 'playlist';
+      Wu.Layout.menu.trigger("showMusic");
+      playlist.fetch({
+        success:function(){
+          Wu.Layout.setSubHeader(dropDown);
+          Wu.Layout.setPage(view);
+        },
+        error:function(model,xhr){
+          Wu.Cache.Views.toastMaster.error(xhr.responseText);
+        }
+      })
+    }else{
+      Wu.Cache.Views.toastMaster.error("Playlist not found");
+    }
   }
 });
