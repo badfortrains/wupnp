@@ -55,7 +55,6 @@ app.get("/api/renderers/:id", renderers.show);
 app.get('/api/categories/:category', categories.show);
 app.get('/JST.js', function(req,res){
   JST.render(function(result){
-    console.log(result)
     res.send(result);
   })
 });
@@ -74,7 +73,6 @@ io.sockets.on('connection', function (socket) {
   }
 
   socket.on("setRenderer",function(uuid){
-    console.log("IN setRenderer",uuid);
     var renderer = mw.renderer.exists(uuid);
     if(!renderer){
       socket.emit("setRendererResult","Renderer no longer exists");
@@ -129,13 +127,6 @@ io.sockets.on('connection', function (socket) {
       renderer.playById(id);
     })
   })
-
-
-  socket.on('doPlay',mw.doPlay);
-  socket.on('doStop',mw.doStop);
-  socket.on("doPoll",mw.doPoll);
-  socket.on("doGetInfo",mw.doGetInfo);
-
 
 });
 

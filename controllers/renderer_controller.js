@@ -8,7 +8,6 @@ module.exports = {
     if(!renderer){
       res.send(500,"Renderer not found");
     }else{
-      console.log("RENDER",renderer)
       res.send(renderer.getAttributes());
     }
   },
@@ -25,7 +24,6 @@ module.exports = {
       if(req.body.trackId){
         renderer.playById(req.body.trackId)
       }
-      console.log("RENDER",renderer)
       res.send(renderer.getAttributes());
     }
   }

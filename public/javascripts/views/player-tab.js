@@ -49,6 +49,7 @@ Wu.Views.playerTab = Backbone.View.extend({
     this.$(".title").html(title);
   },
   changePlayState:function(model,value){
+    console.log("NEw TransportState",value);
     if(value === "PLAYING"){
       this.$(".play").removeClass("icon-play").addClass("icon-pause");
     }else{

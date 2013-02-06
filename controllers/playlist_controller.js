@@ -2,19 +2,6 @@ var Playlists = require('../models/playlist').playlist,
     db = require('mongojs').connect('test');
 
 module.exports = {
-  //playlist/:id
-  /*
-  show: function(req, res){
-    var id = req.params.id,
-        pl = new Playlists(id);
-
-    pl.attributes(function(err,doc){
-      if(!err && doc)
-        res.send(doc[0])
-      else
-        res.send({err:err})
-    })
-  },*/
   index: function(req,res){
     var filter = req.query.filter || {};
     Playlists.prototype.findList(filter,{name:1},function(err,docs){
@@ -54,9 +41,7 @@ module.exports = {
       })
     };
 
-    console.log("IN ADD")
     if(clear){
-      console.log("REMOVE THE TRACKS")
       pl.remove({},addTracks);
     }else{
       addTracks();
@@ -81,9 +66,7 @@ module.exports = {
         if(err){
           res.send(500,"failed to retrieve tracks");
         }else{
-          console.log("DOCS =",docs)
           attributes.docs = docs;
-          console.log(attributes);
           res.send(attributes);
         }
       });

@@ -21,8 +21,6 @@ exports.render = function(callback){
 
       result += template.toString().replace("function anonymous","'"+this+"':function");
       completed++;
-      console.log("numCompleted",completed);
-      console.log("numFiles",numberFiles)
       if(numberFiles === completed){
         result += "}"
         callback(result)
@@ -33,7 +31,6 @@ exports.render = function(callback){
 
   var after = function(filename){
     var templateName = filename.replace("." + getExtension(filename),"");
-    console.log(templateName)
     return _afterCompile.bind(templateName);
   }
 
@@ -43,8 +40,6 @@ exports.render = function(callback){
       console.log(err);
       return callback(err,null);
     }else{
-      console.log("Got files");
-      console.log(files)
       files.forEach(function(file){
         if(getExtension(file) == 'blade'){
           numberFiles++;

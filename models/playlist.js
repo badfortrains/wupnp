@@ -170,7 +170,6 @@ playlist.prototype.findAt = function(position,settings,cb){
   }
 },
 playlist.prototype.getPosition = function(id,cb){
-  console.log("in get position");
   try{
     var _id = (typeof(id) === "string") ? db.bson.ObjectID(id) : id,
         listId = this.id;
@@ -178,7 +177,6 @@ playlist.prototype.getPosition = function(id,cb){
     cb(err,null);
     return;
   }
-  console.log("got _id",id)
 
   this.find({_id:_id},{playlist:1},function(err,docs){
     if(err || !docs[0]){
