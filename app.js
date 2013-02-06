@@ -6,8 +6,6 @@
 var express = require('express'),
     app = express(),
     server = require('http').createServer(app),
-    routes = require('./routes'),
-    list = require('./routes/playlists'),
     http = require('http'),
     path = require('path'),
     mw = require('./watcher.js'),
@@ -37,19 +35,7 @@ app.configure('development', function(){
   app.use(express.errorHandler());
 });
 
-app.get("/pop",function(req,res){
-  res.render('popup', { title: 'Express' });
-});
-/*
-app.get('/', routes.index);
-app.get('/Artist', routes.index);
-app.get('/tracklist', list.show);
-app.get('/lists',list.lists);
-app.get('/playlist',list.playlist);
-app.get('/menu',list.menu);
-*/
-
-/*NEW ROUTES*/
+/*Backbone routes*/
 app.get('/', wu.index);
 app.get('/category/:category', wu.index);
 app.get('/playlist/:id', wu.index);
