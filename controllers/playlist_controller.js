@@ -32,10 +32,10 @@ module.exports = {
 
     if(filter){
       pl.add(filter,function(err,count){
-        res.send({id:id,added:count});
+        res.send({_id:id,added:count});
       });
     }else{
-      res.send({id:id,added:0});
+      res.send({_id:id,added:0});
     }
   },
   add: function(req,res){

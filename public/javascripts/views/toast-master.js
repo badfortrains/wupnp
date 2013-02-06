@@ -19,6 +19,10 @@ Wu.Views.toastMaster = Backbone.View.extend({
         this.message("No media renderer selected");
     },this);
 
+    Socket.on("error",$.proxy(function(err){
+      this.error(err);
+    },this));
+
     this.messageStack = [];
   },
   title: function(text){
@@ -38,19 +42,22 @@ Wu.Views.toastMaster = Backbone.View.extend({
   },
   _add: function(text){
     this.messageStack.push(text);
-    $(".toast").html(text).show();
+    $(".toast").html(text)
+    $(".toast-wrap").show();
     window.setTimeout(function(){
-      $(".toast").hide();
+      $(".toast-wrap").hide();
     },4000);
   },
   _show: function(){
-    if($(".toast").css("display") === "none" && this.messageStack.length){
+    if($(".toast-wrap").css("display") === "none" && this.messageStack.length){
       var toast = this.messageStack.shift();
-      $(".toast")[toast.type === 'error' ? 'addClass' : 'removeClass']("error")
-      .html(toast.text).show();
+      $(".toast-wrap")[toast.type === 'error' ? 'addClass' : 'removeClass']("error")
+      .show();
+      
+      $(".toast").html(toast.text)
 
       window.setTimeout($.proxy(function(){
-        $(".toast").hide();
+        $(".toast-wrap").hide();
         this._show();
       },this),4000);
     }

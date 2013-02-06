@@ -20,7 +20,7 @@ Wu.Routers.Categories = Backbone.Router.extend({
       var page = new Wu.Views.categories({
         model: category
       });
-
+      Wu.Layout.menu.trigger("hideMusic");
       category.fetch({
         success:function(){
           Wu.Layout.setSubHeader(nav);
@@ -37,23 +37,24 @@ Wu.Routers.Categories = Backbone.Router.extend({
   showList: function(id){
     var playlist = Wu.Cache.Collections.playlists.get(id);
     if(playlist){
+      var dropDown = new Wu.Views.playlistDropdown({
+        model: playlist
+      });
       var view = new Wu.Views.trackList({
           model:playlist,
           className: "category"
         });
       Wu.Layout.state = 'playlist';
-      if(playlist.get("docs")){
-        Wu.Layout.setPage(view);
-      }else{
-        playlist.fetch({
-          success:function(){
-            Wu.Layout.setPage(view);
-          },
-          error:function(model,xhr){
-            Wu.Cache.Views.toastMaster.error(xhr.responseText);
-          }
-        })
-      }
+      Wu.Layout.menu.trigger("showMusic");
+      playlist.fetch({
+        success:function(){
+          Wu.Layout.setSubHeader(dropDown);
+          Wu.Layout.setPage(view);
+        },
+        error:function(model,xhr){
+          Wu.Cache.Views.toastMaster.error(xhr.responseText);
+        }
+      })
     }else{
       Wu.Cache.Views.toastMaster.error("Playlist not found");
     }

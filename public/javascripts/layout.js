@@ -8,6 +8,7 @@ Wu.Layout = {
       collection: Wu.Cache.Collections.renderers,
       el: $("#menu")
     }).render();
+    this.menu.trigger('inserted');
 
     this.footer = new Wu.Views.playerTab({
       model: Wu.Cache.Models.player,

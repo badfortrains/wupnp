@@ -9,9 +9,6 @@ Wu.Models.category = Backbone.Model.extend({
     options = options || {};
     options.data = _.extend({},options.data,{'filter':filter})
     Backbone.Model.prototype.fetch.call(this,options);
-    //remove _id, since we only added it to add a track
-    if(filter && filter._id)
-      delete filter._id;
 
   },
 
@@ -34,10 +31,6 @@ Wu.Models.category = Backbone.Model.extend({
         id = this.get('id'),
         currentIndex = _.indexOf(this.ORDER,id);
         newIndex = _.indexOf(this.ORDER,category);
-    
-    //remove _id, since we only added it to add a track
-    if(filter && filter._id)
-      delete filter._id;
     
     while(newIndex <= currentIndex){
       filter[this.ORDER[currentIndex]] && delete filter[this.ORDER[currentIndex]];

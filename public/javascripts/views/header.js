@@ -22,8 +22,7 @@ Wu.Views.header = Backbone.View.extend({
   setSubHeader: function(view){
     this.subHeader && this.subHeader.unrender();
     this.subHeader = view;
-    this.subHeader.setElement(this.$("#subnav"));
-    this.subHeader.render();
+    this.$("#subnav").html(this.subHeader.render().$el);
   },
   toggleMenu: function(){
     this.trigger("menuClick");

@@ -204,7 +204,6 @@ var onTracksAdded = function(data){
         console.log("error inserting initial data");
         console.log(err);
       }
-      console.log("HEREREEEEEEEEEEEEEEEEE")
       updateFromObjID();
       db.tracks.ensureIndex({Artist: 1,Album: 1, Title: 1},function(){
         console.log("tracks inserted");

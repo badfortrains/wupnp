@@ -25,14 +25,18 @@ var playlist = function(id,uuid,cb){
   else if(typeof(id) === "object" && id.toString().length  === 24)
     this.id = id;
   else if(typeof(id) === 'string' && id.length === 24)
-    this.id = db.bson.ObjectID(id)
+    try{
+      this.id = db.bson.ObjectID(id)
+    }catch(err){
+      this.id = db.bson.ObjectID();
+      this._create(id);
+    }
   else{
     this.id = db.bson.ObjectID();
     //create the new playlist with name (id)
     this._create(id);
   }
 }
-
 /**
  * mongojs find applied to only tracks in the playlist
  * arguments: filter(required - can be empty object) [categories][callback]
