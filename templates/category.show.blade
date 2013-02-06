@@ -5,13 +5,16 @@
 -if(title)
   span.title
     =title 
--var current = (docs.length > 20) ? ' ' : 'Z';
+-var current = (docs && docs.length > 20) ? ' ' : 'Z';
 .category-list
-  ul.category
+  ul
     foreach docs as item
       - name = item.Title || item;
       -if(name.toUpperCase()[0] > current){
         -current= name.toUpperCase()[0];
         li.jumper(id='jumper'+current)
       -}
-      li= name
+      -if(item._id)
+        li(id=item._id)=name
+      -else
+        li= name

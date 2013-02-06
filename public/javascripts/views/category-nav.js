@@ -3,7 +3,7 @@ Wu.Views.categoriesNav = Backbone.View.extend({
   template: JST['category.nav'],
 
   initialize: function(){
-    this.model.on("change:id",this.updateActive,this);
+    this.listenTo(this.model,"change:id",this.updateActive);
   },
   render: function(){
     var self = this;
@@ -14,7 +14,7 @@ Wu.Views.categoriesNav = Backbone.View.extend({
     return this;
   },
   unrender:function(){
-    this.model.off("change:id",setActive);
+    this.stopListening();
   },
   updateActive: function(model,category){
     this.$(".active").removeClass('active');

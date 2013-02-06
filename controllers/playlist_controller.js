@@ -1,18 +1,20 @@
-var Playlists = require('../models/playlist').playlist;
+var Playlists = require('../models/playlist').playlist,
+    db = require('mongojs').connect('test');
 
 module.exports = {
   //playlist/:id
+  /*
   show: function(req, res){
     var id = req.params.id,
         pl = new Playlists(id);
 
     pl.attributes(function(err,doc){
-      if(!err && doc[0])
+      if(!err && doc)
         res.send(doc[0])
       else
         res.send({err:err})
     })
-  },
+  },*/
   index: function(req,res){
     var filter = req.query.filter || {};
     Playlists.prototype.findList(filter,{name:1},function(err,docs){
@@ -30,10 +32,10 @@ module.exports = {
 
     if(filter){
       pl.add(filter,function(err,count){
-        res.send({id:id,added:count});
+        res.send({_id:id,added:count});
       });
     }else{
-      res.send({id:id,added:0});
+      res.send({_id:id,added:0});
     }
   },
   add: function(req,res){
@@ -41,6 +43,10 @@ module.exports = {
         id = req.params.id,
         pl = new Playlists(id),
         clear = req.body.clearFirst;
+
+    if(typeof(filter._id) === 'string'){
+      filter._id = db.bson.ObjectID(filter._id)
+    }
 
     var addTracks  = function(){
       pl.add(filter,function(err,count){
@@ -57,7 +63,7 @@ module.exports = {
     }
 
   },
-  showTracks:function(req,res){
+  show:function(req,res){
     var id = req.params.id,
         pl = new Playlists(id),
         categories = {
@@ -66,11 +72,21 @@ module.exports = {
           Title:  1
         };
 
-    pl.findAt(1,{limit:false, categories:categories},function(err,docs){
-      if(err)
-        res.send(500,"failed to retrieve tracks");
-      else
-        res.send(docs);
-    });
+    pl.attributes(function(err,attributes){
+      if(err || !attributes){
+        res.send(500,"error finding playlist")
+        return;
+      }
+      pl.findAt(1,{limit:false, categories:categories},function(err,docs){
+        if(err){
+          res.send(500,"failed to retrieve tracks");
+        }else{
+          console.log("DOCS =",docs)
+          attributes.docs = docs;
+          console.log(attributes);
+          res.send(attributes);
+        }
+      });
+    })
   }
 }

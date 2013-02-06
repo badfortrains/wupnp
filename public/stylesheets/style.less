@@ -4,7 +4,7 @@
   -webkit-tap-highlight-color: rgba(255, 255, 255, 0); 
 }
 
-@font-face { font-family: MyriadPro-light; src: url('/fonts/MyriadPro-Light.otf'); } 
+@font-face { font-family: MyriadPro-light; src: url('/font/MyriadPro-Light.otf'); } 
 a, a:active{
   color:white;
   text-decoration:none;
@@ -13,7 +13,7 @@ a, a:active{
 body{
   background-position-x:0px;
   -webkit-transition:background-position-x 1s;
-  background-image: url(http://s.discogss.com/image/R-3458050-1333231999.jpeg);
+  background-image: url(/images/antony.jpeg);
   max-width:100%;
   font-family:MyriadPro-light,Helvetica;
   background-color:black;
@@ -46,7 +46,7 @@ body{
   }
 }
 
-#category,.list-view{
+.category,.list-view{
   background: -webkit-gradient(linear, left top, right top, color-stop(0%,rgba(0, 0, 0, 0.90)), color-stop(51%,rgba(0, 0, 0, 0.65)), color-stop(100%,transparent));
   position: absolute;
   top:41px;
@@ -193,6 +193,23 @@ body{
   }
 }
 
+.track-list{
+  li{
+    padding:5px;
+    margin-bottom: 0px !important;
+  }
+  li.active{
+    color:blueviolet;
+  }
+  .track-title{
+    font-size: 1.2em;
+  }
+  .more{
+    color:grey;
+    font-size: .9em;
+  }
+}
+
 #menu{
   position: fixed;
   width: 280px;
@@ -202,27 +219,72 @@ body{
   background-color: white;
   top: 0px;
   bottom: 0px;
+  a{
+    color:blueviolet;
+  }
+  .musicLink{
+    display: none;
+    color: blueviolet;
+    font-size: 1.2em;
+    margin-bottom: 20px;
+    .icon-chevron-left{
+      margin-right: 10px;
+    }
+  }
+  .lists{
+    padding-left:10px;
+    h1{
+      text-transform: uppercase;
+      font-size: 1.4em;
+      margin-top: 10px;
+      &:first-child{
+        margin-top: 0px;
+      }
+    }
+    ul{
+      list-style: none;
+      padding-left:10px;
+      li{
+        font-size: 1.4em;
+        margin-top: 5px;
+      }
+    }
+  }
 }
 
 .hide{
   display: none;
 }
 
-.toast{
+.toast-wrap{
   position: absolute;
   top: 20%;
   z-index:13;
   color: white;
-  background-color: rgb(19, 24, 44);
-  border: 1px solid rgb(194, 194, 194);
-  padding: 15px;
-  font-size: 1em;
   left: 50px;
   display: none;
-  letter-spacing: 1px;
+  .toast{
+    background-color: rgb(19, 24, 44);
+    border: 1px solid rgb(194, 194, 194);
+    padding: 15px;
+    font-size: 1em;
+    letter-spacing: 1px;
+    display: inline-block;
+  }
 }
-.toast.error{
-  border: 2px solid rgb(243, 103, 103);
+
+.toast-wrap.error{
+  .toast{
+    border: 2px solid rgb(243, 103, 103);
+  }
+}
+
+@media all and (max-width: 500px){
+  .toast-wrap{
+    left:0px;
+    width:100%;
+    text-align: center;
+  }
 }
 
 .jumper{
@@ -286,6 +348,31 @@ body{
   }
   100%{
     -webkit-transform: translate(-90px,-90px);
+  }
+}
+
+.dropDown{
+  color: rgb(255, 255, 255);
+  font-family: helvetica;
+  border: 1px solid blueviolet;
+  display: inline-block;
+  padding: 2px 10px;
+  font-size: .8em;
+  background-color: rgba(4, 18, 48, 0.71);
+  list-style: none; 
+  .down{
+    margin-left: 10px;
+  }
+  .option{
+    margin-top: 7px;
+    display: none;
+  }
+}
+.dropDown.opened{
+  z-index: 100;
+  position: relative;
+  .option{
+    display: block;
   }
 }
 

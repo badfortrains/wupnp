@@ -1,0 +1,13 @@
+ul.dropDown.closed
+  li.current
+    =currentList.get("name")
+    -if(playlists.length > 1)
+      i.icon-angle-down.down
+  -playlists.each(function(item){
+    -var id = item.get("_id")
+    -if(id !== currentList.get("_id")){
+      li.option
+        a(href="/playlist/"+id)
+          =item.get("name")
+    -}
+  -})
