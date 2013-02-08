@@ -40,24 +40,31 @@ app.get('/', wu.index);
 app.get('/category/:category', wu.index);
 app.get('/playlist/:id', wu.index);
 
+/* Data routes */
 app.get("/api/playlists",playlists.index);
 app.post("/api/playlists",playlists.new);
 app.put("/api/playlists/:id", playlists.add);
 app.get("/api/playlists/:id", playlists.show);
 app.get("/api/playlists/:id/tracks", playlists.showTracks);
 
+app.get("/api/renderers/:id", renderers.show);
+app.get('/api/categories/:category', categories.show);
 
 app.get("/api/renderers", function(req,res){
    res.send(mw.renderer.getRenderers());
 });
-app.get("/api/renderers/:id", renderers.show);
 
-app.get('/api/categories/:category', categories.show);
 app.get('/JST.js', function(req,res){
   JST.render(function(result){
     res.send(result);
   })
 });
+
+app.get('/api/directory/:ms/:id',function(req,res){
+  mw.browse(req.params.ms,req.params.id,function(dir){
+    res.send(dir);
+  });
+})
 
 
 /**********/
@@ -119,6 +126,9 @@ io.sockets.on('connection', function (socket) {
   socket.on('next',function(){
     doCommand('next');
   })
+  socket.on("playPlaylist",function(){
+    doCommand('_playTrack');
+  })
   socket.on('playById',function(id,playlistId){
     getRenderer(function(renderer){
       if(playlistId){
@@ -127,7 +137,6 @@ io.sockets.on('connection', function (socket) {
       renderer.playById(id);
     })
   })
-
 });
 
 server.listen(app.get('port'), function(){

@@ -7,7 +7,10 @@ var db = require('mongojs').connect('test', ['tracks','playlist']),
 
 
 
-
+var MEDIA_SERVERS ={ 
+  "e91f16b6-f441-4de4-a65d-d1ed420c10e1" : "0$2$2",
+  "7076436f-6e65-1063-8074-4ce6766160b7" : "1$268435466"
+}
 
 var updateFromObjID = function(){
   var map = function(){
@@ -65,6 +68,7 @@ var rendy = function(name,uuid){
 } 
 rendy.prototype = {
   _playNext: function(cb){
+    console.log("in playNext")
     self = this;
     mw.setRenderer(this.uuid);
     this.playlist.findAt(this.position,function(err,docs){
@@ -73,13 +77,15 @@ rendy.prototype = {
           typeof(cb) === 'function' && cb(err);
         });
         self.state.currentPlayingTrack = docs[0];
+      }else{
+        self.setState({name:"currentPlayingTrack",vale:{}});
       }
       self.nextTrack = docs && docs[1];      
     })
   },
   next: function(cb){
     this.position++;
-    this.play();
+    this._playTrack();
   },
   previous: function(cb){
     if(this.position === 1){
@@ -87,7 +93,7 @@ rendy.prototype = {
       return;
     }else{
       this.position--;
-      this.play();
+      this._playTrack();
     }
   },
   setPlaylist: function(id){
@@ -97,12 +103,8 @@ rendy.prototype = {
   },
   setState: function(event){
     if(this.state[event.name] !== event.value){
-      if(event.name === "TransportState"){
-        console.log("State was",this.state.TransportState);
-        console.log("now is",event.value);
-      }
+      //TODO: make this not supper ugly / hacky
       if( this.isPlaying && (event.value === "NO_MEDIA_PRESENT" || event.value === "STOPPED") && this.state.TransportState !== "TRANSITIONING" && this.state.TransportState !== "STOPPED"){
-        console.log("in play next");
         this.state[event.name] = event.value;
         this.next();
       }else{
@@ -127,7 +129,8 @@ rendy.prototype = {
 
     })
   },
-  play:function(){
+  _playTrack:function(){
+    console.log("in playtrack")
     var self = this;
     mw.setRenderer(this.uuid);
     if(!this.isPlaying){
@@ -136,8 +139,6 @@ rendy.prototype = {
           self.isPlaying = true;
         });
       })
-    }else if(this.state.TransportState === "PAUSED_PLAYBACK"){
-      mw.play(function(){});
     }else if(this.state.TransportState === "STOPPED" || this.state.TransportState === "NO_MEDIA_PRESENT"){
       self._playNext();
       this.isPlaying = true;
@@ -154,13 +155,17 @@ rendy.prototype = {
     this.playlist.getPosition(id,function(err,position){
       if(!err && position !== null && position !== undefined){
         self.position = position;
-        self.play();
+        self._playTrack();
       }
     })
   },
   pause:function(){
     mw.setRenderer(this.uuid);
     mw.pause(function(){});
+  },
+  play:function(){
+    mw.setRenderer(this.uuid);
+    mw.play(function(){});
   },
   getAttributes: function(){
     return this.state;
@@ -176,7 +181,7 @@ var onTracksAdded = function(data){
         console.log("error inserting initial data");
         console.log(err);
       }
-      updateFromObjID();
+      //updateFromObjID();
       db.tracks.ensureIndex({Artist: 1,Album: 1, Title: 1},function(){
         console.log("tracks inserted");
       });
@@ -233,7 +238,9 @@ var respond = function (data){
   while(event){
     if(event.name === "msAdd") {
       var server = mw.getServer();
-      //mw.getTracks(onTracksAdded,server);
+      var dirId = MEDIA_SERVERS[event.uuid];
+      if(dirId)
+        mw.getTracks(onTracksAdded,server,dirId);
       console.log("SERVER ADDED GETTING TRACKS,",event.uuid);
     }else if(event.name === "mrAdd"){
       mw.setRenderer(event.uuid)
@@ -247,8 +254,10 @@ var respond = function (data){
   mw.watchEvents(respond);
 };
 
-//db.tracks.remove();
-
+db.tracks.remove();
+exports.browse = function(uuid,id,cb){
+  mw.doBrowse(cb,uuid,id);
+};
 
 exports.renderer = render;
 exports.getRenderer = function(){

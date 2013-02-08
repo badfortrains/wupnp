@@ -47,6 +47,21 @@ Wu.Views.playerTab = Backbone.View.extend({
   changeTrack:function(model,track){
     var title = (track && track.Title) ? track.Title : "Unknown";
     this.$(".title").html(title);
+
+    /*
+    if(track){
+      var parser=new DOMParser();
+      var xmlDoc = parser.parseFromString(track.Didl,"text/xml");
+      var artNode = xmlDoc.getElementsByTagName("albumArtURI")[0]
+      if(artNode){
+        var artURI = artNode.childNodes[0].nodeValue;
+        if(artURI != this.albumArt){
+          $("body").css("background-image","url("+artURI+")");
+          this.albumArt = artURI;
+        }
+      }
+    }*/
+
   },
   changePlayState:function(model,value){
     console.log("NEw TransportState",value);
