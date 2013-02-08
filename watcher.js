@@ -8,8 +8,9 @@ var db = require('mongojs').connect('test', ['tracks','playlist']),
 
 
 var MEDIA_SERVERS ={ 
-  "e91f16b6-f441-4de4-a65d-d1ed420c10e1" : "0$2$2",
-  "7076436f-6e65-1063-8074-4ce6766160b7" : "1$268435466"
+  "e91f16b6-f441-4de4-a65d-d1ed420c10e1"   : "0$2$2",         //ps3Media Server
+  //"7076436f-6e65-1063-8074-4ce6766160b7" : "1$268435466",   //Linkstation
+  //"bc4fab65-9f26-3687-bbfc-1fb761347c74" : "2"              //galaxy s2
 }
 
 var updateFromObjID = function(){
@@ -178,6 +179,7 @@ var onTracksAdded = function(data){
   if(data !== 'fail'){
     db.tracks.save(data,{safe:true},function(err){
       if(err){
+        Socket.emit("error","Error inserting tracks "+err);
         console.log("error inserting initial data");
         console.log(err);
       }
@@ -239,9 +241,13 @@ var respond = function (data){
     if(event.name === "msAdd") {
       var server = mw.getServer();
       var dirId = MEDIA_SERVERS[event.uuid];
-      if(dirId)
+      if(dirId){
         mw.getTracks(onTracksAdded,server,dirId);
-      console.log("SERVER ADDED GETTING TRACKS,",event.uuid);
+        console.log("SERVER ADDED GETTING TRACKS,",event.uuid,event.value);
+
+      }
+        
+      
     }else if(event.name === "mrAdd"){
       mw.setRenderer(event.uuid)
       render.add(event.uuid,event.value);
