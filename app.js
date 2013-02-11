@@ -62,7 +62,10 @@ app.get('/JST.js', function(req,res){
 
 app.get('/api/directory/:ms/:id',function(req,res){
   mw.browse(req.params.ms,req.params.id,function(dir){
-    res.send(dir);
+    if(dir)
+      res.send({docs:dir});
+    else
+      res.send(500,"Failed to get directory");
   });
 })
 
