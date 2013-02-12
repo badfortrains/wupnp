@@ -14,6 +14,9 @@ Wu.Views.menu = Backbone.View.extend({
     this.listenTo(this,"hideMusic",this.hideMusic);
     this.listenTo(this,"showMusic",this.showMusic);
     this.listenTo(this,"inserted",this.setupDrag);
+    this.listenTo(Wu.Cache.Models.player,"change:id",this.setActive);
+    this.listenTo(Wu.Cache.Models.player,"change:playlist",this.setActive);
+    this.listenTo(Wu.Cache.Models.player,"change:TransportState",this.setActive);
   },
   render: function(){
     var self = this;
@@ -21,6 +24,7 @@ Wu.Views.menu = Backbone.View.extend({
       self.$el.html(html);
       if(self.showMusicLink)
         self.showMusic();
+      self.setActive();
     });
     return this;
   },
@@ -49,7 +53,7 @@ Wu.Views.menu = Backbone.View.extend({
     .off("click",$.proxy(this.hide,this));
   },
   setRenderer: function(e){
-    var uuid = $(e.target).attr("uuid");
+    var uuid = $(e.target).attr("id");
     Wu.Cache.Models.player.setRenderer(uuid);
   },
   hideMusic: function(){
@@ -64,6 +68,14 @@ Wu.Views.menu = Backbone.View.extend({
     var category = Wu.Cache.Models.category.get("id") || "Artist";
     this.hide();
     Backbone.history.navigate("/category/"+category,{trigger:true});
-  }
+  },
+  setActive:function(){
+    var renderer = Wu.Cache.Models.player.id,
+        playlist = Wu.Cache.Models.player.get('playlist'),
+        isPlaying = Wu.Cache.Models.player.get("TransportState") === "PLAYING";
+
+    playlist && $("#"+playlist)[isPlaying ? "addClass" : "removeClass"]("active");
+    renderer && $("#"+renderer).addClass("active");
+ }
 
 });

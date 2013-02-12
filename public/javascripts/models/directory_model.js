@@ -1,15 +1,21 @@
 Wu.Models.directory = Backbone.Model.extend({
 
-  idAttribute: "id",
   urlRoot: function(){
     return "/api/directory/"+this.get("uuid")+"/";
   },
-  initialize:function(params){
-    this.set("uuid",params.uuid);
+  initialize:function(){
+    this.titleMap = {};
   },
-  filter:function(name,id){
-    this.set("title",name);
-    this.set("id",id);
+  filter:function(title,id){
+    if(id){
+      this.titleMap[id] = title;
+      return this.get("uuid")+"/"+id;
+    }else{
+      return false;
+    }
+  },
+  getTitle: function(){
+    return this.titleMap[this.get("id")];
   }
 
 });

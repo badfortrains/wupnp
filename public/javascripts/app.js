@@ -11,6 +11,7 @@ Wu = {
   init: function(){
     window.Socket = io.connect(':3000');
     this.Cache.Models.category = new Wu.Models.category();
+    this.Cache.Models.directory  = new Wu.Models.directory();
     this.Cache.Models.player = new Wu.Models.player();
     this.Cache.Collections.renderers = new Wu.Collections.renderers();
     Wu.Cache.Categories = new Wu.Routers.Categories();

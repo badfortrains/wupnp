@@ -50,7 +50,7 @@ var watcherInterface = {
     },trackItem);
   },
   stop:function(cb){
-    wm.stop(cb);
+    mw.stop(cb);
   }
 };
 

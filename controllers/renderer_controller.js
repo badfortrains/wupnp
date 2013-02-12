@@ -26,5 +26,8 @@ module.exports = {
       }
       res.send(renderer.getAttributes());
     }
+  },
+  index: function(req,res){
+   res.send(mw.renderer.getRenderers());
   }
 }

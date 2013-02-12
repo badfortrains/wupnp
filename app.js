@@ -39,6 +39,8 @@ app.configure('development', function(){
 app.get('/', wu.index);
 app.get('/category/:category', wu.index);
 app.get('/playlist/:id', wu.index);
+app.get('/directory/:uuid/:id', wu.index);
+app.get("/test",wu.index);
 
 /* Data routes */
 app.get("/api/playlists",playlists.index);
@@ -50,9 +52,7 @@ app.get("/api/playlists/:id/tracks", playlists.showTracks);
 app.get("/api/renderers/:id", renderers.show);
 app.get('/api/categories/:category', categories.show);
 
-app.get("/api/renderers", function(req,res){
-   res.send(mw.renderer.getRenderers());
-});
+app.get("/api/renderers", renderers.index);
 
 app.get('/JST.js', function(req,res){
   JST.render(function(result){

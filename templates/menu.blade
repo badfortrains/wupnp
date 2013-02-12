@@ -6,14 +6,24 @@
   ul.renderers
     -renderers.each(function(item){
       -var uuid = item.get("uuid")
-      li(uuid=uuid)
+      li(id=uuid)
         =item.get("name")
+        i.icon-circle
     -})
   h1 Playlists
   ul.playlists
     -playlists.each(function(item){
       -var id = item.get("_id")
-      li
+      li(id=id)
         a(href="/playlist/"+id)
           =item.get("name")
+        i.icon-volume-up
+    -})
+  h1 Play To
+  ul.renderers
+    -renderers.each(function(item){
+      -var uuid = item.get("uuid")
+      li(id=uuid)
+        =item.get("name")
+        i.icon-circle
     -})
