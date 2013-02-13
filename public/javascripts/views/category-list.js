@@ -8,8 +8,8 @@ Wu.Views.categoryList = Wu.Views.list.extend({
   },
 
   initialize:function(params){
-    Wu.Views.list.prototype.initialize.call(this);
-
+    Wu.Views.list.prototype.initialize.call(this,params);
+    this.url = params.url || "category/";
     this.listenTo(this.model,"change:docs",this.render);
   },
 
@@ -28,7 +28,7 @@ Wu.Views.categoryList = Wu.Views.list.extend({
   select: function(e){
     var category = this.model.filter($(e.target).html(),e.target.id);
     if(category)
-      Backbone.history.navigate('category/'+category,{trigger:true});
+      Backbone.history.navigate(this.url+category,{trigger:true});
     else
       this.trigger("showPopup")
   },

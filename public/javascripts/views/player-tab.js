@@ -48,7 +48,7 @@ Wu.Views.playerTab = Backbone.View.extend({
     var title = (track && track.Title) ? track.Title : "Unknown";
     this.$(".title").html(title);
 
-    /*
+    
     if(track){
       var parser=new DOMParser();
       var xmlDoc = parser.parseFromString(track.Didl,"text/xml");
@@ -60,7 +60,7 @@ Wu.Views.playerTab = Backbone.View.extend({
           this.albumArt = artURI;
         }
       }
-    }*/
+    }
 
   },
   changePlayState:function(model,value){

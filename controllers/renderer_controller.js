@@ -1,9 +1,9 @@
-var mw = require('../watcher.js');
+var Renderers = require('../models/renderer');
 
 module.exports = {
   show:function(req,res){
     var uuid = req.params.id,
-        renderer = mw.renderer.getRenderer(uuid);
+        renderer = Renderers.find(uuid);
 
     if(!renderer){
       res.send(500,"Renderer not found");
@@ -13,7 +13,7 @@ module.exports = {
   },
   update:function(req,res){
     var uuid = req.params.id,
-        renderer = mw.renderer.getRenderer(uuid);
+        renderer = Renderers.find(uuid);
 
     if(!renderer){
       res.send(500,"Renderer not found");
@@ -26,5 +26,8 @@ module.exports = {
       }
       res.send(renderer.getAttributes());
     }
+  },
+  index: function(req,res){
+   res.send(Renderers.all());
   }
 }

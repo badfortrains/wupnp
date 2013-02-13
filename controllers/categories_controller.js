@@ -9,7 +9,12 @@ module.exports = {
 
     if(category !== 'Title'){
       Tracks.distinct(category,filter,function(err,docs){
-        res.send({err:err,docs:docs.sort()});
+        if(docs){
+          res.send({err:err,docs:docs.sort()});
+        }else{
+          res.send({err:err,docs:null});
+        }
+          
       })      
     }else if(!filter.Album){
       Tracks.find(filter,{Title:1}).sort({Title:1},function(err,docs){
