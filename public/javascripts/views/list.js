@@ -14,7 +14,7 @@ Wu.Views.list = Backbone.View.extend({
 
   render: function(){
     var self = this;
-    this.template({model: this.model},function(err,html){
+    this.template({model: this.model,jumper:this.jumper},function(err,html){
       self.$el.html(html);
       self.jumper && self.jumper.render();
 

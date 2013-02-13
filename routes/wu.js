@@ -4,6 +4,8 @@ exports.index = function(req, res){
     var lists = "";
     if(!err && docs){
       lists = "var bootstrapPlaylists = " + JSON.stringify(docs);
+    }else{
+      lists = "var bootstrapPlaylists = [];"
     }
     res.render('Wu', { 
       title: 'Wu',
