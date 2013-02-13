@@ -13,5 +13,13 @@ module.exports = {
   },
   index:function(req,res){
     res.send(servers.all());
+  },
+  browse: function(req,res){
+    servers.browse(req.params.ms,req.params.id,function(dir){
+      if(dir)
+        res.send({docs:dir});
+      else
+        res.send(500,"Failed to get directory");
+    });
   }
 }

@@ -19,11 +19,3 @@
           =item.get("name")
         i.icon-volume-up
     -})
-  h1 Play To
-  ul.renderers
-    -renderers.each(function(item){
-      -var uuid = item.get("uuid")
-      li(id=uuid)
-        =item.get("name")
-        i.icon-circle
-    -})
