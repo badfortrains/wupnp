@@ -7,7 +7,8 @@
     -renderers.each(function(item){
       -var uuid = item.get("uuid")
       li(id=uuid)
-        =item.get("name")
+        span
+          =item.get("name")
         i.icon-circle
     -})
   h1 Playlists

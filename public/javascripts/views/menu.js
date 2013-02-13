@@ -53,7 +53,7 @@ Wu.Views.menu = Backbone.View.extend({
     .off("click",$.proxy(this.hide,this));
   },
   setRenderer: function(e){
-    var uuid = $(e.target).attr("id");
+    var uuid = $(e.currentTarget).attr("id");
     Wu.Cache.Models.player.setRenderer(uuid);
   },
   hideMusic: function(){
@@ -74,6 +74,7 @@ Wu.Views.menu = Backbone.View.extend({
         playlist = Wu.Cache.Models.player.get('playlist'),
         isPlaying = Wu.Cache.Models.player.get("TransportState") === "PLAYING";
 
+    this.$("li").removeClass("active");
     playlist && $("#"+playlist)[isPlaying ? "addClass" : "removeClass"]("active");
     renderer && $("#"+renderer).addClass("active");
  }

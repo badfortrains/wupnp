@@ -240,12 +240,26 @@ body{
       padding-bottom: 3px;
       border-bottom: 0px;
       padding-top: 3px;
+      position:relative;
       &:last-child{
         border-bottom: 1px solid rgb(180, 172, 172);
+      }
+      span{
+        margin-right: 14px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: block;
+        white-space: nowrap;
       }
     }
     li.active{
       background-color: rgb(216, 184, 245);
+      i{
+        float:none;
+        position: absolute;
+        top:5px;
+        right:0px;
+      }
     }
   }
   li{
@@ -278,10 +292,13 @@ body{
     ul{
       list-style: none;
       padding-left:10px;
+      margin-top: 10px;
       li{
         font-size: 1em;
-        margin-top: 10px;
       }
+    }
+    .playlists li{
+      margin-bottom: 10px;
     }
   }
 }

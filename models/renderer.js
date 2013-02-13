@@ -20,7 +20,6 @@ var rendy = function(name,uuid){
 } 
 rendy.prototype = {
   _playNext: function(cb){
-    console.log("in playNext")
     self = this;
     mw.setRenderer(this.uuid);
     this.playlist.findAt(this.position,function(err,docs){
@@ -86,7 +85,6 @@ rendy.prototype = {
     })
   },
   _playTrack:function(){
-    console.log("in playtrack")
     var self = this;
     mw.setRenderer(this.uuid);
     if(!this.isPlaying){
@@ -130,14 +128,13 @@ rendy.prototype = {
 
 var Renderer = function(){
   this.renderers = {};
-  this.secret = Math.random();
 }
 util.inherits(Renderer,EventEmitter);
 Renderer.prototype.find = function(uuid){
   return this.renderers[uuid];
 }
 Renderer.prototype.all = function(){
-  console.log("all from",this.secret)
+
   return mw.getRenderers();
 }
 Renderer.prototype.exists = function(id){
@@ -149,14 +146,13 @@ Renderer.prototype.exists = function(id){
 Renderer.prototype.add = function(event){
   var uuid = event.uuid,
       name = event.value;
-  console.log("add",name,uuid);
+
   this.renderers[uuid] = new rendy(name,uuid)
-  console.log(this);
   this.emit("rendererAdded",{name:name,uuid:uuid})
 }
 Renderer.prototype.remove = function(event){
   var uuid = event.uuid;
-  console.log("remove",uuid)
+
   if(!this.exists(uuid)){
     return;
   }

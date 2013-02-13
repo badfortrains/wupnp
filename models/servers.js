@@ -1,4 +1,5 @@
 var mw = require('../mediaWatcher')
+    ,db = require('mongojs').connect('test', ['tracks','playlist'])
     ,servers = []
     ,KNOWN_PATHS ={ 
       "e91f16b6-f441-4de4-a65d-d1ed420c10e1"   : "0$2$2",         //ps3Media Server
@@ -62,7 +63,10 @@ var add = function(event){
       },
       path = KNOWN_PATHS[event.uuid];
 
-  path && (ms.path = path);
+  if(path){
+    ms.path = path
+    mw.getTracks(onTracksAdded,event.uuid,path);
+  }
   servers[event.uuid] = ms;
 }
 
