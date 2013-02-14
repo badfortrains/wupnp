@@ -51,8 +51,9 @@ exports.onConnect = function(socket) {
     })
   }
   var doCommand = function(command){
+    var args = Array.prototype.slice.call(arguments,1);
     getRenderer(function(renderer){
-      var args = Array.prototype.slice.call(arguments,1);
+      console.log(args)
       renderer[command].apply(renderer,args);
     })
   }
@@ -71,6 +72,10 @@ exports.onConnect = function(socket) {
   })
   socket.on("playPlaylist",function(){
     doCommand('_playTrack');
+  })
+  socket.on("setPosition",function(position){
+    console.log("POSITION",position)
+    doCommand('setPosition',position);
   })
   socket.on('playById',function(id,playlistId){
     getRenderer(function(renderer){

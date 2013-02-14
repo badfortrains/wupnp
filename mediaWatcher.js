@@ -22,7 +22,9 @@ MediaWatcher.prototype._respond = function (data){
 MediaWatcher.prototype.openAndPlay = function(trackItem,callback){
   var self = this;
   this.open(function(resO){
+    console.log("Result of open",resO);
     self.play(function(resP){
+      console.log("Result of play",resP);
       return callback({res: resP});
     });
   },trackItem);

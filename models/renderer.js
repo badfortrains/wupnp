@@ -17,8 +17,21 @@ var rendy = function(name,uuid){
     self.state.quickList = id;
     self.state.playlist = id;
   })
+  setInterval(this._getPosition.bind(this),1000);
 } 
 rendy.prototype = {
+  _getPosition: function(){
+    if(this.state.TransportState != "PLAYING"){
+      return;
+    }else{
+      mw.getPosition(function(result){
+        if(result){
+          this.setState({name:"trackPosition",value:result.position});
+          this.setState({name:"duration",value:result.duration});
+        }
+      }.bind(this))
+    }
+  },
   _playNext: function(cb){
     self = this;
     mw.setRenderer(this.uuid);
@@ -123,6 +136,25 @@ rendy.prototype = {
   },
   getAttributes: function(){
     return this.state;
+  },
+  setPosition: function(position){
+    var hours = Math.floor(position / 3600000),
+        minutes,
+        seconds,
+        target;
+
+    position -= hours * 3600000;
+    minutes = Math.floor(position / 60000);
+    position -= minutes * 60000;
+    seconds = Math.floor(position / 1000);
+
+    hours = (hours < 10) ? "0"+hours : hours;
+    minutes = (minutes < 10) ? "0"+minutes : minutes;
+    seconds = (seconds < 10) ? "0"+seconds : seconds;
+
+    target = hours + ":" + minutes + ":" + seconds;
+    mw.setRenderer(this.uuid);
+    mw.seek(function(){},target);
   }
 }
 
