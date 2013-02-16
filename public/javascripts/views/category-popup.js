@@ -115,7 +115,7 @@ Wu.Views.categoryPopup = Backbone.View.extend({
 
     list.set("clearFirst",true);
     this._add(list,function(){
-      Socket.emit("playPlaylist");
+      Socket.emit("playPlaylist",id);
     });
   },
 

@@ -181,6 +181,8 @@ body{
     float:left;
     padding-right: 30px;
     i{
+      position:relative;
+      z-index: 10;
       display: inline-block;
       margin:10px;
       font-size: 17px
@@ -196,10 +198,19 @@ body{
     position:absolute;
     left:50px;
     top:0px;
+    z-index: 1;
     margin-left:0px;
-    width:15px;
+    width:50px;
     height:50px;
-    background-color:rgba(138, 43, 226, 0.39);
+    display:none;
+    background-color:rgba(123, 118, 128, 0.39);
+  }
+  a, a:active{
+    color: black
+  }
+  .title{
+    position:relative;
+    z-index: 10;
   }
 }
 
@@ -229,6 +240,8 @@ body{
   background-color: white;
   top: 0px;
   bottom: 0px;
+  overflow:auto;
+  -webkit-overflow-scrolling: touch;
   a{
     color:blueviolet;
   }

@@ -36,6 +36,7 @@ Wu.Models.category = Backbone.Model.extend({
       filter[this.ORDER[currentIndex]] && delete filter[this.ORDER[currentIndex]];
       currentIndex--;
     }
+    filter._id &&  delete filter._id;
     this.set("filter",filter);
     this.set("id",category);
   },

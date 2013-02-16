@@ -65,6 +65,10 @@ rendy.prototype = {
     this.position = 1;
     this.setState({name:"playlist",value:id});
   },
+  playPlaylist: function(id){
+    this.setPlaylist(id);
+    this._playTrack();
+  },
   setState: function(event){
     if(this.state[event.name] !== event.value){
       //TODO: make this not supper ugly / hacky

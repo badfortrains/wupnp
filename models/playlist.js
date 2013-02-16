@@ -92,7 +92,7 @@ playlist.prototype.remove = function(filter,callback){
   obj['playlist.'+this.id] = 1;
   db.tracks.update(filter,{$unset : obj }, {multi : true, safe:true},function(err,count){
     db.lists.update({_id:this.id},{$inc : {count: -count}},{safe:true},callback);
-  });
+  }.bind(this));
     
 
 }

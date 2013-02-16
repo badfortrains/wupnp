@@ -15,8 +15,8 @@ Wu.Views.playerTab = Backbone.View.extend({
     this.listenTo(this,"inserted",this.setupDrag);
     this.lastTime = Date.now();
     this.animator = this.animateProgress.bind(this);
+    
     this.animateProgress();
-
 
     this.listenTo($(document),"mousemove touchmove",$.proxy(this.drag,this));
     this.listenTo($(document),"mouseup touchend",$.proxy(this.dragEnd,this));
@@ -24,7 +24,10 @@ Wu.Views.playerTab = Backbone.View.extend({
     //prevent highlighting on desktop
     this.listenTo(this.$el,"mousedown",function(e){
       e.preventDefault();
-    })
+    });
+    this.listenTo($(window),"resize",$.proxy(function(){
+      this.width = this.$el.width() - 50;    
+    },this));
     this.animate = true;
   },
 
@@ -34,6 +37,7 @@ Wu.Views.playerTab = Backbone.View.extend({
       self.$el.html(html);
       self.changeTrack(self.model,self.model.get("currentPlayingTrack"));
       self.changePlayState(self.model,self.model.get("TransportState"));
+      self.setPosition(self.model.get('trackPosition'));
     });
     return this;
   },
@@ -42,13 +46,16 @@ Wu.Views.playerTab = Backbone.View.extend({
   },
   animateProgress: function(){
     if(this.animate && !this.dragging && this.model.get("TransportState") === "PLAYING"){
-      var position = this.model.get('trackPosition'),
-          left = this.width * (position/ this.model.get("duration"));
-      this.$(".ball").css("-webkit-transform","translateX("+left+"px)");
+      var position = this.model.get('trackPosition')
+      this.setPosition(position);
       this.model.set("trackPosition",position + Date.now() - this.lastTime ); 
     }
     this.lastTime = Date.now();
-    window.webkitRequestAnimationFrame(this.animator);
+    window.requestAnimationFrame(this.animator);
+  },
+  setPosition: function(position){
+    var left = this.width * (position/ this.model.get("duration"));
+    this.$(".ball").css("-webkit-transform","translate3d("+left+"px,0,0)");
   },
   dragStart: function(e){
     this.dragging = true;
@@ -58,7 +65,7 @@ Wu.Views.playerTab = Backbone.View.extend({
     if(this.dragging){
       var x = e.pageX || e.touches[0].pageX;
       this.lastX = x;
-      this.$(".ball").css("-webkit-transform","translateX("+x+"px)");
+      this.$(".ball").css("-webkit-transform","translateZ(0) translateX("+x+"px)");
     }
   },  
   dragEnd: function(){
@@ -99,9 +106,10 @@ Wu.Views.playerTab = Backbone.View.extend({
   },
   changeTrack:function(model,track){
     var title = (track && track.Title) ? track.Title : "Unknown";
-    this.$(".title").html(title);
+    this.$(".title").html(title)
+    .attr("href","/playlist/"+model.get("playlist"));
 
-    
+    /*
     if(track){
       var parser=new DOMParser();
       var xmlDoc = parser.parseFromString(track.Didl,"text/xml");
@@ -113,14 +121,15 @@ Wu.Views.playerTab = Backbone.View.extend({
           this.albumArt = artURI;
         }
       }
-    }
+    }*/
 
   },
   changePlayState:function(model,value){
-    console.log("NEw TransportState",value);
     if(value === "PLAYING"){
+      this.$(".ball").show();
       this.$(".play").removeClass("icon-play").addClass("icon-pause");
     }else{
+      this.$(".ball")[value === "PAUSED_PLAYBACK" ? "show" : "hide" ](); 
       this.$(".play").removeClass("icon-pause").addClass("icon-play");
     }
   }

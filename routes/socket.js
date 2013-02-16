@@ -64,14 +64,11 @@ exports.onConnect = function(socket) {
   socket.on('play', function(){
     doCommand('play');
   })
-  socket.on('setList', function(id){
-    doCommand('setPlaylist',id)
-  })
   socket.on('next',function(){
     doCommand('next');
   })
-  socket.on("playPlaylist",function(){
-    doCommand('_playTrack');
+  socket.on("playPlaylist",function(id){
+    doCommand('playPlaylist',id)
   })
   socket.on("setPosition",function(position){
     console.log("POSITION",position)
