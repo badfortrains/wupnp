@@ -10,6 +10,7 @@ Wu.Views.categoryList = Wu.Views.list.extend({
   initialize:function(params){
     Wu.Views.list.prototype.initialize.call(this,params);
     this.url = params.url || "category/";
+
     this.listenTo(this.model,"change:docs",this.render);
   },
 
@@ -24,7 +25,6 @@ Wu.Views.categoryList = Wu.Views.list.extend({
     this.$el.off();
     this.stopListening();
   },
-
   select: function(e){
     var category = this.model.filter($(e.target).html(),e.target.id);
     if(category)

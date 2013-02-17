@@ -10,6 +10,7 @@ Wu.Views.menu = Backbone.View.extend({
   initialize: function(){
     this.listenTo(Wu.Layout.header,"menuClick",this.show);
     this.listenTo(this.collection,"add remove reset",this.render);
+    this.listenTo(Wu.Cache.Collections.servers,"add remove reset",this.render);
     this.listenTo(Wu.Cache.Collections.playlists,"add remove reset",this.render);
     this.listenTo(this,"hideMusic",this.hideMusic);
     this.listenTo(this,"showMusic",this.showMusic);
@@ -20,7 +21,11 @@ Wu.Views.menu = Backbone.View.extend({
   },
   render: function(){
     var self = this;
-    this.template({playlists:Wu.Cache.Collections.playlists, renderers: this.collection},function(err,html){
+    this.template({
+      playlists: Wu.Cache.Collections.playlists, 
+      renderers: this.collection,
+      servers: Wu.Cache.Collections.servers
+    },function(err,html){
       self.$el.html(html);
       if(self.showMusicLink)
         self.showMusic();

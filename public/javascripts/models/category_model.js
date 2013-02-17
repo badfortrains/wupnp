@@ -4,6 +4,12 @@ Wu.Models.category = Backbone.Model.extend({
 
   urlRoot: '/api/categories',
 
+  initialize: function(){
+    Socket.on("tracksInserted",function(){
+      Wu.Layout.page.trigger("tracksInserted");
+    })
+  },
+
   fetch: function(options){
     var filter = this.get('filter');
     options = options || {};
