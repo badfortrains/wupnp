@@ -1,6 +1,6 @@
 var mw = require('../mediaWatcher')
     ,db = require('mongojs').connect('test', ['tracks','playlist'])
-    ,servers = []
+    ,servers = {}
     ,KNOWN_PATHS ={ 
       "e91f16b6-f441-4de4-a65d-d1ed420c10e1"   : "0$2$2",         //ps3Media Server
       "7076436f-6e65-1063-8074-4ce6766160b7" : "1$268435466",   //Linkstation
@@ -57,9 +57,11 @@ var onTracksAdded = function(data){
 
 }
 
+
 var add = function(event){
   var ms = {
-        name: event.value
+        name: event.value,
+        uuid: event.uuid
       },
       path = KNOWN_PATHS[event.uuid];
 
@@ -82,7 +84,11 @@ module.exports = {
     return servers[uuid];
   },
   all: function(){
-    return servers;
+    var serverObjs = [];
+    for(var uuid in servers){
+      serverObjs.push(servers[uuid]);
+    }
+    return serverObjs;
   },
   browse: function(uuid,id,cb){
     mw.doBrowse(cb,uuid,id);

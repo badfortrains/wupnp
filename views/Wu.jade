@@ -15,7 +15,11 @@ html
     script(src='/javascripts/backbone-min.js')
     script(src='/javascripts/app.js')
     script(src='/JST.js')
+
+    //bootstraped collections
     script!= playlists
+    script!= servers
+    script!= renderers
 
     //views
     script(src='/javascripts/views/list.js')
@@ -37,11 +41,13 @@ html
     script(src='/javascripts/models/directory_model.js')
     script(src='/javascripts/models/playlist_model.js')
     script(src='/javascripts/models/renderer_model.js')
+    script(src='/javascripts/models/server_model.js')
     script(src='/javascripts/models/player_model.js')
 
     //collections
     script(src='/javascripts/collections/playlists.js')
     script(src='/javascripts/collections/renderers.js')
+    script(src='/javascripts/collections/servers.js')
 
     //routes
     script(src='/javascripts/routes/route.js')

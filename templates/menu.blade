@@ -20,3 +20,11 @@
           =item.get("name")
         i.icon-volume-up
     -})
+  h1 Servers
+  ul.playlists
+    -servers.each(function(item){
+      -var id = item.id
+      li(id=id)
+        a(href="/directory/"+id+"/0")
+          =item.get("name")
+    -})
