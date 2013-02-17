@@ -15,12 +15,22 @@ module.exports = {
     res.send(servers.all());
   },
   browse: function(req,res){
-    console.log("HERERALKDJAS DAS")
     servers.browse(req.params.ms,req.params.id,function(dir){
       if(dir)
         res.send({docs:dir});
       else
         res.send(500,"Failed to get directory");
     });
+  },
+  setPath: function(req,res){
+    var server = servers.find(req.params.id),
+        path = req.body.path;
+
+    if(server && path){
+      server.setPath(path);
+      res.send(server);
+    }else{
+      res.send(500,"server not found")
+    }
   }
 }

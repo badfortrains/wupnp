@@ -1,5 +1,6 @@
 var mw = require('../mediaWatcher'),
-    Renderers = require('../models/renderer');
+    Renderers = require('../models/renderer'),
+    Servers = require('../models/servers')
 
 exports.registerEmits = function(socketIO){
   Renderers.on("rendererAdded",function(event){
@@ -10,6 +11,15 @@ exports.registerEmits = function(socketIO){
   })
   Renderers.on("stateChange",function(uuid,event){
     socketIO.sockets.in(uuid).emit("stateChange",event);
+  })
+  Servers.on("tracksInserted",function(){
+    socketIO.sockets.emit("tracksInserted",event);
+  })
+  Servers.on("serverAdded",function(server){
+    socketIO.sockets.emit("serverAdded",server);
+  })
+  Servers.on("serverRemoved",function(server){
+    socketIO.sockets.emit("serverRemoved",server);
   })
 }
 

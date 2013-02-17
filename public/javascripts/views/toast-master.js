@@ -8,6 +8,12 @@ Wu.Views.toastMaster = Backbone.View.extend({
     this.listenTo(Wu.Cache.Collections.renderers,"remove",function(model){
       this.message('Media renderer "'+model.get("name")+'" removed');
     },this);
+    this.listenTo(Wu.Cache.Collections.servers,"add",function(model){
+      this.message('New media server "'+model.get("name")+'" detected');
+    },this);
+    this.listenTo(Wu.Cache.Collections.servers,"remove",function(model){
+      this.message('Media server "'+model.get("name")+'" removed');
+    },this);
     this.listenTo(Wu.Cache.Models.player,"change:currentPlayingTrack",function(model,value){
       this.title(value.Title);
     },this);
@@ -21,6 +27,10 @@ Wu.Views.toastMaster = Backbone.View.extend({
 
     Socket.on("error",$.proxy(function(err){
       this.error(err);
+    },this));
+
+    Socket.on("tracksInserted",$.proxy(function(){
+      this.message("New tracks inserted");
     },this));
 
     this.messageStack = [];
