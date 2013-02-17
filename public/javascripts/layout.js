@@ -21,6 +21,9 @@ Wu.Layout = {
     this.header.setSubHeader(view);
     this.header.render();
   },
+  removeSubHeader : function(){
+    this.header.removeSubHeader();
+  },
   setPage: function(view){
     this.page && this.page.unrender();
     this.menu.hide();

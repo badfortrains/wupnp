@@ -66,6 +66,7 @@ Wu.Routers.Categories = Backbone.Router.extend({
   },
   showDir: function(uuid,dirID){
     if(Wu.Layout.state != 'directory'){
+      Wu.Layout.removeSubHeader();
       var view = new Wu.Views.directories({
         model:Wu.Cache.Models.directory,
       });

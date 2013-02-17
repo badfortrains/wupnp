@@ -23,6 +23,8 @@ Wu.Views.categories = Backbone.View.extend({
     this.listenTo(this.list,"rendered",function(){
       this.popup.hide();
     })
+
+    this.listenTo(this,"tracksInserted", this.tracksInserted);
   },
   render: function(){
     var self = this;
@@ -37,6 +39,9 @@ Wu.Views.categories = Backbone.View.extend({
   unrender: function(){
     this.stopListening();
     this.list.unrender();
-  }
+  },
+  tracksInserted: function(){
+    this.model.fetch();
+  },
 
 });
