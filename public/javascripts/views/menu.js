@@ -20,7 +20,11 @@ Wu.Views.menu = Backbone.View.extend({
   },
   render: function(){
     var self = this;
-    this.template({playlists:Wu.Cache.Collections.playlists, renderers: this.collection},function(err,html){
+    this.template({
+      playlists: Wu.Cache.Collections.playlists, 
+      renderers: this.collection,
+      servers: Wu.Cache.Collections.servers
+    },function(err,html){
       self.$el.html(html);
       if(self.showMusicLink)
         self.showMusic();

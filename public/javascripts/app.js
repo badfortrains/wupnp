@@ -16,10 +16,12 @@ Wu = {
     this.Cache.Collections.renderers = new Wu.Collections.renderers();
     Wu.Cache.Categories = new Wu.Routers.Categories();
     Wu.Cache.Collections.playlists = new Wu.Collections.playlists();
+    Wu.Cache.Collections.servers  = new Wu.Collections.servers();
 
     Wu.Cache.Views.toastMaster = new Wu.Views.toastMaster();
     
-    this.Cache.Collections.renderers.fetch();
+    this.Cache.Collections.servers.reset(bootstrapServers);
+    this.Cache.Collections.renderers.reset(bootstrapRenderers);
     this.Cache.Collections.playlists.reset(bootstrapPlaylists);
 
     $(document).on("click","a:not(.data-bypass)",function(e){

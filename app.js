@@ -57,6 +57,8 @@ app.get("/api/renderers/:id", renderers.show);
 app.get('/api/categories/:category', categories.show);
 
 app.get('/api/directory/:ms/:id',server.browse);
+app.get('/api/servers/',server.all);
+app.get('/api/servers/:id',server.find)
 
 app.get('/JST.js', function(req,res){
   JST.render(function(result){
