@@ -155,6 +155,9 @@ body{
     display: none;
 }
 .popup.add .add{
+    span{
+      color: blueviolet;
+    }
     display: block !important;
 }
 
@@ -216,10 +219,6 @@ body{
   }
   a, a:active{
     color: black
-  }
-  .title{
-    position:relative;
-    z-index: 10;
   }
 }
 
@@ -454,6 +453,25 @@ body{
   position: relative;
   .option{
     display: block;
+  }
+}
+
+.info{
+  font-size: 1.7em;
+  padding:20px 10px;
+  position: relative;
+  z-index: 12;
+  text-align: center;
+  background-color: rgba(44, 44, 61, 0.79);
+  ul{
+    list-style: none;
+    margin-top: 20px;
+  }
+  li{
+    font-size: .7em;
+    a, a:active{
+      color: blueviolet;
+    }
   }
 }
 

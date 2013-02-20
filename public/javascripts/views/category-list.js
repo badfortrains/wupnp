@@ -1,9 +1,10 @@
 Wu.Views.categoryList = Wu.Views.list.extend({
 
   ORDER: ["Artist","Album","Title"],
+  infoTemplate: JST['category.info'],
 
   events: {
-    "click li:not(.jumper)" : "select",
+    "click .category-list li:not(.jumper)" : "select",
     "click .title"          : "showPopup"
   },
 
@@ -15,8 +16,18 @@ Wu.Views.categoryList = Wu.Views.list.extend({
   },
 
   render:function(){
-    Wu.Views.list.prototype.render.call(this);
-    this.trigger("rendered");
+    var self = this,
+        docs = this.model.get("docs");
+    if(docs && docs.length){
+      Wu.Views.list.prototype.render.call(this);
+      $("#mask").hide();
+      this.trigger("rendered");
+    }else{
+      this.infoTemplate({servers: Wu.Cache.Collections.servers},function(err,html){
+        self.$el.html(html);
+        $("#mask").show();
+      })
+    }
     return this;
   },
 
