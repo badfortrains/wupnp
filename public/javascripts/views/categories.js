@@ -28,12 +28,14 @@ Wu.Views.categories = Backbone.View.extend({
   },
   render: function(){
     var self = this;
+
     this.template({},function(err,html){
       self.$el.html(html)
       .append(self.popup.render().$el);
 
       self.$("#category-container").html(self.list.render().$el);
-    });
+    }); 
+
     return this;
   },
   unrender: function(){

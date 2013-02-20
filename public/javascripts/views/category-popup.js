@@ -6,6 +6,7 @@ Wu.Views.categoryPopup = Backbone.View.extend({
     "click h1.play"               : "playNow",
     "click h1.add"                : "showAddTo",
     "click h1.new"                : "showCreate",
+    "click span.new"              : "showCreate",
     "click .cancel"               : "back",
     "submit .bottom-box.new form" : "createList",
     "click .bottom-box.add li"    : "addToList"
@@ -34,12 +35,16 @@ Wu.Views.categoryPopup = Backbone.View.extend({
   },
 
   generateList: function(){
-    var result = "<ul>";
-    this.collection.each(function(el){
+    if(this.collection.length){
+      var result = "<ul>";
+      this.collection.each(function(el){
 
-      result += "<li listId='"+el.get('_id')+"'>"+el.get('name')+"</li>";
-    });
-    result += "</ul>"
+        result += "<li listId='"+el.get('_id')+"'>"+el.get('name')+"</li>";
+      });
+      result += "</ul>"
+    }else{
+      var result = "No exisiting playlists, <span class='new'>create one</span> to continue"
+    }
     return result;
   },
 
@@ -53,7 +58,10 @@ Wu.Views.categoryPopup = Backbone.View.extend({
   },
 
   showCreate:function(){
-    this.$el.addClass("new expand");
+    this.$el.removeClass("add")
+    .addClass("new expand");
+
+    this.$("input.name").val("");
   },
 
   back:function(){
