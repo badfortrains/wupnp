@@ -1,0 +1,20 @@
+- var title = model.getTitle();
+- var docs = model.get('docs');
+- var name;
+
+-if(title)
+  span.title
+    =title 
+-var current = (jumper && docs && docs.length > 20) ? ' ' : String.fromCharCode(99999);
+.category-list
+  ul
+    foreach docs as item
+      - name = item.Title || item;
+      -if(name.toUpperCase()[0] > current){
+        -current= name.toUpperCase()[0];
+        li.jumper(id='jumper'+current)
+      -}
+      -if(item._id)
+        li(id=item._id)=name
+      -else
+        li= name

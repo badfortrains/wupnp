@@ -1,0 +1,67 @@
+doctype 5
+html
+  head
+    title= title
+    link(rel='stylesheet', href='/stylesheets/style.css')
+    link(rel='stylesheet', href='/stylesheets/font-awesome.css')
+    meta(content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no",name="viewport")
+    meta(name="apple-mobile-web-app-capable",content="yes")  
+    meta(name="viewport",content="width=device-width");
+    script(src='/javascripts/zepto.min.js')
+    script(src='/javascripts/underscore-min.js')
+    script(src='/javascripts/runtime.js')
+    script(src='/javascripts/drag.js')
+    script(src="/socket.io/socket.io.js")
+    script(src='/javascripts/backbone-min.js')
+    script(src='/javascripts/app.js')
+    script(src='/JST.js')
+
+    //bootstraped collections
+    script!= playlists
+    script!= servers
+    script!= renderers
+
+    //views
+    script(src='/javascripts/views/list.js')
+    script(src='/javascripts/views/list-jumper.js')
+    script(src='/javascripts/views/category-nav.js')
+    script(src='/javascripts/views/category-list.js')
+    script(src='/javascripts/views/category-popup.js')
+    script(src='/javascripts/views/categories.js')
+    script(src='/javascripts/views/directories.js')
+    script(src='/javascripts/views/track-list.js')
+    script(src='/javascripts/views/menu.js')
+    script(src='/javascripts/views/header.js')
+    script(src='/javascripts/views/player-tab.js')
+    script(src='/javascripts/views/toast-master.js')
+    script(src='/javascripts/views/playlist-dropdown.js')
+
+    //models
+    script(src='/javascripts/models/category_model.js')
+    script(src='/javascripts/models/directory_model.js')
+    script(src='/javascripts/models/playlist_model.js')
+    script(src='/javascripts/models/renderer_model.js')
+    script(src='/javascripts/models/server_model.js')
+    script(src='/javascripts/models/player_model.js')
+
+    //collections
+    script(src='/javascripts/collections/playlists.js')
+    script(src='/javascripts/collections/renderers.js')
+    script(src='/javascripts/collections/servers.js')
+
+    //routes
+    script(src='/javascripts/routes/route.js')
+
+    //helpers
+    script(src='/javascripts/helpers/helpers.js')
+    script(src='/javascripts/layout.js')
+
+  body
+    .toast-wrap
+        .toast
+    #alphabet
+    #header
+    #page
+    #mask
+    #menu
+    #pullTab

@@ -40,7 +40,7 @@ var Drawer = (function(){
       return;
 
     if( yDif > yPad && yDif < yCutOff  && xDif < xCutOff && xDif > xPad){
-      e.preventDefault();
+      //e.preventDefault();
       startTime = e.timeStamp;
       if(options.drag == "horizontal")
         startPos = x;

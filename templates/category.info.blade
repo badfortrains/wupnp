@@ -1,0 +1,12 @@
+-if(!servers.length){
+  .info.no-server No upnp media servers detected on the network, add a server to begin
+-}else{
+  .info.no-tracks No tracks selected, add tracks from a server:
+    ul.playlists
+      -servers.each(function(item){
+        -var id = item.id
+        li(id=id)
+          a(href="/directory/"+id+"/0")
+            =item.get("name")
+      -})
+-}

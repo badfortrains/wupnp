@@ -1,0 +1,30 @@
+.musicLink
+  i.icon-chevron-left
+  | Music 
+.lists
+  h1 Play To
+  ul.renderers
+    -renderers.each(function(item){
+      -var uuid = item.get("uuid")
+      li(id=uuid)
+        span
+          =item.get("name")
+        i.icon-circle
+    -})
+  h1 Playlists
+  ul.playlists
+    -playlists.each(function(item){
+      -var id = item.get("_id")
+      li(id=id)
+        a(href="/playlist/"+id)
+          =item.get("name")
+        i.icon-volume-up
+    -})
+  h1 Servers
+  ul.playlists
+    -servers.each(function(item){
+      -var id = item.id
+      li(id=id)
+        a(href="/directory/"+id+"/0")
+          =item.get("name")
+    -})

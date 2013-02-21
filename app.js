@@ -6,12 +6,17 @@
 var express = require('express'),
     app = express(),
     server = require('http').createServer(app),
-    routes = require('./routes'),
-    list = require('./routes/playlists'),
     http = require('http'),
     path = require('path'),
-    mw = require('./watcher.js'),
-    io = require('socket.io').listen(server);
+    io = require('socket.io').listen(server),
+    wu = require('./routes/wu.js'),
+    socketRoutes = require('./routes/socket'),
+    playlists = require('./controllers/playlist_controller.js'),
+    renderers = require('./controllers/renderer_controller.js'),
+    servers = require('./controllers/server_controller'),
+    categories = require('./controllers/categories_controller.js'),
+    JST = require('./helpers/JST'),
+    mw = require('./mediaWatcher').listen();
 
 app.configure(function(){
   app.set('port', process.env.PORT || 3000);
@@ -32,30 +37,38 @@ app.configure('development', function(){
   app.use(express.errorHandler());
 });
 
-app.get("/pop",function(req,res){
-  res.render('popup', { title: 'Express' });
-});
-app.get('/', routes.index);
-app.get('/Artist', routes.index);
-app.get('/tracklist', list.show);
-app.get('/lists',list.lists);
-app.get('/playlist',list.playlist);
-app.get('/menu',list.menu);
+/*Backbone routes*/
+app.get('/', wu.index);
+app.get('/category/:category', wu.index);
+app.get('/playlist/:id', wu.index);
+app.get('/directory/:uuid/:id', wu.index);
+app.get("/test",wu.index);
 
-mw.listen(io);
+/* Data routes */
+app.get("/api/playlists",playlists.index);
+app.post("/api/playlists",playlists.new);
+app.put("/api/playlists/:id", playlists.add);
+app.get("/api/playlists/:id", playlists.show);
+app.get("/api/playlists/:id/tracks", playlists.showTracks);
 
-io.sockets.on('connection', function (socket) {
-  socket.join(mw.getRenderer());
-  //Set current renderer
-  socket.set("renderer",mw.getRenderer());
+app.get("/api/renderers", renderers.index);
+app.get("/api/renderers/:id", renderers.show);
 
-  //emit current state of renderer
-  
-  socket.on('play', function(id){
-    console.log("PLAY" + id)
-    mw.renderer.next(id);
+app.get('/api/categories/:category', categories.show);
+
+app.get('/api/directory/:ms/:id',servers.browse);
+app.get('/api/servers/',servers.all);
+app.get('/api/servers/:id',servers.find)
+app.put('/api/servers/:id',servers.setPath)
+
+app.get('/JST.js', function(req,res){
+  JST.render(function(result){
+    res.send(result);
   })
 });
+/**********/
+socketRoutes.registerEmits(io);
+io.sockets.on('connection', socketRoutes.onConnect);
 
 server.listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));

@@ -4,7 +4,7 @@
   -webkit-tap-highlight-color: rgba(255, 255, 255, 0); 
 }
 
-@font-face { font-family: MyriadPro-light; src: url('/fonts/MyriadPro-Light.otf'); } 
+@font-face { font-family: MyriadPro-light; src: url('/font/MyriadPro-Light.otf'); } 
 a, a:active{
   color:white;
   text-decoration:none;
@@ -13,7 +13,7 @@ a, a:active{
 body{
   background-position-x:0px;
   -webkit-transition:background-position-x 1s;
-  background-image: url(http://s.discogss.com/image/R-3458050-1333231999.jpeg);
+  background-image: url(/images/antony.jpeg);
   max-width:100%;
   font-family:MyriadPro-light,Helvetica;
   background-color:black;
@@ -46,7 +46,7 @@ body{
   }
 }
 
-#category,.list-view{
+.category,.list-view{
   background: -webkit-gradient(linear, left top, right top, color-stop(0%,rgba(0, 0, 0, 0.90)), color-stop(51%,rgba(0, 0, 0, 0.65)), color-stop(100%,transparent));
   position: absolute;
   top:41px;
@@ -61,6 +61,7 @@ body{
     display: inline-block;
     position: relative;
     margin-bottom: 14px;
+    cursor: pointer;
   }
   .title:after{
     //non breaking space
@@ -77,6 +78,7 @@ body{
     margin-bottom:12px;
   }
   ul{
+    margin-bottom:40px;
     li{
       margin-bottom:10px;
     }
@@ -92,7 +94,7 @@ body{
     }
   }
 }
-.mask{
+#mask{
   width: 100%;
   height: 100%;
   position: absolute;
@@ -124,11 +126,17 @@ body{
   .top-box{
     padding: 5px;
   }
+  span,h1,li{
+    cursor: pointer;
+  }
   .bottom-box{
     margin:10px 0px 10px 10px;
     color: black;
     line-height: 27px;
     font-size: 20px;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+    display: none;
     ul{
       list-style: none;
     }
@@ -140,6 +148,29 @@ body{
   h1{
     line-height: 1.3em;
     font-weight: normal;
+  }
+}
+
+.popup.expand .top-box h1{
+    display: none;
+}
+.popup.add .add{
+    span{
+      color: blueviolet;
+    }
+    display: block !important;
+}
+
+.popup.new .new{
+    display: block !important;
+}
+
+.popup.server{
+  h1{
+    cursor: initial; 
+  }
+  h2{
+    cursor: pointer;
   }
 }
 
@@ -155,14 +186,16 @@ body{
   margin-left: -50px;
   padding-left: 50px;
   div{
-    margin-top: 8px;
     font-size: 20px;
     margin-left: 10px;
   }
   .playing{
     float:left;
     padding-right: 30px;
-    span{
+    i{
+      position:relative;
+      z-index: 10;
+      display: inline-block;
       margin:10px;
       font-size: 17px
     }
@@ -172,6 +205,165 @@ body{
     left: 7px;
     top: 3px;
     font-size: 35px;
+  }
+  .ball{
+    position:absolute;
+    left:50px;
+    top:0px;
+    z-index: 1;
+    margin-left:0px;
+    width:50px;
+    height:50px;
+    display:none;
+    background-color:rgba(123, 118, 128, 0.39);
+  }
+  a, a:active{
+    color: black
+  }
+}
+
+.track-list{
+  li{
+    padding:5px;
+    margin-bottom: 0px !important;
+  }
+  li.active{
+    color:blueviolet;
+  }
+  .track-title{
+    font-size: 1.2em;
+  }
+  .more{
+    color:grey;
+    font-size: .9em;
+  }
+}
+
+#menu{
+  position: fixed;
+  width: 280px;
+  z-index: 12;
+  padding: 10px;
+  color: black;
+  background-color: white;
+  top: 0px;
+  bottom: 0px;
+  overflow:auto;
+  -webkit-overflow-scrolling: touch;
+  a{
+    color:blueviolet;
+  }
+  .musicLink{
+    display: none;
+    color: blueviolet;
+    font-size: 1.2em;
+    margin-bottom: 20px;
+    .icon-chevron-left{
+      margin-right: 10px;
+    }
+  }
+  .renderers{
+    li{
+      border: 1px solid rgb(180, 172, 172);
+      padding-left: 10px;
+      padding-bottom: 3px;
+      border-bottom: 0px;
+      padding-top: 3px;
+      position:relative;
+      &:last-child{
+        border-bottom: 1px solid rgb(180, 172, 172);
+      }
+      span{
+        margin-right: 14px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: block;
+        white-space: nowrap;
+      }
+    }
+    li.active{
+      background-color: rgb(216, 184, 245);
+      i{
+        float:none;
+        position: absolute;
+        top:5px;
+        right:0px;
+      }
+    }
+  }
+  li{
+    i{
+      float:right;
+      display:none;
+      color:blueviolet;
+    }
+  }
+  li.active{
+    i{
+      display:inline-block;
+    }
+  }
+  .lists{
+    padding-left:10px;
+    h1{
+      text-transform: uppercase;
+      font-size: .9em;
+      margin-top: 10px;
+      font-weight: bolder;
+      font-family: Helvetica;
+      &:first-child{
+        margin-top: 0px;
+      }
+      i{
+        margin-left:10px;
+      }
+    }
+    ul{
+      list-style: none;
+      padding-left:10px;
+      margin-top: 10px;
+      li{
+        font-size: 1em;
+      }
+    }
+    .playlists li{
+      margin-bottom: 10px;
+    }
+  }
+}
+
+.hide{
+  display: none;
+}
+
+.toast-wrap{
+  position: absolute;
+  top: 20%;
+  z-index:13;
+  color: white;
+  left: 50px;
+  display: none;
+  .toast{
+    background-color: rgb(19, 24, 44);
+    border: 1px solid rgb(194, 194, 194);
+    padding: 15px;
+    font-size: 1em;
+    letter-spacing: 1px;
+    display: inline-block;
+  }
+}
+
+.toast-wrap.error{
+  .toast{
+    border: 2px solid rgb(243, 103, 103);
+  }
+}
+
+@media all and (max-width: 500px){
+  .toast-wrap{
+    left:0px;
+    width:100%;
+    text-align: center;
   }
 }
 
@@ -236,6 +428,50 @@ body{
   }
   100%{
     -webkit-transform: translate(-90px,-90px);
+  }
+}
+
+.dropDown{
+  color: rgb(255, 255, 255);
+  font-family: helvetica;
+  border: 1px solid blueviolet;
+  display: inline-block;
+  padding: 2px 10px;
+  font-size: .8em;
+  background-color: rgba(4, 18, 48, 0.71);
+  list-style: none; 
+  .down{
+    margin-left: 10px;
+  }
+  .option{
+    margin-top: 7px;
+    display: none;
+  }
+}
+.dropDown.opened{
+  z-index: 100;
+  position: relative;
+  .option{
+    display: block;
+  }
+}
+
+.info{
+  font-size: 1.7em;
+  padding:20px 10px;
+  position: relative;
+  z-index: 12;
+  text-align: center;
+  background-color: rgba(44, 44, 61, 0.79);
+  ul{
+    list-style: none;
+    margin-top: 20px;
+  }
+  li{
+    font-size: .7em;
+    a, a:active{
+      color: blueviolet;
+    }
   }
 }
 
