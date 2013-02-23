@@ -23,7 +23,8 @@ Wu.Views.categoryList = Wu.Views.list.extend({
   render:function(){
     var self = this,
         docs = this.model.get("docs");
-    if(!this.isCategory || Wu.Cache.Collections.servers.pathSet){
+
+    if(docs && docs.length){
       Wu.Views.list.prototype.render.call(this);
       $("#mask").hide();
       this.trigger("rendered");

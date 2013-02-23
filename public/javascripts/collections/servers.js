@@ -11,7 +11,7 @@ Wu.Collections.servers = Backbone.Collection.extend({
     Socket.on("serverRemoved",function(server){
       self.remove(this.get(server.uuid));
     })
-
+    
     this.on("change:path",function(){
       self.pathSet = true;
     })
