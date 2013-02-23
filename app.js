@@ -16,12 +16,14 @@ var express = require('express'),
     servers = require('./controllers/server_controller'),
     categories = require('./controllers/categories_controller.js'),
     JST = require('./helpers/JST'),
-    mw = require('./mediaWatcher').listen();
+    mw = require('./mediaWatcher').listen(),
+    connect = require('connect');
 
 app.configure(function(){
   app.set('port', process.env.PORT || 3000);
   app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');
+  app.use(connect.compress());
   app.use(express.favicon());
   app.use(express.logger('dev'));
   app.use(express.bodyParser());

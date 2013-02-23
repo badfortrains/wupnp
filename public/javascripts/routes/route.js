@@ -61,9 +61,6 @@ Wu.Routers.Categories = Backbone.Router.extend({
       Wu.Cache.Views.toastMaster.error("Playlist not found");
     }
   },
-  testDir: function(){
-    this.showDir("e91f16b6-f441-4de4-a65d-d1ed420c10e1","0");
-  },
   showDir: function(uuid,dirID){
     if(Wu.Layout.state != 'directory'){
       Wu.Layout.removeSubHeader();

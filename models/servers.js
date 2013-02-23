@@ -42,10 +42,10 @@ var onTracksAdded = function(data){
   //add to db;
   if(data !== 'fail'){
     db.tracks.save(data,{safe:true},function(err){
-      if(err){
-        server_model.emit("error","Error inserting tracks "+err);
+      if(err){     
         console.log("error inserting initial data");
         console.log(err);
+        server_model.emit("error","Error inserting tracks "+err);
       }else{
         //updateFromObjID();
         server_model.emit("tracksInserted");
@@ -64,7 +64,6 @@ var MediaServer = function(addEvent){
 }
 
 MediaServer.prototype.setPath = function(path){
-  console.log("Set path")
   if(path){
     this.path = path
     console.log("get tracks",this.uuid,path)

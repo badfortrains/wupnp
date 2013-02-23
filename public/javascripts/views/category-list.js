@@ -10,7 +10,12 @@ Wu.Views.categoryList = Wu.Views.list.extend({
 
   initialize:function(params){
     Wu.Views.list.prototype.initialize.call(this,params);
-    this.url = params.url || "category/";
+    if(params.url){
+      this.url = params.url
+    }else{
+      this.url = "category/";
+      this.isCategory = true;
+    }
 
     this.listenTo(this.model,"change:docs",this.render);
   },
@@ -18,7 +23,7 @@ Wu.Views.categoryList = Wu.Views.list.extend({
   render:function(){
     var self = this,
         docs = this.model.get("docs");
-    if(docs && docs.length){
+    if(!this.isCategory || Wu.Cache.Collections.servers.pathSet){
       Wu.Views.list.prototype.render.call(this);
       $("#mask").hide();
       this.trigger("rendered");

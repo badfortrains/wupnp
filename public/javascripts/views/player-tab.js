@@ -109,7 +109,6 @@ Wu.Views.playerTab = Backbone.View.extend({
     this.$(".title").html(title)
     .attr("href","/playlist/"+model.get("playlist"));
 
-    
     if(track){
       var parser=new DOMParser();
       var xmlDoc = parser.parseFromString(track.Didl,"text/xml");
