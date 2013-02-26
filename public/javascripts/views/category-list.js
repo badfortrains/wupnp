@@ -18,6 +18,11 @@ Wu.Views.categoryList = Wu.Views.list.extend({
     }
 
     this.listenTo(this.model,"change:docs",this.render);
+    this.listenTo(Wu.Cache.Collections.servers, "add remove", function(){
+      if( !docs || !docs.length){
+        this.render();
+      }
+    })
   },
 
   render:function(){
