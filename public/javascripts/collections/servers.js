@@ -16,6 +16,13 @@ Wu.Collections.servers = Backbone.Collection.extend({
       self.pathSet = true;
     })
 
+    this.on("reset",function(){
+      self.each(function(server){
+        if(server.get('path'))
+          self.pathSet = true;
+      })
+    })
+
     this.pathSet = false;
   }
 });

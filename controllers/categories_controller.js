@@ -6,7 +6,7 @@ module.exports = {
   show: function(req, res){
     var filter = req.query.filter || {}
         ,category = req.params.category;
-
+        
     if(category !== 'Title'){
       Tracks.distinct(category,filter,function(err,docs){
         if(docs){

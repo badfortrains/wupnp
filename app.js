@@ -16,9 +16,13 @@ var express = require('express'),
     servers = require('./controllers/server_controller'),
     categories = require('./controllers/categories_controller.js'),
     JST = require('./helpers/JST'),
-    mw = require('./mediaWatcher').listen(),
+    tracks = require('./models/tracks'),
+    mw = require('./mediaWatcher'),
     connect = require('connect');
 
+    tracks.removeAll(function(){
+      mw.listen();
+    })
 app.configure(function(){
   app.set('port', process.env.PORT || 3000);
   app.set('views', __dirname + '/views');

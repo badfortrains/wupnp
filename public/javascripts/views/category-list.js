@@ -29,7 +29,7 @@ Wu.Views.categoryList = Wu.Views.list.extend({
     var self = this,
         docs = this.model.get("docs");
 
-    if(docs && docs.length){
+    if(!this.isCategory || Wu.Cache.Collections.servers.pathSet){
       Wu.Views.list.prototype.render.call(this);
       $("#mask").hide();
       this.trigger("rendered");
@@ -48,7 +48,7 @@ Wu.Views.categoryList = Wu.Views.list.extend({
     this.stopListening();
   },
   select: function(e){
-    var category = this.model.filter($(e.target).html(),e.target.id);
+    var category = this.model.filter($(e.target).text(),e.target.id);
     if(category)
       Backbone.history.navigate(this.url+category,{trigger:true});
     else

@@ -8,7 +8,11 @@ var Tracks = function(){
 }
 
 Tracks.prototype = db.tracks;
-
+Tracks.prototype.removeAll = function(cb){
+  db.tracks.remove(function(){
+    db.lists.remove(cb);
+  })
+}
 
 var tracks = new Tracks();
 module.exports = tracks;
