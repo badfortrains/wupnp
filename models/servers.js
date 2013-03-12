@@ -102,4 +102,8 @@ Server.prototype.browse = function(uuid,id,cb){
 }
 
 var server_model = new Server();
+
+server_model.on('tracksInserted',function(){
+  server_model.lastUpdated = Date.now();
+})
 module.exports = server_model;
