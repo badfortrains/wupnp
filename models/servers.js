@@ -49,6 +49,8 @@ var onTracksAdded = function(data){
       }else{
         //updateFromObjID();
         server_model.emit("tracksInserted");
+        db.tracks.ensureIndex({Album:1});
+        db.tracks.ensureIndex({Title:1});
         db.tracks.ensureIndex({Artist: 1,Album: 1, Title: 1},function(){
           console.log("tracks inserted");
         });
