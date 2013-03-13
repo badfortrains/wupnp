@@ -29,6 +29,10 @@ Wu = {
       Backbone.history.navigate($(e.target).attr('href'),{trigger:true});
     })
 
+    $(document).on("swipeRight",".category",function(){
+      window.history.back();
+    })
+
     Wu.Layout.init();
     Backbone.history.start({pushState: true});
 

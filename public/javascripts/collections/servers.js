@@ -6,6 +6,8 @@ Wu.Collections.servers = Backbone.Collection.extend({
   initialize:function(){
     var self = this;
     Socket.on("serverAdded",function(server){
+      if(server.path)
+        self.pathSet = true;
       self.add(server);
     })
     Socket.on("serverRemoved",function(server){
