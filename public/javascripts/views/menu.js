@@ -18,6 +18,7 @@ Wu.Views.menu = Backbone.View.extend({
     this.listenTo(Wu.Cache.Models.player,"change:id",this.setActive);
     this.listenTo(Wu.Cache.Models.player,"change:playlist",this.setActive);
     this.listenTo(Wu.Cache.Models.player,"change:TransportState",this.setActive);
+    this.$el.on("click","a",$.proxy(this.hide,this));
   },
   render: function(){
     var self = this;

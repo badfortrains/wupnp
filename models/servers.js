@@ -4,7 +4,7 @@ var mw = require('../mediaWatcher')
     ,EventEmitter = require("events").EventEmitter
     ,servers = {}
     ,KNOWN_PATHS ={ 
-      //"e91f16b6-f441-4de4-a65d-d1ed420c10e1"   : "0$3$2",         //ps3Media Server
+      "e91f16b6-f441-4de4-a65d-d1ed420c10e1"   : "0$2$2",         //ps3Media Server
       "7076436f-6e65-1063-8074-4ce6766160b7" : "1$268435466",   //Linkstation
       "bc4fab65-9f26-3687-bbfc-1fb761347c74" : "2"              //galaxy s2
     }
@@ -47,8 +47,10 @@ var onTracksAdded = function(data){
         console.log(err);
         server_model.emit("error","Error inserting tracks "+err);
       }else{
-        //updateFromObjID();
+        updateFromObjID();
         server_model.emit("tracksInserted");
+        db.tracks.ensureIndex({Album:1});
+        db.tracks.ensureIndex({Title:1});
         db.tracks.ensureIndex({Artist: 1,Album: 1, Title: 1},function(){
           console.log("tracks inserted");
         });
