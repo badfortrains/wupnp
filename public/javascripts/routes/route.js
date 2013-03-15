@@ -72,6 +72,8 @@ Wu.Routers.Categories = Backbone.Router.extend({
     }
     Wu.Layout.menu.trigger("showMusic");
     Wu.Cache.Models.directory.set("uuid",uuid);
-    Wu.Cache.Models.directory.set("id",dirID);
+    Wu.Cache.Models.directory.set({id:dirID},{silent:true});
+    //trigger this ourselves, might be same id, but uuid has changed so is different directory
+    Wu.Cache.Models.directory.trigger("change:id");
   }
 });
