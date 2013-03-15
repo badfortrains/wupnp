@@ -16,7 +16,12 @@ Wu.Views.directories = Backbone.View.extend({
     })
 
     this.listenTo(this.model,"change:id",function(){
-      this.model.fetch();
+      this.model.fetch({
+        error:function(model,xhr){
+          Wu.Cache.Views.toastMaster.error(xhr.responseText);
+          window.history.back();
+        }
+      });
     });
 
     this.listenTo(this.list,"showPopup",this.showPrompt);

@@ -19,7 +19,7 @@ module.exports = {
       if(dir)
         res.send({docs:dir});
       else
-        res.send(500,"Failed to get directory");
+        res.send(404,"Failed to get directory");
     });
   },
   setPath: function(req,res){
