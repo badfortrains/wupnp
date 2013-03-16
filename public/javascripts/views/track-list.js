@@ -3,12 +3,13 @@ Wu.Views.trackList = Backbone.View.extend({
   template: JST['track.list'],
 
   events: {
-    "click li"  : "play"
+    "click li"           : "play"
   },
 
   initialize: function(params){
     this.listenTo(Wu.Cache.Models.player,"change:currentPlayingTrack",this.highlight);
     this.listenTo(this,"inserted",this.highlight);
+    Wu.Mixin.mix(this,Wu.Mixin.swipeAway)
   },
 
   render: function(){
