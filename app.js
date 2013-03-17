@@ -12,6 +12,7 @@ var express = require('express'),
     wu = require('./routes/wu.js'),
     socketRoutes = require('./routes/socket'),
     playlists = require('./controllers/playlist_controller.js'),
+    playlist_tracks = require('./controllers/playlists_tracks_controller.js'),
     renderers = require('./controllers/renderer_controller.js'),
     servers = require('./controllers/server_controller'),
     categories = require('./controllers/categories_controller.js'),
@@ -54,8 +55,9 @@ app.get("/test",wu.index);
 app.get("/api/playlists",playlists.index);
 app.post("/api/playlists",playlists.new);
 app.put("/api/playlists/:id", playlists.add);
-app.get("/api/playlists/:id", playlists.show);
-app.get("/api/playlists/:id/tracks", playlists.showTracks);
+
+app.get("/api/playlists/:id", playlist_tracks.index)
+app.delete("/api/playlists/:id/:track", playlist_tracks.delete)
 
 app.get("/api/renderers", renderers.index);
 app.get("/api/renderers/:id", renderers.show);

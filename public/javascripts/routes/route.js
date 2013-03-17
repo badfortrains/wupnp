@@ -37,17 +37,20 @@ Wu.Routers.Categories = Backbone.Router.extend({
   },
 
   showList: function(id){
-    var playlist = Wu.Cache.Collections.playlists.get(id);
+    var playlist = Wu.Cache.Collections.playlists.get(id),
+        tracks;
     if(playlist){
+      tracks = playlist.get("tracks") || playlist.set('tracks',new Wu.Collections.tracks({id:id})).get("tracks");
       Wu.Layout.state = 'playlist';
       Wu.Layout.menu.trigger("showMusic");
-      playlist.fetch({
+      tracks.fetch({
         success:function(){
           var dropDown = new Wu.Views.playlistDropdown({
             model: playlist
           });
           var view = new Wu.Views.trackList({
-            model:playlist,
+            model: playlist,
+            collection:tracks,
             className: "category"
           });
           Wu.Layout.setSubHeader(dropDown);

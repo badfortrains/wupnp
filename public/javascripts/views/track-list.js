@@ -3,17 +3,19 @@ Wu.Views.trackList = Backbone.View.extend({
   template: JST['track.list'],
 
   events: {
-    "click li"  : "play"
+    "click .track-info"           : "play"
   },
 
   initialize: function(params){
     this.listenTo(Wu.Cache.Models.player,"change:currentPlayingTrack",this.highlight);
     this.listenTo(this,"inserted",this.highlight);
+    this.listenTo(this,"swipeAway",this.delete);
+    Wu.Mixin.mix(this,Wu.Mixin.swipeAway)
   },
 
   render: function(){
     var self = this;
-    this.template({model: this.model},function(err,html){
+    this.template({collection: this.collection},function(err,html){
       self.$el.html(html);
       self.$("li").length && self.$("li")[0].scrollIntoView();
     });
@@ -29,8 +31,23 @@ Wu.Views.trackList = Backbone.View.extend({
     $("#"+id).addClass('active');
   },
   play: function(e){
-    var id = e.currentTarget.id;
-    Wu.Cache.Models.player.playById(id,this.model.get("_id"));
+    if($(e.currentTarget).parent().hasClass("transition")){
+      return;
+    }else{
+      var id = $(e.currentTarget).parent().attr('id');
+      Wu.Cache.Models.player.playById(id,this.model.get("_id"));
+    }
+  },
+  delete:function(id){
+    var track = this.collection.get(id);
+    if(track){
+      track.destroy({
+        error:function(model,xhr){
+          var message = xhr.responseText;
+          Wu.Cache.Views.toastMaster.error(message);
+        }
+      })
+    }
   }
 
 });
