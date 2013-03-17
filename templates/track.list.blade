@@ -1,9 +1,13 @@
-- var docs = model.get('docs');
+- var docs = collection.toJSON();
 
 .track-list
   ul
     foreach docs as item
       li(id=item._id)
-        .track-title=item.Title
-        .more
-          =item.Artist + " - " + item.Album
+        .swipeEl
+          .track-info
+            .track-title=item.Title
+            .more
+              =item.Artist + " - " + item.Album
+          .swipeCover
+            h1 Undo
