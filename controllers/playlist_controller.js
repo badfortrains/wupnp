@@ -46,30 +46,5 @@ module.exports = {
     }else{
       addTracks();
     }
-
-  },
-  show:function(req,res){
-    var id = req.params.id,
-        pl = new Playlists(id),
-        categories = {
-          Artist: 1,
-          Album:  1,
-          Title:  1
-        };
-
-    pl.attributes(function(err,attributes){
-      if(err || !attributes){
-        res.send(500,"error finding playlist")
-        return;
-      }
-      pl.findAt(1,{limit:false, categories:categories},function(err,docs){
-        if(err){
-          res.send(500,"failed to retrieve tracks");
-        }else{
-          attributes.docs = docs;
-          res.send(attributes);
-        }
-      });
-    })
   }
 }

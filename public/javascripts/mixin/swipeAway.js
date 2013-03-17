@@ -33,6 +33,7 @@ Wu.Mixin.swipeAway = {
     this.active = true;
     this.startX = this.position(e);
     this.started = true;
+    this.pos = 0;
   
     if(!this.touchable)
       e.preventDefault();
@@ -42,28 +43,40 @@ Wu.Mixin.swipeAway = {
       var x = this.position(e);
       
       this.pos = Math.min(0,x - this.startX);
-      this.cover.css("-webkit-transform","translate3d("+this.pos+"px,0,0)");
+      if(this.pos < -5)
+        this.cover.css("-webkit-transform","translate3d("+this.pos+"px,0,0)");
     } 
   },
   end: function(){
-    if(this.active && this.pos < 0){
-      this.active = false;
-      this.cover.parent().addClass("transition");
-      this.cover.css("-webkit-transform","translate3d(-"+this.cover.width()+"px,0,0)");
-      
-    }    
+    if(this.active){
+      if(this.pos < -40){
+        this.active = false;
+        this.cover.parent().addClass("transition");
+        this.cover.css("-webkit-transform","translate3d(-"+this.cover.width()+"px,0,0)");
+      }else if(this.pos < -5){
+        this.active = false;
+        this.cover.parent().addClass("transition");
+        this.cover.css("-webkit-transform","translate3d(0,0,0)");
+      }    
+    }
   },
   transitionEnd: function(e){
     if(e.propertyName.indexOf('transform') != -1){
-      $(e.currentTarget).css("opacity",0);
+      if($(e.target).css(e.propertyName) === "translate3d(0px, 0px, 0px)"){
+        $(e.currentTarget).removeClass("transition");
+      }else{
+        $(e.currentTarget).css("opacity",0);        
+      }
     }else if(e.propertyName == 'opacity'){
       $(e.currentTarget).parent().hide();
-      this.view.trigger("swipeAway",$(e.currentTarget).attr('id'));
+      this.view.trigger("swipeAway",$(e.currentTarget).parent().attr('id'));
     }
   },
-  undo:function(){
-    $(e.currentTarget).parent().removeClass("transition")
-    .css("opacity",0);
+  undo:function(e){
+    e.preventDefault();
+    $(e.currentTarget).parent().css("-webkit-transform","translate3d(0,0,0)")
+    .parent().removeClass("transition")
+    .css("opacity",1);
   }
 
 }
