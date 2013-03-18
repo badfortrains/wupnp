@@ -28,6 +28,8 @@ module.exports = {
     pl.remove(filter,function(err){
       if(err){
         res.send(500,"failed to remove track");
+      }else{
+        res.send(200);
       }
     })
   }

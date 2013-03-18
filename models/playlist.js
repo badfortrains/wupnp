@@ -49,6 +49,25 @@ playlist.prototype.find = function(){
   }
   return db.tracks.find.apply(db.tracks,arguments);
 }
+
+playlist.prototype.order = function(cursor,count,callback){
+  var listId = this.id,
+      oldCount = count;
+
+  cursor.forEach(function(err,doc){
+    if(err){
+      callback(err);
+    }else if(doc !== null){
+      ++count;
+      var obj = {};
+      obj['playlist.'+listId.toString()] = count;
+      db.tracks.update({_id:doc._id},{$set : obj })
+    }else{
+      db.lists.update({_id:listId},{$set:{count: count}});
+      callback(null,count-oldCount);
+    }
+  })
+},
 /**
  * add all tracks matching filter to playlist
  * @param  {object}   filter   mongodb query object
@@ -57,27 +76,14 @@ playlist.prototype.find = function(){
  */
 playlist.prototype.add = function(filter,callback){
   assert(typeof(filter) == "object");
-  listId = this.id
   this.getCount(function(err,count){
-    var oldCount = count
     if(err){
       callback(err);
     }else{
-      db.tracks.find(filter).sort({Album:1,TrackNumber:1}).forEach(function(err,doc){
-        if(err){
-          callback(err)
-        }else if(doc !== null){
-          ++count;
-          var obj = {};
-          obj['playlist.'+listId.toString()] = count;
-          db.tracks.update({_id:doc._id},{$set : obj })
-        }else{
-          db.lists.update({_id:listId},{$set:{count: count}});
-          callback(null,count-oldCount);
-        }
-      });
+      var cursor = db.tracks.find(filter).sort({Album:1,TrackNumber:1});
+      this.order(cursor,count,callback);
     }
-  })
+  }.bind(this));
 }
 /**
  * remove all tracks matching filter from playlist
@@ -91,7 +97,11 @@ playlist.prototype.remove = function(filter,callback){
   var obj =  {};
   obj['playlist.'+this.id] = 1;
   db.tracks.update(filter,{$unset : obj }, {multi : true, safe:true},function(err,count){
-    db.lists.update({_id:this.id},{$inc : {count: -count}},{safe:true},callback);
+    var filter = {},
+        sort = {};
+    filter["playlist."+this.id] =  {$exists:1};
+    sort["playlist."+this.id] =  1;
+    this.order(db.tracks.find(filter).sort(sort),0,callback);
   }.bind(this));
     
 
