@@ -29,7 +29,7 @@ module.exports = {
       if(err){
         res.send(500,"failed to remove track");
       }else{
-        res.send(200);
+        res.send(200,{deleted:true});
       }
     })
   }
