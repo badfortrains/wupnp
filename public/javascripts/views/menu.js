@@ -61,6 +61,7 @@ Wu.Views.menu = Backbone.View.extend({
   setRenderer: function(e){
     var uuid = $(e.currentTarget).attr("id");
     Wu.Cache.Models.player.setRenderer(uuid);
+    this.hide();
   },
   hideMusic: function(){
     this.$(".musicLink").hide();

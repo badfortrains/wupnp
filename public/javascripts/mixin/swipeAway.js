@@ -19,6 +19,7 @@ Wu.Mixin.swipeAway = {
     map['webkitTransitionEnd .swipeEl'] = 'transitionEnd';
     map['transitionend .swipeEl'] = 'transitionEnd';
     map["click .swipeEl h1"] = "undo";
+
     return map;
   },
   position: function(e){
@@ -32,7 +33,7 @@ Wu.Mixin.swipeAway = {
 
     this.active = true;
     this.startX = this.position(e);
-    this.started = true;
+    this.started = false;
     this.pos = 0;
   
     if(!this.touchable)
@@ -43,17 +44,19 @@ Wu.Mixin.swipeAway = {
       var x = this.position(e);
       
       this.pos = Math.min(0,x - this.startX);
-      if(this.pos < -5)
+      if(this.pos < -5 || this.started){
         this.cover.css("-webkit-transform","translate3d("+this.pos+"px,0,0)");
+        this.started = true;
+      }
     } 
   },
   end: function(){
-    if(this.active){
+    if(this.active && this.started){
       if(this.pos < -40){
         this.active = false;
         this.cover.parent().addClass("transition");
         this.cover.css("-webkit-transform","translate3d(-"+this.cover.width()+"px,0,0)");
-      }else if(this.pos < -5){
+      }else if(this.pos < 0){
         this.active = false;
         this.cover.parent().addClass("transition");
         this.cover.css("-webkit-transform","translate3d(0,0,0)");
