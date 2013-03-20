@@ -49,7 +49,6 @@ app.get('/', wu.index);
 app.get('/category/:category', wu.index);
 app.get('/playlist/:id', wu.index);
 app.get('/directory/:uuid/:id', wu.index);
-app.get("/test",wu.index);
 
 /* Data routes */
 app.get("/api/playlists",playlists.index);

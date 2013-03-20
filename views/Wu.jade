@@ -8,13 +8,13 @@ html
     meta(name="apple-mobile-web-app-capable",content="yes")  
     meta(name="viewport",content="width=device-width");
     script(src='/javascripts/zepto.min.js')
-    script(src='/javascripts/touch.js')
+    script(src='/javascripts/wu/touch.js')
     script(src='/javascripts/underscore-min.js')
-    script(src='/javascripts/runtime.js')
-    script(src='/javascripts/drag.js')
+    script(src='/javascripts/wu/runtime.js')
+    script(src='/javascripts/wu/drag.js')
     script(src="/socket.io/socket.io.js")
     script(src='/javascripts/backbone-min.js')
-    script(src='/javascripts/app.js')
+    script(src='/javascripts/wu/app.js')
     script(src='/JST.js')
 
     //bootstraped collections
@@ -23,7 +23,7 @@ html
     script!= renderers
 
     //views
-    script(src='/javascripts/views/list.js')
+    script(src='/javascripts/views/base/list.js')
     script(src='/javascripts/views/list-jumper.js')
     script(src='/javascripts/views/category-nav.js')
     script(src='/javascripts/views/category-list.js')
@@ -57,7 +57,7 @@ html
 
     //helpers
     script(src='/javascripts/helpers/helpers.js')
-    script(src='/javascripts/layout.js')
+    script(src='/javascripts/wu/layout.js')
 
     //mixins
     script(src='/javascripts/mixin/_base.js')
