@@ -16,7 +16,7 @@ module.exports = function(grunt) {
         'public/javascripts/collections/*.js',
         'public/javascripts/routes/*.js',
         'public/javascripts/helpers/*.js',
-        'public/javascripts/mixins/*.js'
+        'public/javascripts/mixin/*.js'
         ],
         dest: 'public/build/<%= pkg.name %>.js'
       }	
