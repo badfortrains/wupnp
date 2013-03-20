@@ -3,7 +3,8 @@ Wu.Views.categoryPopup = Backbone.View.extend({
   template: JST['category.popup'],
 
   events: {
-    "click h1.play"               : "playNow",
+    "click h1.play i"             : "playNow",
+    "click h1.play .next"         : "playNext",
     "click h1.add"                : "showAddTo",
     "click h1.new"                : "showCreate",
     "click span.new"              : "showCreate",
@@ -121,12 +122,27 @@ Wu.Views.categoryPopup = Backbone.View.extend({
       return;
     }
 
-    list.set("clearFirst",true);
+    list.set("clearAfter",0);
     this._add(list,function(){
       Socket.emit("playPlaylist",id);
     });
   },
+  playNext:function(){
+    var player = Wu.Cache.Models.player,
+        id = player.get("quickList"),
+        list = this.collection.get(id),
+        currentTrack = player.get('currentPlayingTrack'),
+        currentListId = player.get('playlist'),
+        position = (currentTrack) ? currentTrack.playlist[currentListId] || 0 : 0;
 
+    if(!list){
+      Wu.Cache.Views.toastMaster.error("Must select a media renderer first");
+      return;
+    }
+
+    list.set("clearAfter",position);
+    this._add(list);
+  },
   addToList:function(e){
     var id = $(e.target).attr('listId'),
         list = this.collection.get(id);
@@ -149,7 +165,7 @@ Wu.Views.categoryPopup = Backbone.View.extend({
       }
     });
     list.unset('filter');
-    list.unset('clearFirst');
+    list.unset('clearAfter');
     this.hide();
   }
 

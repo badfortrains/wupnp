@@ -93,7 +93,7 @@ playlist.prototype.add = function(filter,callback){
  */
 playlist.prototype.remove = function(filter,callback){
   assert(typeof(filter) == "object");
-  filter["playlist."+this.id] =  {$exists:1};
+  filter["playlist."+this.id] || (filter["playlist."+this.id] =  {$exists:1})
   var obj =  {};
   obj['playlist.'+this.id] = 1;
   db.tracks.update(filter,{$unset : obj }, {multi : true, safe:true},function(err,count){
@@ -105,6 +105,12 @@ playlist.prototype.remove = function(filter,callback){
   }.bind(this));
     
 
+}
+
+playlist.prototype.removeAfter = function(position,callback){
+  var filter = {};
+  filter['playlist.'+this.id] = {$gt : position};
+  this.remove(filter,callback);
 }
 /**
  * Delete playlist form list db, and remove all tracks
