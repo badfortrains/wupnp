@@ -29,7 +29,7 @@ module.exports = {
     var filter = req.body.filter || {},
         id = req.params.id,
         pl = new Playlists(id),
-        clear = req.body.clearFirst;
+        clearAfter = req.body.clearAfter;
 
     if(typeof(filter._id) === 'string'){
       filter._id = db.bson.ObjectID(filter._id)
@@ -41,8 +41,8 @@ module.exports = {
       })
     };
 
-    if(clear){
-      pl.remove({},addTracks);
+    if(typeof(clearAfter) != 'undefined'){
+      pl.removeAfter(clearAfter,addTracks);
     }else{
       addTracks();
     }
