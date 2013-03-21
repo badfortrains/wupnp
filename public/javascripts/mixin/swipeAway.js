@@ -33,7 +33,6 @@ Wu.Mixin.swipeAway = {
 
     this.active = true;
     this.startX = this.position(e);
-    this.started = false;
     this.pos = 0;
   
     if(!this.touchable)
@@ -53,15 +52,15 @@ Wu.Mixin.swipeAway = {
   end: function(){
     if(this.active && this.started){
       if(this.pos < -40){
-        this.active = false;
         this.cover.parent().addClass("transition");
         this.cover.css("-webkit-transform","translate3d(-"+this.cover.width()+"px,0,0)");
       }else if(this.pos < 0){
-        this.active = false;
         this.cover.parent().addClass("transition");
         this.cover.css("-webkit-transform","translate3d(0,0,0)");
       }    
     }
+    this.active = false;
+    this.started = false;
   },
   transitionEnd: function(e){
     if(e.propertyName.indexOf('transform') != -1){
