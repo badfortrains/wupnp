@@ -3,7 +3,7 @@ var Playlists = require('../models/playlist').playlist,
 
 module.exports = {
   index:function(req,res){
-    var id = req.params.id,
+    var id = parseFloat(req.params.id),
         pl = new Playlists(id),
         categories = {
           Artist: 1,
@@ -13,6 +13,7 @@ module.exports = {
 
     pl.findAt(1,{limit:false, categories:categories},function(err,docs){
       if(err){
+        console.log(err);
         res.send(500,"failed to retrieve tracks");
       }else{
         res.send(docs);
@@ -21,7 +22,7 @@ module.exports = {
   },
   delete:function(req,res){
     var trackId = req.params.track,
-        id = req.params.id,
+        id = parseFloat(req.params.id),
         filter = {_id: db.bson.ObjectID(trackId)},
         pl = new Playlists(id);
 

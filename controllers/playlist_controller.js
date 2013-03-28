@@ -1,5 +1,4 @@
-var Playlists = require('../models/playlist').playlist,
-    db = require('mongojs').connect('test');
+var Playlists = require('../models/playlist').playlist;
 
 module.exports = {
   index: function(req,res){
@@ -13,28 +12,26 @@ module.exports = {
   },
   new: function(req,res){
     var filter = req.body.filter,
-        name = req.body.name,
-        pl = new Playlists(name),
-        id = pl.id;
+        name = req.body.name;
 
-    if(filter){
-      pl.add(filter,function(err,count){
-        res.send({_id:id,added:count});
-      });
-    }else{
-      res.send({_id:id,added:0});
-    }
+        pl = new Playlists(name,function(id){
+          if(filter){
+            pl.add(filter,function(err,count){
+              res.send({_id:id,added:count});
+            });
+          }else{
+            res.send({_id:id,added:0});
+          }
+        });
   },
   add: function(req,res){
     var filter = req.body.filter || {},
-        id = req.params.id,
+        id = parseFloat(req.params.id),
         pl = new Playlists(id),
         clearAfter = req.body.clearAfter;
 
-    if(typeof(filter._id) === 'string'){
-      filter._id = db.bson.ObjectID(filter._id)
-    }
-
+        console.log("add tracks",id);
+        console.log(filter)
     var addTracks  = function(){
       pl.add(filter,function(err,count){
         res.send({err:err,added:count});

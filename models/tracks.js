@@ -1,7 +1,10 @@
-var db = require('mongojs').connect('test', ['tracks','playlist','lists']),
-    assert = require('assert'),
+var db = require('./db'),
     util = require("util"),
     EventEmitter = require("events").EventEmitter;
+
+var Tracks = function(){}
+util.inherits(Tracks,EventEmitter);
+
 
 var updateFromObjID = function(){
   var map = function(){
@@ -32,51 +35,84 @@ var updateFromObjID = function(){
 }
 
 
+Tracks.prototype.insert = function(data,cb){
+  var i = 0,
+      length = data.length,
+      stmt = db.prepare("INSERT INTO tracks VALUES (NULL,?,?,?,?,?,?,?)"),
+      item;
 
-var Tracks = function(){}
-util.inherits(Tracks,EventEmitter);
-Tracks.prototype.insert = function(data){
-  db.tracks.save(data,{safe:true},function(err){
+  for(;i<length;i++){
+    item = data[i];
+    stmt.run(item.TrackNumber,item.Title,item.Artist,item.Album,item.Didl,JSON.stringify(item.Resources),item.oID)
+  }
+
+  stmt.finalize(function(err,docs){
     if(err){     
       console.log("error inserting initial data into db");
       console.log(err);
       this.emit("error","Error inserting tracks "+err);
     }else{
-      updateFromObjID();
+      //updateFromObjID();
       this.lastUpdated = Date.now();
       this.emit("tracksInserted");
-      db.tracks.ensureIndex({Album:1});
-      db.tracks.ensureIndex({Title:1});
-      db.tracks.ensureIndex({Artist: 1,Album: 1, Title: 1},function(){
-        console.log("tracks inserted");
-      });
-    }      
+      console.log("tracks inserted");
+    }     
   }.bind(this));
 }
-Tracks.prototype.removeAll = function(cb){
-  db.tracks.remove(function(){
-    db.lists.remove(cb);
-  })
-}
+
 Tracks.prototype.getCategory = function(category,filter,cb){
+  var WHERE = filterToSQL(filter),
+      statement;
+
   if(category !== 'Title'){
-    db.tracks.distinct(category,filter,function(err,docs){
-      if(docs && !err){
-        cb({err:null,docs:docs.sort()});
-      }else{
-        cb({err:err,docs:null});
-      }
-        
-    })      
-  }else if(!filter.Album){
-    db.tracks.find(filter,{Title:1}).sort({Title:1},function(err,docs){
-        cb({err:err,docs:docs});
-    })   
+    statement = "SELECT DISTINCT "+category+" FROM tracks "+WHERE+" ORDER BY "+category;
   }else{
-    db.tracks.find(filter,{Title:1}).sort({Album:1,TrackNumber:1},function(err,docs){
-        cb({err:err,docs:docs});
-    })   
+    statement = "SELECT Title,_id FROM tracks " + WHERE;
+    if(filter.Album){
+      statement += " ORDER BY Album, TrackNumber" 
+    }else{
+      statement += " ORDER BY Title" 
+    }
   }
+  console.log(statement);
+  db.all(statement,function(err,docs){
+    if(err){
+      cb(err,docs);
+    }else{
+      if(category != "Title"){
+        var results = [];
+        docs.forEach(function(el){
+          results.push(el[category]);
+        })
+        cb(err,results);
+      }else{
+        cb(err,docs);
+      }
+    }
+  });
+}
+
+var filterToSQL = function(filter){
+  var where = "";
+  if(typeof(filter) === 'object' && Object.keys(filter).length > 0){
+    where = "WHERE "
+    for(var column in filter){
+      where += column + "='" + filter[column] + "' AND "; 
+    }
+    where = where.substring(0,where.length - 5);
+  }
+  return where;
+}
+
+
+function readAllRows() {
+    console.log("readAllRows");
+    db.all("SELECT * FROM tracks", function(err, rows) {
+        console.log(err);
+        rows.forEach(function (row) {
+            console.log(row);
+        });
+    });
 }
 
 var tracks = new Tracks();
