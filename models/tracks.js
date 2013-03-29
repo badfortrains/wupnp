@@ -41,6 +41,7 @@ Tracks.prototype.insert = function(data,cb){
       stmt = db.prepare("INSERT INTO tracks VALUES (NULL,?,?,?,?,?,?)"),
       resourceInsert = db.prepare("INSERT INTO resources VALUES (NULL,?,?,?)");
 
+  db.run("BEGIN TRANSACTION");
   data.forEach(function(item){
     stmt.run(item.TrackNumber,item.Title,item.Artist,item.Album,item.Didl,item.oID,function(){
       var lastID = this.lastID;
@@ -62,6 +63,7 @@ Tracks.prototype.insert = function(data,cb){
       console.log("tracks inserted");
     }     
   }.bind(this));
+  db.run("COMMIT")
 }
 
 Tracks.prototype.getCategory = function(category,filter,cb){

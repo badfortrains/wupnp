@@ -2,6 +2,9 @@ var sqlite3 = require('sqlite3').verbose(),
     db = new sqlite3.Database('/tmp/db');
 
 db.serialize(function() {
+  db.run("PRAGMA synchronous = OFF");
+  db.run("PRAGMA journal_mode = MEMORY");
+  
   var TABLE = "CREATE TABLE IF NOT EXISTS tracks (_id INTEGER PRIMARY KEY,TrackNumber INTEGER, Title TEXT, Artist TEXT, Album TEXT, Didl TEXT, oID TEXT)";
   db.run("DROP TABLE IF EXISTS tracks ");
   db.run("DROP TABLE IF EXISTS lists");
