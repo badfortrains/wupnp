@@ -89,10 +89,8 @@ playlist.prototype.remove = function(filter,callback){
   if(typeof(filter) === "object"){
     WHERE = filterToSQL(filter) + " AND lists._id = " + this.id;
   }
-  console.log("DELETE FROM playlist_tracks JOIN tracks ON track_id = _id "+WHERE)
+
   db.run("DELETE FROM playlist_tracks JOIN tracks ON track_id = _id "+WHERE,function(err){
-    console.log("deleted");
-    console.log(err);
     var stmt = db.prepare("SELECT track_id FROM playlist_tracks WHERE list_id = ? ORDER BY position",this.id);
     this.order(stmt,0,callback);
   }.bind(this));  
@@ -101,8 +99,7 @@ playlist.prototype.remove = function(filter,callback){
 playlist.prototype.removeAfter = function(position,callback){
   var listId = this.id;
   db.run("DELETE FROM playlist_tracks WHERE list_id = ? AND position > ?",listId,position,function(err){
-    console.log('HERERADASDASDASD');
-    db.run("UPDATE lists SET count = count + ? WHERE _id = ?",this.changes,listId,callback);
+    db.run("UPDATE lists SET count = count - ? WHERE _id = ?",this.changes,listId,callback);
   })
 }
 /**
@@ -169,10 +166,18 @@ playlist.prototype.findAt = function(position,settings,cb){
 
   var stmt = "SELECT "+options.categories+" FROM tracks JOIN playlist_tracks ON (track_id = _id) WHERE playlist_tracks.list_id = ? AND playlist_tracks.position > ? ORDER BY playlist_tracks.position";
   stmt += options.limit ? " LIMIT "+options.limit : "";
-  console.log(stmt);
-  console.log(this.id);
-  console.log(typeof(this.id))
   db.all(stmt,this.id,position,cb);
+}
+
+playlist.prototype.resourcesAt = function(position,cb){
+  var find = "SELECT Uri,ProtocolInfo FROM playlist_tracks join resources ON (playlist_tracks.track_id = resources.track_id) WHERE position = ? AND list_id = ?";
+  db.all(find,position,this.id,function(err,docs){
+    if(err || !docs){
+      cb(err,docs);
+    }else{ 
+      cb(err,{Resources:docs});
+    }
+  })
 }
 
 playlist.prototype.findList = function(filter,categories,cb){

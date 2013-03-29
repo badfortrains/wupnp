@@ -15,7 +15,7 @@ var mw = require('../mediaWatcher')
 var onTracksAdded = function(data){
   //add to db;
   if(data){
-    console.log('start insert')
+    console.log('Inserting tracks')
     Tracks.insert(data);
   }else{
     console.log("Error getting tracks from server")

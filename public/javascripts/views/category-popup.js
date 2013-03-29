@@ -133,7 +133,7 @@ Wu.Views.categoryPopup = Backbone.View.extend({
         list = this.collection.get(id),
         currentTrack = player.get('currentPlayingTrack'),
         currentListId = player.get('playlist'),
-        position = (currentTrack) ? currentTrack.playlist[currentListId] || 0 : 0;
+        position = (currentTrack) ? currentTrack.position : 0;
 
     if(!list){
       Wu.Cache.Views.toastMaster.error("Must select a media renderer first");

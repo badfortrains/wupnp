@@ -38,13 +38,17 @@ var updateFromObjID = function(){
 Tracks.prototype.insert = function(data,cb){
   var i = 0,
       length = data.length,
-      stmt = db.prepare("INSERT INTO tracks VALUES (NULL,?,?,?,?,?,?,?)"),
-      item;
+      stmt = db.prepare("INSERT INTO tracks VALUES (NULL,?,?,?,?,?,?)"),
+      resourceInsert = db.prepare("INSERT INTO resources VALUES (NULL,?,?,?)");
 
-  for(;i<length;i++){
-    item = data[i];
-    stmt.run(item.TrackNumber,item.Title,item.Artist,item.Album,item.Didl,JSON.stringify(item.Resources),item.oID)
-  }
+  data.forEach(function(item){
+    stmt.run(item.TrackNumber,item.Title,item.Artist,item.Album,item.Didl,item.oID,function(){
+      var lastID = this.lastID;
+      item.Resources && item.Resources.forEach(function(resource){
+        resourceInsert.run(resource.Uri,resource.ProtocolInfo,lastID);
+      });
+    })
+  })
 
   stmt.finalize(function(err,docs){
     if(err){     
@@ -74,7 +78,7 @@ Tracks.prototype.getCategory = function(category,filter,cb){
       statement += " ORDER BY Title" 
     }
   }
-  console.log(statement);
+
   db.all(statement,function(err,docs){
     if(err){
       cb(err,docs);
@@ -92,6 +96,10 @@ Tracks.prototype.getCategory = function(category,filter,cb){
   });
 }
 
+Tracks.prototype.findByUri = function(uri,cb){
+  db.get("SELECT * FROM tracks JOIN resources ON track_id = _id WHERE Uri = ?",uri,cb)
+}
+
 var filterToSQL = function(filter){
   var where = "";
   if(typeof(filter) === 'object' && Object.keys(filter).length > 0){
@@ -102,17 +110,6 @@ var filterToSQL = function(filter){
     where = where.substring(0,where.length - 5);
   }
   return where;
-}
-
-
-function readAllRows() {
-    console.log("readAllRows");
-    db.all("SELECT * FROM tracks", function(err, rows) {
-        console.log(err);
-        rows.forEach(function (row) {
-            console.log(row);
-        });
-    });
 }
 
 var tracks = new Tracks();

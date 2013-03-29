@@ -20,9 +20,7 @@ MediaWatcher.prototype._respond = function (data){
   this.watchEvents(this._respond.bind(this));
 };
 MediaWatcher.prototype.openAndPlay = function(trackItem,callback){
-  console.log(trackItem.Resources)
-  trackItem.Resources = JSON.parse(trackItem.Resources);
-  console.log(trackItem.Resources)
+
   var self = this;
   this.open(function(resO){
     console.log("Result of open",resO);

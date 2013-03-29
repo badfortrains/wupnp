@@ -30,8 +30,6 @@ module.exports = {
         pl = new Playlists(id),
         clearAfter = req.body.clearAfter;
 
-        console.log("add tracks",id);
-        console.log(filter)
     var addTracks  = function(){
       pl.add(filter,function(err,count){
         res.send({err:err,added:count});

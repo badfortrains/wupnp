@@ -34,8 +34,8 @@ Wu.Views.trackList = Backbone.View.extend({
     if($(e.currentTarget).parent().hasClass("transition")){
       return;
     }else{
-      var id = $(e.currentTarget).parent().parent().attr('id');
-      Wu.Cache.Models.player.playById(id,this.model.get("_id"));
+      var position = $(e.currentTarget).parent().parent().attr('position');
+      Wu.Cache.Models.player.playByPosition(position,this.model.get("_id"));
     }
   },
   delete:function(id){

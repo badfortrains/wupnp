@@ -85,12 +85,12 @@ exports.onConnect = function(socket) {
     console.log("POSITION",position)
     doCommand('setPosition',position);
   })
-  socket.on('playById',function(id,playlistId){
+  socket.on('playByPosition',function(position,playlistId){
     getRenderer(function(renderer){
       if(playlistId){
         renderer.setPlaylist(playlistId);
       }
-      renderer.playById(id);
+      renderer.playAt(position);
     })
   })
 };

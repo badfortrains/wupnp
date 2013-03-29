@@ -8,14 +8,17 @@ module.exports = {
         categories = {
           Artist: 1,
           Album:  1,
-          Title:  1
+          Title:  1,
+          _id: 1,
+          position: 1
         };
 
-    pl.findAt(1,{limit:false, categories:categories},function(err,docs){
+    pl.findAt(0,{limit:false, categories:categories},function(err,docs){
       if(err){
         console.log(err);
         res.send(500,"failed to retrieve tracks");
       }else{
+        console.log(docs);
         res.send(docs);
       }
     });
