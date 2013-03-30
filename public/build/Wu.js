@@ -1382,7 +1382,7 @@ function(e, t) {
         list = this.collection.get(id),
         currentTrack = player.get('currentPlayingTrack'),
         currentListId = player.get('playlist'),
-        position = (currentTrack) ? currentTrack.playlist[currentListId] || 0 : 0;
+        position = (currentTrack) ? currentTrack.position : 0;
 
     if(!list){
       Wu.Cache.Views.toastMaster.error("Must select a media renderer first");
@@ -1945,8 +1945,8 @@ function(e, t) {
     if($(e.currentTarget).parent().hasClass("transition")){
       return;
     }else{
-      var id = $(e.currentTarget).parent().parent().attr('id');
-      Wu.Cache.Models.player.playById(id,this.model.get("_id"));
+      var position = $(e.currentTarget).parent().parent().attr('position');
+      Wu.Cache.Models.player.playByPosition(position,this.model.get("_id"));
     }
   },
   delete:function(id){
@@ -2065,8 +2065,8 @@ function(e, t) {
       }
     });
   },
-  playById: function(id,playlistId){
-    Socket.emit("playById",id,playlistId);
+  playByPosition: function(id,playlistId){
+    Socket.emit("playByPosition",id,playlistId);
   },
   setRenderer: function(uuid){
     Socket.emit("setRenderer",uuid);
@@ -2087,7 +2087,7 @@ function(e, t) {
 
 });;Wu.Models.tracks = Backbone.Model.extend({
 
-  idAttribute: "_id",
+  idAttribute: "position",
 
 });;Wu.Collections.playlists = Backbone.Collection.extend({
 

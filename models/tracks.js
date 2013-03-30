@@ -7,31 +7,14 @@ util.inherits(Tracks,EventEmitter);
 
 
 var updateFromObjID = function(){
-  var map = function(){
-    emit(this.Album,this.Artist);
-  }
-  var reduce = function(k,vals){
-    return vals[0];
-  }
-  db.tracks.mapReduce(map,reduce,{out:{inline:1}},function(err,data){
-    if(data && !err){
-      data.forEach(function(album){
-        db.tracks.find({Album:album._id,Artist:album.value},{_id:1,oID:1}).sort({oID:1}).toArray(function(err,data){
-          if(err){
-            console.log("error getting sorted albums")
-            console.log(err);
-          }else{
-            data.forEach(function(entry,i){
-              db.tracks.update({_id:entry._id},{$set:{TrackNumber:i+1}});
-            });
-          }
-        });
-      });
-    }else{
-      console.log(err);
-      console.log("Error getting artists");
-    }
-  });
+  var getAlbum = db.prepare("SELECT _id FROM tracks WHERE Artist = ? AND Album = ? ORDER BY oID"),
+      updateTrack = db.prepare("UPDATE tracks SET TrackNumber = ? WHERE _id = ?");
+  db.each("SELECT Artist,Album FROM tracks GROUP BY Album",function(err,group){
+    var trackNumber = 1;
+    getAlbum.each(group.Artist,group.Album,function(err,doc){
+      updateTrack.run(trackNumber++,doc._id);
+    });
+  })
 }
 
 
@@ -57,7 +40,7 @@ Tracks.prototype.insert = function(data,cb){
       console.log(err);
       this.emit("error","Error inserting tracks "+err);
     }else{
-      //updateFromObjID();
+      updateFromObjID();
       this.lastUpdated = Date.now();
       this.emit("tracksInserted");
       console.log("tracks inserted");
