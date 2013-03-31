@@ -21,7 +21,7 @@ var updateFromObjID = function(){
 Tracks.prototype.insert = function(data,cb){
   var i = 0,
       length = data.length,
-      stmt = db.prepare("INSERT INTO tracks VALUES (NULL,?,?,?,?,?,?)"),
+      stmt = db.prepare("INSERT OR IGNORE INTO tracks VALUES (NULL,?,?,?,?,?,?)"),
       resourceInsert = db.prepare("INSERT INTO resources VALUES (NULL,?,?,?)");
 
   db.run("BEGIN TRANSACTION");

@@ -4,8 +4,8 @@ var sqlite3 = require('sqlite3').verbose(),
 db.serialize(function() {
   db.run("PRAGMA synchronous = OFF");
   db.run("PRAGMA journal_mode = MEMORY");
-  
-  var TABLE = "CREATE TABLE IF NOT EXISTS tracks (_id INTEGER PRIMARY KEY,TrackNumber INTEGER, Title TEXT, Artist TEXT, Album TEXT, Didl TEXT, oID TEXT)";
+
+  var TABLE = "CREATE TABLE IF NOT EXISTS tracks (_id INTEGER PRIMARY KEY,TrackNumber INTEGER, Title TEXT, Artist TEXT, Album TEXT, Didl TEXT, oID TEXT UNIQUE)";
   db.run("DROP TABLE IF EXISTS tracks ");
   db.run("DROP TABLE IF EXISTS lists");
   db.run("DROP TABLE IF EXISTS playlist_tracks");
