@@ -24,14 +24,13 @@ Wu.Views.directoryMenu = Backbone.View.extend({
   },
 
   changeServer: function(){
-    var uuid = this.model.get("uuid"),
-        status;
+    var uuid = this.model.get("uuid");
     this.server = Wu.Cache.Collections.servers.get(uuid);
     this.updateButtons();
   },
 
   updateButtons: function(){
-    status = this.server && this.server.get("status");
+    var status = this.server && this.server.get("status");
     if(!status){
       this.$el.hide();
     }else if(status === 'loading'){
