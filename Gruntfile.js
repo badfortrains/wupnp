@@ -1,3 +1,5 @@
+var JST = require('./helpers/JST'),
+    fs = require('fs');
 module.exports = function(grunt) {
 
   // Project configuration.
@@ -9,6 +11,7 @@ module.exports = function(grunt) {
       },
       dist: {
         src: [
+        'public/javascripts/jst/*.js',
         'public/javascripts/wu/*.js',
         'public/javascripts/views/base/*.js',
         'public/javascripts/views/*.js',
@@ -29,12 +32,27 @@ module.exports = function(grunt) {
     }
   });
 
+  grunt.registerTask('build-jst','compile templates',function(){
+    var done = this.async();
+    JST.render(function(result){
+      var fileName = 'public/javascripts/jst/jst.js';
+      fs.writeFile(fileName,result,function(err){
+        if(err){
+          throw err;
+        }else{
+          console.log('File "'+fileName+'" created.');
+          done();
+        }
+      })
+    })
+  });
+
   grunt.loadNpmTasks('grunt-contrib-concat');
 
   // Load the plugin that provides the "uglify" task.
   grunt.loadNpmTasks('grunt-contrib-uglify');
 
   // Default task(s).
-  grunt.registerTask('default', ['concat','uglify']);
+  grunt.registerTask('default', ['build-jst','concat','uglify']);
 
 };
