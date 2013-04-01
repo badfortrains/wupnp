@@ -18,18 +18,21 @@ Wu.Views.categoryList = Wu.Views.list.extend({
     }
 
     this.listenTo(this.model,"change:docs",this.render);
-    this.listenTo(Wu.Cache.Collections.servers, "add remove", function(){
-      if(this.isCategory && !Wu.Cache.Collections.servers.pathSet){
-        this.render();
-      }
-    })
+    if(this.isCategory){
+      this.listenTo(Wu.Cache.Collections.servers, "add remove", function(){
+        if(this.isCategory && !Wu.Cache.Collections.servers.tracksInserted){
+          this.render();
+        }
+      })
+      this.listenTo(Wu.Cache.Collections.servers, "change:tracksInserted",this.render);
+    }
   },
 
   render:function(){
     var self = this,
         docs = this.model.get("docs");
 
-    if(!this.isCategory || Wu.Cache.Collections.servers.pathSet){
+    if(!this.isCategory || Wu.Cache.Collections.servers.tracksInserted){
       Wu.Views.list.prototype.render.call(this);
       $("#mask").hide();
       this.trigger("rendered");

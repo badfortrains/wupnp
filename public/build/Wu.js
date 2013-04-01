@@ -1098,20 +1098,32 @@ function(e, t) {
       });
       this.$el.on("click",".jumper",$.proxy(this.jumper.show,this.jumper));
     }
+    if(params && params.loader){
+      var self =this;
+      JST['loader']({},function(err,html){
+        self.loaderHTML = html;
+      })
+      this.listenTo(this.model,"request",function(){
+        this.$(".loader").show();
+        $("#mask").show();
+      });
+    }
   },
 
   render: function(){
     var self = this;
     this.template({model: this.model,jumper:this.jumper},function(err,html){
+      $("#mask").hide();
       self.$el.html(html);
       self.jumper && self.jumper.render();
-
+      self.loaderHTML && self.$el.append(self.loaderHTML);
       var topEl = self.$(".title")[0] || self.$("li")[0];
       topEl && topEl.scrollIntoView();
     });
     return this;
   },
   unrender:function(){
+    this.stopListening();
     this.jumper && this.jumper.unrender();
   }
 
@@ -1183,18 +1195,21 @@ function(e, t) {
     }
 
     this.listenTo(this.model,"change:docs",this.render);
-    this.listenTo(Wu.Cache.Collections.servers, "add remove", function(){
-      if(this.isCategory && !Wu.Cache.Collections.servers.pathSet){
-        this.render();
-      }
-    })
+    if(this.isCategory){
+      this.listenTo(Wu.Cache.Collections.servers, "add remove", function(){
+        if(this.isCategory && !Wu.Cache.Collections.servers.tracksInserted){
+          this.render();
+        }
+      })
+      this.listenTo(Wu.Cache.Collections.servers, "change:tracksInserted",this.render);
+    }
   },
 
   render:function(){
     var self = this,
         docs = this.model.get("docs");
 
-    if(!this.isCategory || Wu.Cache.Collections.servers.pathSet){
+    if(!this.isCategory || Wu.Cache.Collections.servers.tracksInserted){
       Wu.Views.list.prototype.render.call(this);
       $("#mask").hide();
       this.trigger("rendered");
@@ -1429,9 +1444,10 @@ function(e, t) {
   initialize: function(){
     this.list =  new Wu.Views.categoryList({
       model: this.model,
-      className: 'category',
+      className: 'category directory',
       url:"directory/",
       noJumper:true,
+      loader:true,
       parent: this
     })
 
@@ -1487,6 +1503,65 @@ function(e, t) {
     }
   }
 
+});;Wu.Views.directoryMenu = Backbone.View.extend({
+
+  template: JST['server.menu'],
+
+  events: {
+    "click .refresh"  : "reloadTracks"
+  },
+
+  initialize: function(){
+    this.changeServer();
+    this.listenTo(this.model,"change:uuid",this.changeServer);
+    this.listenTo(Wu.Cache.Collections.servers,"change:status",this.updateButtons);
+  },
+
+  render: function(){
+    var self = this;
+    this.template({},function(err,html){
+      self.$el.html(html);
+    });
+    return this;
+  },
+  unrender:function(){
+    this.stopListening();
+  },
+
+  changeServer: function(){
+    var uuid = this.model.get("uuid"),
+        status;
+    this.server = Wu.Cache.Collections.servers.get(uuid);
+    this.updateButtons();
+  },
+
+  updateButtons: function(){
+    status = this.server && this.server.get("status");
+    if(!status){
+      this.$el.hide();
+    }else if(status === 'loading'){
+      this.$el.show();
+      this.$(".refresh").addClass("loading");
+    }else if(status === 'inserted'){
+      this.$el.show();
+      this.$(".refresh").removeClass("loading");
+    }
+  },
+
+  reloadTracks: function(){
+    if(this.server){
+      var name = this.server.get('name');
+      this.server.save({},{
+        success: function(){
+          Wu.Cache.Views.toastMaster.message('Refreshing track from '+name);
+          
+        },
+        error: function(xhr){
+          Wu.Cache.Views.toastMaster.error(xhr.responseText);
+        }
+      })
+    };
+  }
 });;Wu.Views.header = Backbone.View.extend({
 
   template: JST['header'],
@@ -1593,6 +1668,7 @@ function(e, t) {
     this.listenTo(Wu.Cache.Models.player,"change:id",this.setActive);
     this.listenTo(Wu.Cache.Models.player,"change:playlist",this.setActive);
     this.listenTo(Wu.Cache.Models.player,"change:TransportState",this.setActive);
+    this.listenTo(Wu.Cache.Collections.servers,"change:status",this.setStatus);
     this.$el.on("click","a",$.proxy(this.hide,this));
   },
   render: function(){
@@ -1650,6 +1726,9 @@ function(e, t) {
     var category = Wu.Cache.Models.category.get("id") || "Artist";
     this.hide();
     Backbone.history.navigate("/category/"+category,{trigger:true});
+  },
+  setStatus: function(model,value){
+    $("#ms"+model.id).removeClass('loading').addClass(value);
   },
   setActive:function(){
     var renderer = Wu.Cache.Models.player.id,
@@ -2119,29 +2198,39 @@ function(e, t) {
   model: Wu.Models.server,
   url: '/api/servers',
 
+  setTracks: function(value){
+    if(this.tracksInserted != value){
+      this.tracksInserted = value;
+      this.trigger("change:tracksInserted");
+    }
+  },
+
   initialize:function(){
     var self = this;
     Socket.on("serverAdded",function(server){
-      if(server.path)
-        self.pathSet = true;
+      if(server.status === 'inserted')
+        self.setTracks(true);
       self.add(server);
     })
     Socket.on("serverRemoved",function(server){
       self.remove(this.get(server.uuid));
     })
-    
-    this.on("change:path",function(){
-      self.pathSet = true;
-    })
 
     this.on("reset",function(){
       self.each(function(server){
-        if(server.get('path'))
-          self.pathSet = true;
+        if(server.get('status') === 'inserted')
+          self.setTracks(true);
       })
     })
 
-    this.pathSet = false;
+    Socket.on("tracksInserted",function(uuid){
+      console.log("tracksInserted",uuid )
+      var server = self.get(uuid);
+      server && server.set("status","inserted"); 
+      self.setTracks(true);
+    })
+
+    this.hasTracks = false;
   }
 });;Wu.Collections.tracks = Backbone.Collection.extend({
   model: Wu.Models.tracks,
@@ -2157,8 +2246,7 @@ function(e, t) {
     ''                    : 'index',
     'category/:id'        : 'show',
     'playlist/:id'        : 'showList',
-    'directory/:uuid/:id' : 'showDir',
-    'test'                : 'testDir'
+    'directory/:uuid/:id' : 'showDir'
   },
 
   index: function(){
@@ -2219,19 +2307,27 @@ function(e, t) {
     }
   },
   showDir: function(uuid,dirID){
+    var oldID = Wu.Cache.Models.directory.get("uuid");
     if(Wu.Layout.state != 'directory'){
-      Wu.Layout.removeSubHeader();
-      var view = new Wu.Views.directories({
-        model:Wu.Cache.Models.directory,
+      var nav = new Wu.Views.directoryMenu({
+        model: Wu.Cache.Models.directory
       });
+      var view = new Wu.Views.directories({
+        model:Wu.Cache.Models.directory
+      });
+      Wu.Layout.setSubHeader(nav);
       Wu.Layout.setPage(view);
       Wu.Layout.state = 'directory';
     }
     Wu.Layout.menu.trigger("showMusic");
     Wu.Cache.Models.directory.set("uuid",uuid);
-    Wu.Cache.Models.directory.set({id:dirID},{silent:true});
-    //trigger this ourselves, might be same id, but uuid has changed so is different directory
-    Wu.Cache.Models.directory.trigger("change:id");
+    if(oldID != uuid){
+      Wu.Cache.Models.directory.set({id:dirID},{silent:true});
+      //trigger this ourselves, might be same id, but uuid has changed so is different directory
+      Wu.Cache.Models.directory.trigger("change:id");
+    }else{
+      Wu.Cache.Models.directory.set({id:dirID});
+    }
   }
 });;(function() {
     var lastTime = 0;

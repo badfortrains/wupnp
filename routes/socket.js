@@ -13,8 +13,8 @@ exports.registerEmits = function(socketIO){
   Renderers.on("stateChange",function(uuid,event){
     socketIO.sockets.in(uuid).emit("stateChange",event);
   })
-  Tracks.on("tracksInserted",function(){
-    socketIO.sockets.emit("tracksInserted",event);
+  Tracks.on("tracksInserted",function(uuid){
+    socketIO.sockets.emit("tracksInserted",uuid);
   })
   Servers.on("serverAdded",function(server){
     socketIO.sockets.emit("serverAdded",server);

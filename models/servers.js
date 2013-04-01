@@ -16,7 +16,9 @@ var onTracksAdded = function(data){
   //add to db;
   if(data){
     console.log('Inserting tracks')
-    Tracks.insert(data);
+    Tracks.insert(data,this.uuid,function(){
+      this.status = "inserted"
+    }.bind(this));
   }else{
     console.log("Error getting tracks from server")
   }
@@ -32,7 +34,8 @@ MediaServer.prototype.setPath = function(path){
   if(path){
     this.path = path
     console.log("get tracks",this.uuid,path)
-    mw.getTracks(onTracksAdded,this.uuid,path);
+    this.status = "loading"
+    mw.getTracks(onTracksAdded.bind(this),this.uuid,path);
   }
 }
 

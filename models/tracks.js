@@ -18,7 +18,7 @@ var updateFromObjID = function(){
 }
 
 
-Tracks.prototype.insert = function(data,cb){
+Tracks.prototype.insert = function(data,uuid,cb){
   var i = 0,
       length = data.length,
       stmt = db.prepare("INSERT OR IGNORE INTO tracks VALUES (NULL,?,?,?,?,?,?)"),
@@ -42,7 +42,8 @@ Tracks.prototype.insert = function(data,cb){
     }else{
       updateFromObjID();
       this.lastUpdated = Date.now();
-      this.emit("tracksInserted");
+      this.emit("tracksInserted",uuid);
+      typeof(cb) === "function" && cb();
       console.log("tracks inserted");
     }     
   }.bind(this));
