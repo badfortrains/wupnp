@@ -41,6 +41,7 @@ rendy.prototype = {
           typeof(cb) === 'function' && cb(err);
         });
       }else{
+        self.position = 1;
         self.setState({name:"currentPlayingTrack",vale:{}});
       }     
     })
