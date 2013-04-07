@@ -15,8 +15,8 @@ module.exports = {
       res.set('ETag',etag);
     }
 
-    Tracks.getCategory(category,filter,function(results){
-      res.send(results);
+    Tracks.getCategory(category,filter,function(err,docs){
+      res.send({docs:docs});
     }.bind(this));
   }
 }

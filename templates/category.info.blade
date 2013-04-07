@@ -5,8 +5,13 @@
     ul.playlists
       -servers.each(function(item){
         -var id = item.id
-        li(id=id)
+        -var status = item.get("status")
+        li(id=id,class=status)
           a(href="/directory/"+id+"/0")
             =item.get("name")
+          .loading
+            | [ loading
+            i.icon-refresh.icon-spin
+            | ]
       -})
 -}

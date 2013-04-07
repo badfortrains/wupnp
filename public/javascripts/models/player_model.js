@@ -22,8 +22,8 @@ Wu.Models.player = Backbone.Model.extend({
       }
     });
   },
-  playById: function(id,playlistId){
-    Socket.emit("playById",id,playlistId);
+  playByPosition: function(id,playlistId){
+    Socket.emit("playByPosition",id,playlistId);
   },
   setRenderer: function(uuid){
     Socket.emit("setRenderer",uuid);

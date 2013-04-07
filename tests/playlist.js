@@ -1,3 +1,4 @@
+/*
 var db = require('mongojs').connect('test', ['tracks','playlist','lists']),
     assert = require('assert'),
     playlist = require('../models/playlist').playlist,
@@ -95,3 +96,4 @@ module.exports = {
     });
   }
 }
+*/

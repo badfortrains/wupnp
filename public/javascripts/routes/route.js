@@ -3,8 +3,7 @@ Wu.Routers.Categories = Backbone.Router.extend({
     ''                    : 'index',
     'category/:id'        : 'show',
     'playlist/:id'        : 'showList',
-    'directory/:uuid/:id' : 'showDir',
-    'test'                : 'testDir'
+    'directory/:uuid/:id' : 'showDir'
   },
 
   index: function(){
@@ -65,18 +64,26 @@ Wu.Routers.Categories = Backbone.Router.extend({
     }
   },
   showDir: function(uuid,dirID){
+    var oldID = Wu.Cache.Models.directory.get("uuid");
     if(Wu.Layout.state != 'directory'){
-      Wu.Layout.removeSubHeader();
-      var view = new Wu.Views.directories({
-        model:Wu.Cache.Models.directory,
+      var nav = new Wu.Views.directoryMenu({
+        model: Wu.Cache.Models.directory
       });
+      var view = new Wu.Views.directories({
+        model:Wu.Cache.Models.directory
+      });
+      Wu.Layout.setSubHeader(nav);
       Wu.Layout.setPage(view);
       Wu.Layout.state = 'directory';
     }
     Wu.Layout.menu.trigger("showMusic");
     Wu.Cache.Models.directory.set("uuid",uuid);
-    Wu.Cache.Models.directory.set({id:dirID},{silent:true});
-    //trigger this ourselves, might be same id, but uuid has changed so is different directory
-    Wu.Cache.Models.directory.trigger("change:id");
+    if(oldID != uuid){
+      Wu.Cache.Models.directory.set({id:dirID},{silent:true});
+      //trigger this ourselves, might be same id, but uuid has changed so is different directory
+      Wu.Cache.Models.directory.trigger("change:id");
+    }else{
+      Wu.Cache.Models.directory.set({id:dirID});
+    }
   }
 });
