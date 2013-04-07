@@ -19,6 +19,7 @@ var express = require('express'),
     JST = require('./helpers/JST'),
     tracks = require('./models/tracks'),
     mw = require('./mediaWatcher'),
+    mwb = require('./mediaWatcherWeb')
     connect = require('connect');
 
     //tracks.removeAll(function(){
@@ -44,6 +45,8 @@ app.configure('development', function(){
   app.use(express.errorHandler());
 });
 
+/*Renderer*/
+app.get('/renderer', wu.renderer);
 /*Backbone routes*/
 app.get('/', wu.index);
 app.get('/category/:category', wu.index);
@@ -74,8 +77,9 @@ app.get('/JST.js', function(req,res){
   })
 });
 /**********/
-socketRoutes.registerEmits(io);
-io.sockets.on('connection', socketRoutes.onConnect);
+socketRoutes.registerEmits(io.of('/controller'));
+io.of('/controller').on('connection', socketRoutes.onConnect);
+io.of('/renderer').on('connection', mwb.onConnect);
 
 server.listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));

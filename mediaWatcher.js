@@ -29,11 +29,45 @@ MediaWatcher.prototype.openAndPlay = function(trackItem,callback){
       return callback({res: resP});
     });
   },trackItem);
+};
+
+MediaWatcher.prototype.setPosition = function(uuid,position){
+  var hours = Math.floor(position / 3600000),
+      minutes,
+      seconds,
+      target;
+
+  position -= hours * 3600000;
+  minutes = Math.floor(position / 60000);
+  position -= minutes * 60000;
+  seconds = Math.floor(position / 1000);
+
+  hours = (hours < 10) ? "0"+hours : hours;
+  minutes = (minutes < 10) ? "0"+minutes : minutes;
+  seconds = (seconds < 10) ? "0"+seconds : seconds;
+
+  target = hours + ":" + minutes + ":" + seconds;
+  this.setRenderer(this.uuid);
+  this.seek(function(){},target);
 }
+
+MediaWatcher.prototype.getTrackPosition = function(uuid){
+  var self = this;
+  console.log('getposition');
+  this.setRenderer(uuid);
+  this.getPosition(function(result){
+    result.uuid = uuid;
+    console.log('gotposition',result);
+    self.emit("gotPosition",result);
+  })
+}
+
 MediaWatcher.prototype.listen = function(){
   this.startUpnp(function(){});
   this.watchEvents(this._respond.bind(this));
 }
+
+
 
 var mw = new MediaWatcher();
 EventEmitter.call(mw);

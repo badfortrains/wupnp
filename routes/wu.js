@@ -24,3 +24,7 @@ exports.index = function(req, res){
     });
   });
 };
+
+exports.renderer = function(req,res){
+  res.render("Wu-renderer",{title: "renderer"})
+}

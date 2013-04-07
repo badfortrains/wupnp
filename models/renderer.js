@@ -1,4 +1,5 @@
 var mw = require('../mediaWatcher'),
+    mwb = require('../mediaWatcherWeb').mwb,
     Playlist = require("./playlist").playlist,
     Tracks = require("./tracks"),
     socketIO = require('socket.io'),
@@ -6,17 +7,19 @@ var mw = require('../mediaWatcher'),
     EventEmitter = require("events").EventEmitter;
 
 
-var rendy = function(name,uuid){
+var rendy = function(name,uuid,type){
   var self = this;
   this.position = 1;
   this.uuid = uuid;
   this.name = name;
   this.state = {};
+  this.mw = (type === "WebRenderer") ? mwb : mw;
   this.playlist = new Playlist(name +" quickList",uuid,function(id){
     self.id = id;
     self.state.quickList = id;
     self.state.playlist = id;
   })
+
   setInterval(this._getPosition.bind(this),1000);
 } 
 rendy.prototype = {
@@ -24,20 +27,21 @@ rendy.prototype = {
     if(this.state.TransportState != "PLAYING"){
       return;
     }else{
-      mw.getPosition(function(result){
-        if(result){
-          this.setState({name:"trackPosition",value:result.position});
-          this.setState({name:"duration",value:result.duration});
-        }
-      }.bind(this))
+      this.mw.getTrackPosition(this.uuid);
     }
+  },
+  _gotPosition: function(result){
+    if(result){
+      this.setState({name:"trackPosition",value:result.position});
+      this.setState({name:"duration",value:result.duration});
+    }    
   },
   _playNext: function(cb){
     self = this;
-    mw.setRenderer(this.uuid);
+    this.mw.setRenderer(this.uuid);
     this.playlist.resourcesAt(this.position,function(err,doc){
       if(!err && doc){
-        mw.openAndPlay(doc,function(err){
+        self.mw.openAndPlay(doc,function(err){
           typeof(cb) === 'function' && cb(err);
         });
       }else{
@@ -78,7 +82,7 @@ rendy.prototype = {
         this.state[event.name] = event.value;
       }
       //HACK: emiting on renderer obj, not this
-      renderer.emit("stateChange",event.uuid,event);
+      renderer.emit("stateChange",this.uuid,event);
     }
     
     if(event.name === "CurrentTrackURI"){
@@ -103,9 +107,9 @@ rendy.prototype = {
   },
   _playTrack:function(){
     var self = this;
-    mw.setRenderer(this.uuid);
+    this.mw.setRenderer(this.uuid);
     if(!this.isPlaying){
-      mw.stop(function(){
+      this.mw.stop(function(){
         self._playNext(function(){
           self.isPlaying = true;
         });
@@ -117,7 +121,7 @@ rendy.prototype = {
       this.isPlaying = true;
       //HACK stop will go to next track, need to offset that
       this.position--;
-      mw.stop(function(res){
+      this.mw.stop(function(res){
       });
     }
   },
@@ -126,34 +130,18 @@ rendy.prototype = {
     this._playTrack();
   },
   pause:function(){
-    mw.setRenderer(this.uuid);
-    mw.pause(function(){});
+    this.mw.setRenderer(this.uuid);
+    this.mw.pause(function(){});
   },
   play:function(){
-    mw.setRenderer(this.uuid);
-    mw.play(function(){});
+    this.mw.setRenderer(this.uuid);
+    this.mw.play(function(){});
   },
   getAttributes: function(){
     return this.state;
   },
   setPosition: function(position){
-    var hours = Math.floor(position / 3600000),
-        minutes,
-        seconds,
-        target;
-
-    position -= hours * 3600000;
-    minutes = Math.floor(position / 60000);
-    position -= minutes * 60000;
-    seconds = Math.floor(position / 1000);
-
-    hours = (hours < 10) ? "0"+hours : hours;
-    minutes = (minutes < 10) ? "0"+minutes : minutes;
-    seconds = (seconds < 10) ? "0"+seconds : seconds;
-
-    target = hours + ":" + minutes + ":" + seconds;
-    mw.setRenderer(this.uuid);
-    mw.seek(function(){},target);
+    this.mw.setPosition(this.uuid,position);
   }
 }
 
@@ -165,8 +153,7 @@ Renderer.prototype.find = function(uuid){
   return this.renderers[uuid];
 }
 Renderer.prototype.all = function(){
-
-  return mw.getRenderers();
+  return mw.getRenderers().concat(mwb.getRenderers());
 }
 Renderer.prototype.exists = function(id){
   if(!this.renderers[id]){
@@ -176,9 +163,10 @@ Renderer.prototype.exists = function(id){
 }
 Renderer.prototype.add = function(event){
   var uuid = event.uuid,
-      name = event.value;
+      name = event.value
+      type = event.rendererType;
 
-  this.renderers[uuid] = new rendy(name,uuid)
+  this.renderers[uuid] = new rendy(name,uuid,type)
   this.emit("rendererAdded",{name:name,uuid:uuid})
 }
 Renderer.prototype.remove = function(event){
@@ -196,6 +184,13 @@ Renderer.prototype.stateChange = function(event){
   }
   this.renderers[event.uuid].setState(event);     
 }
+Renderer.prototype.gotPosition = function(event){
+  if(!this.exists(event.uuid)){
+    return;
+  }
+  this.renderers[event.uuid]._gotPosition(event); 
+}
+
 Renderer.prototype.getOne = function(){
     return Object.keys(this.renderers)[0];
 }
@@ -204,6 +199,12 @@ var renderer = new Renderer();
 mw.on("rendererAdded",renderer.add.bind(renderer))
 mw.on("rendererRemoved",renderer.remove.bind(renderer))
 mw.on("stateChange",renderer.stateChange.bind(renderer))
+mw.on("gotPosition",renderer.gotPosition.bind(renderer))
+
+mwb.on("rendererAdded",renderer.add.bind(renderer))
+mwb.on("rendererRemoved",renderer.remove.bind(renderer))
+mwb.on("stateChange",renderer.stateChange.bind(renderer))
+mwb.on("gotPosition",renderer.gotPosition.bind(renderer))
 
 
 module.exports = renderer;
