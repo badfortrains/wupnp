@@ -179,6 +179,7 @@ body{
 
 #pullTab{
   -webkit-transition: left .5s;
+  -moz-transition: left .5s;
   position:fixed;
   bottom:0px;
   color:black;
@@ -264,6 +265,16 @@ body{
     margin-bottom: 20px;
     .icon-chevron-left{
       margin-right: 10px;
+    }
+  }
+  .servers{
+    li.loading{
+      i{
+        display: inline-block;
+      }
+    }  
+    li i{
+      display: none;
     }
   }
   .renderers{
@@ -476,6 +487,13 @@ body{
     a, a:active{
       color: blueviolet;
     }
+    .loading{
+      margin-left:5px;
+      display:none;
+    }
+  }
+  li.loading .loading{
+    display: inline-block;
   }
 }
 
@@ -516,4 +534,42 @@ body{
   -webkit-transition: opacity 2s;
   -moz-transition:    opacity 2s;
   transition:         opacity 2s;
+}
+
+.directory{
+  padding-top: 10px;
+  .loader{
+    display:none;
+    position: fixed;
+    left: 50px;
+    top: 20%;
+    z-index: 20;
+    font-size: 72px;
+  }
+}
+
+.directory-button.loading{
+  background-color: rgb(193, 164, 219);
+  .refresh{
+    display:none
+  }
+  .load{
+    display:block;
+  }
+}
+.directory-button{
+  font-size: 20px;
+  padding: 2px 10px;
+  display: inline-block;
+  background-color: blueviolet;
+  margin-left:10px;
+  &:first-child{
+    margin-left:0px;
+  }
+  i{
+    margin-left: 10px;
+  }
+  .load{
+    display:none;
+  }
 }

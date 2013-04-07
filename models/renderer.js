@@ -1,6 +1,6 @@
 var mw = require('../mediaWatcher'),
-    db = require('mongojs').connect('test', ['tracks','playlist']),
     Playlist = require("./playlist").playlist,
+    Tracks = require("./tracks"),
     socketIO = require('socket.io'),
     util = require("util"),
     EventEmitter = require("events").EventEmitter;
@@ -35,16 +35,15 @@ rendy.prototype = {
   _playNext: function(cb){
     self = this;
     mw.setRenderer(this.uuid);
-    this.playlist.findAt(this.position,function(err,docs){
-      if(!err && docs[0]){
-        mw.openAndPlay(docs[0],function(err){
+    this.playlist.resourcesAt(this.position,function(err,doc){
+      if(!err && doc){
+        mw.openAndPlay(doc,function(err){
           typeof(cb) === 'function' && cb(err);
         });
-        self.state.currentPlayingTrack = docs[0];
       }else{
+        self.position = 1;
         self.setState({name:"currentPlayingTrack",vale:{}});
-      }
-      self.nextTrack = docs && docs[1];      
+      }     
     })
   },
   next: function(cb){
@@ -89,9 +88,10 @@ rendy.prototype = {
   },
   _onTrackChange:function(uri){
     var self = this;
-    db.tracks.findOne({'Resources.Uri':uri},function(err,doc){
+    Tracks.findByUri(uri,function(err,doc){
       if(!err && doc){
         self.state.currentPlayingTrack = doc;
+        doc.position = self.position;
         //HACK: emiting on renderer obj, not this
         renderer.emit("stateChange",self.uuid,{
           name:"currentPlayingTrack",
@@ -121,14 +121,9 @@ rendy.prototype = {
       });
     }
   },
-  playById: function(id){
-    var self = this;
-    this.playlist.getPosition(id,function(err,position){
-      if(!err && position !== null && position !== undefined){
-        self.position = position;
-        self._playTrack();
-      }
-    })
+  playAt: function(position){
+    this.position = position;
+    this._playTrack();
   },
   pause:function(){
     mw.setRenderer(this.uuid);

@@ -18,6 +18,7 @@ Wu.Views.menu = Backbone.View.extend({
     this.listenTo(Wu.Cache.Models.player,"change:id",this.setActive);
     this.listenTo(Wu.Cache.Models.player,"change:playlist",this.setActive);
     this.listenTo(Wu.Cache.Models.player,"change:TransportState",this.setActive);
+    this.listenTo(Wu.Cache.Collections.servers,"change:status",this.setStatus);
     this.$el.on("click","a",$.proxy(this.hide,this));
   },
   render: function(){
@@ -75,6 +76,9 @@ Wu.Views.menu = Backbone.View.extend({
     var category = Wu.Cache.Models.category.get("id") || "Artist";
     this.hide();
     Backbone.history.navigate("/category/"+category,{trigger:true});
+  },
+  setStatus: function(model,value){
+    $("#ms"+model.id).removeClass('loading').addClass(value);
   },
   setActive:function(){
     var renderer = Wu.Cache.Models.player.id,

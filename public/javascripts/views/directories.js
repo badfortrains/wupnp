@@ -9,9 +9,10 @@ Wu.Views.directories = Backbone.View.extend({
   initialize: function(){
     this.list =  new Wu.Views.categoryList({
       model: this.model,
-      className: 'category',
+      className: 'category directory',
       url:"directory/",
       noJumper:true,
+      loader:true,
       parent: this
     })
 

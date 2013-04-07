@@ -21,9 +21,9 @@ var express = require('express'),
     mw = require('./mediaWatcher'),
     connect = require('connect');
 
-    tracks.removeAll(function(){
+    //tracks.removeAll(function(){
       mw.listen();
-    })
+    //})
 app.configure(function(){
   app.set('port', process.env.PORT || 3000);
   app.set('views', __dirname + '/views');

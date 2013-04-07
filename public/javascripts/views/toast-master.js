@@ -15,7 +15,7 @@ Wu.Views.toastMaster = Backbone.View.extend({
       this.message('Media server "'+model.get("name")+'" removed');
     },this);
     this.listenTo(Wu.Cache.Models.player,"change:currentPlayingTrack",function(model,value){
-      this.title(value.Title);
+      value && this.title(value.Title);
     },this);
     this.listenTo(Wu.Cache.Models.player,"change:uuid",function(model,value){
       var renderer = Wu.Cache.Collections.renderers.get(value);

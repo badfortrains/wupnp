@@ -21,10 +21,12 @@
         i.icon-volume-up
     -})
   h1 Servers
-  ul.playlists
+  ul.playlists.servers
     -servers.each(function(item){
       -var id = item.id
-      li(id=id)
+      -var status = item.get("status")
+      li(id='ms'+id,class=status)
         a(href="/directory/"+id+"/0")
           =item.get("name")
+          i.icon-refresh.icon-spin
     -})
