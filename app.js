@@ -20,7 +20,10 @@ var express = require('express'),
     tracks = require('./models/tracks'),
     mw = require('./mediaWatcher'),
     mwb = require('./mediaWatcherWeb')
-    connect = require('connect');
+    connect = require('connect'),
+    server_model = require("./models/servers"),
+    httpProxy = require('http-proxy'),
+    url = require('url');
 
     //tracks.removeAll(function(){
       mw.listen();
@@ -84,3 +87,21 @@ io.of('/renderer').on('connection', mwb.onConnect);
 server.listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));
 });
+
+httpProxy.createServer(function (req, res, proxy) {
+  var parsed_url = url.parse(req.url),
+      server = server_model.find(parsed_url.pathname.replace("/",""));
+
+  if(server){
+    var server_url = url.parse(server.baseUrl);
+    req.url = req.url.replace(parsed_url.pathname+"?","/");
+
+    proxy.proxyRequest(req, res, {
+      host: server_url.hostname,
+      port: server_url.port
+    });
+  }else{
+    res.writeHead(404);
+    res.end();
+  }
+}).listen(2000);

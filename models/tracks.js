@@ -1,6 +1,7 @@
 var db = require('./db'),
     util = require("util"),
-    EventEmitter = require("events").EventEmitter;
+    EventEmitter = require("events").EventEmitter,
+    IP = (process.env.NODE_ENV == "production") ? "http://50.152.237.177:2000" :  "http://127.0.0.1:2000";
 
 var Tracks = function(){}
 util.inherits(Tracks,EventEmitter);
@@ -18,7 +19,7 @@ var updateFromObjID = function(){
 }
 
 
-Tracks.prototype.insert = function(data,uuid,cb){
+Tracks.prototype.insert = function(data,uuid,baseUrl,cb){
   var i = 0,
       length = data.length,
       stmt = db.prepare("INSERT OR IGNORE INTO tracks VALUES (NULL,?,?,?,?,?,?)"),
@@ -29,7 +30,7 @@ Tracks.prototype.insert = function(data,uuid,cb){
     stmt.run(item.TrackNumber,item.Title,item.Artist,item.Album,item.Didl,item.oID,function(){
       var lastID = this.lastID;
       item.Resources && item.Resources.forEach(function(resource){
-        resourceInsert.run(resource.Uri,resource.ProtocolInfo,lastID);
+        resourceInsert.run(resource.Uri.replace(baseUrl,IP+"/"+uuid+"?"),resource.ProtocolInfo,lastID);
       });
     })
   })
@@ -53,9 +54,6 @@ Tracks.prototype.insert = function(data,uuid,cb){
 Tracks.prototype.getCategory = function(category,filter,cb){
   var WHERE = filterToSQL(filter),
       statement;
-
-  console.log("WHERE",WHERE);
-  WHERE.replace("\'","'");
 
   if(category !== 'Title'){
     statement = "SELECT DISTINCT "+category+" FROM tracks "+WHERE+" ORDER BY "+category;

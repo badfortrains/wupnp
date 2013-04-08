@@ -8,7 +8,7 @@ var mw = require('../mediaWatcher')
       "e91f16b6-f441-4de4-a65d-d1ed420c10e1"   : "0$3$2",         //ps3Media Server
       "7076436f-6e65-1063-8074-4ce6766160b7" : "1$268435466",   //Linkstation
       //"bc4fab65-9f26-3687-bbfc-1fb761347c74" : "2"              //galaxy s2
-    }
+    };
 
 
 
@@ -16,7 +16,9 @@ var onTracksAdded = function(data){
   //add to db;
   if(data){
     console.log('Inserting tracks')
-    Tracks.insert(data,this.uuid,function(){
+    console.log(this.uuid);
+
+    Tracks.insert(data,this.uuid,this.baseUrl,function(){
       this.status = "inserted"
     }.bind(this));
   }else{
@@ -27,6 +29,9 @@ var onTracksAdded = function(data){
 var MediaServer = function(addEvent){
   this.name = addEvent.value;
   this.uuid = addEvent.uuid;
+  this.iconUrl = addEvent.iconUrl;
+  this.baseUrl = addEvent.baseUrl;
+
   this.setPath(KNOWN_PATHS[event.uuid]);
 }
 
