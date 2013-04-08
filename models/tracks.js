@@ -54,6 +54,9 @@ Tracks.prototype.getCategory = function(category,filter,cb){
   var WHERE = filterToSQL(filter),
       statement;
 
+  console.log("WHERE",WHERE);
+  WHERE.replace("\'","'");
+
   if(category !== 'Title'){
     statement = "SELECT DISTINCT "+category+" FROM tracks "+WHERE+" ORDER BY "+category;
   }else{
@@ -87,11 +90,13 @@ Tracks.prototype.findByUri = function(uri,cb){
 }
 
 var filterToSQL = function(filter){
-  var where = "";
+  var where = "",
+      quote;
   if(typeof(filter) === 'object' && Object.keys(filter).length > 0){
     where = "WHERE "
     for(var column in filter){
-      where += column + "='" + filter[column] + "' AND "; 
+      quote = (filter[column].indexOf("'") === -1) ? "'" : '"';
+      where += column + "=" + quote + filter[column] + quote + " AND " ;  
     }
     where = where.substring(0,where.length - 5);
   }
