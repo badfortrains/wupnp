@@ -277,30 +277,6 @@ window.JST = {'category.container':function(locals, cb, __) {
     }
     if (!__.inc) __.r.done(__);
     cb(null, __.join(""), __);
-},'player.tab':function(locals, cb, __) {
-    __ = __ || [];
-    __.r = __.r || blade.Runtime;
-    if (!__.func) __.func = {}, __.blocks = {}, __.chunk = {};
-    __.locals = locals || {};
-    __.filename = "/Users/spurcell/code/fun/node_modules/wu/templates/player.tab.blade";
-    try {
-        with (__.locals) {
-            __.line = 1, __.col = 1;
-            __.push("<div" + ' class="playing"' + ">");
-            __.line = 2, __.col = 3;
-            __.push("<a" + ' class="title"' + ">" + "Now Playing" + "</a>");
-            __.line = 3, __.col = 3;
-            __.push("<i" + ' class="icon-play play"' + ">" + "</i>");
-            __.line = 4, __.col = 3;
-            __.push("<i" + ' class="icon-chevron-right next"' + ">" + "</i>");
-            __.line = 5, __.col = 3;
-            __.push("<div" + ' class="ball"' + ">" + "</div>" + "</div>");
-        }
-    } catch (e) {
-        return cb(__.r.rethrow(e, __));
-    }
-    if (!__.inc) __.r.done(__);
-    cb(null, __.join(""), __);
 },'menu':function(locals, cb, __) {
     __ = __ || [];
     __.r = __.r || blade.Runtime;
@@ -418,6 +394,30 @@ window.JST = {'category.container':function(locals, cb, __) {
                 }
             });
             __.push("</ul>" + "</div>");
+        }
+    } catch (e) {
+        return cb(__.r.rethrow(e, __));
+    }
+    if (!__.inc) __.r.done(__);
+    cb(null, __.join(""), __);
+},'player.tab':function(locals, cb, __) {
+    __ = __ || [];
+    __.r = __.r || blade.Runtime;
+    if (!__.func) __.func = {}, __.blocks = {}, __.chunk = {};
+    __.locals = locals || {};
+    __.filename = "/Users/spurcell/code/fun/node_modules/wu/templates/player.tab.blade";
+    try {
+        with (__.locals) {
+            __.line = 1, __.col = 1;
+            __.push("<div" + ' class="playing"' + ">");
+            __.line = 2, __.col = 3;
+            __.push("<a" + ' class="title"' + ">" + "Now Playing" + "</a>");
+            __.line = 3, __.col = 3;
+            __.push("<i" + ' class="icon-play play"' + ">" + "</i>");
+            __.line = 4, __.col = 3;
+            __.push("<i" + ' class="icon-chevron-right next"' + ">" + "</i>");
+            __.line = 5, __.col = 3;
+            __.push("<div" + ' class="ball"' + ">" + "</div>" + "</div>");
         }
     } catch (e) {
         return cb(__.r.rethrow(e, __));
@@ -592,7 +592,7 @@ window.JST = {'category.container':function(locals, cb, __) {
   },
   Routers: {},
   init: function(){
-    window.Socket = io.connect(':3000/controller');
+    window.Socket = io.connect('/controller');
     this.Cache.Models.category = new Wu.Models.category();
     this.Cache.Models.directory  = new Wu.Models.directory();
     this.Cache.Models.player = new Wu.Models.player();

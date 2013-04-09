@@ -9,7 +9,7 @@ Wu = {
   },
   Routers: {},
   init: function(){
-    window.Socket = io.connect(':3000/controller');
+    window.Socket = io.connect('/controller');
     this.Cache.Models.category = new Wu.Models.category();
     this.Cache.Models.directory  = new Wu.Models.directory();
     this.Cache.Models.player = new Wu.Models.player();
