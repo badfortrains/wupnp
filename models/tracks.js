@@ -1,7 +1,6 @@
 var db = require('./db'),
     util = require("util"),
-    EventEmitter = require("events").EventEmitter,
-    IP = (process.env.NODE_ENV == "production") ? "http://50.152.237.177:2000" :  "http://10.10.18.155:2000";
+    EventEmitter = require("events").EventEmitter;
 
 var Tracks = function(){}
 util.inherits(Tracks,EventEmitter);

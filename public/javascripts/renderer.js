@@ -1,5 +1,5 @@
 $(document).ready(function(){
-  window.Socket = io.connect(':3000/renderer');
+  window.Socket = io.connect('/renderer');
   var player = {
     audio: $("#player")[0],
     audioSource: $("#player source")[0],

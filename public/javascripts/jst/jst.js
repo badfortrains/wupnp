@@ -16,6 +16,28 @@ window.JST = {'category.container':function(locals, cb, __) {
     }
     if (!__.inc) __.r.done(__);
     cb(null, __.join(""), __);
+},'category.nav':function(locals, cb, __) {
+    __ = __ || [];
+    __.r = __.r || blade.Runtime;
+    if (!__.func) __.func = {}, __.blocks = {}, __.chunk = {};
+    __.locals = locals || {};
+    __.filename = "/Users/spurcell/code/fun/node_modules/wu/templates/category.nav.blade";
+    try {
+        with (__.locals) {
+            __.line = 1, __.col = 1;
+            __.push("<nav" + ">");
+            __.line = 2, __.col = 3;
+            __.push("<a" + ' href="/category/Artist"' + ' class="active Artist"' + ' cat="Artist"' + ">" + "Artists" + "</a>");
+            __.line = 3, __.col = 3;
+            __.push("<a" + ' href="/category/Album"' + ' cat="Album"' + ' class="Album"' + ">" + "Albums" + "</a>");
+            __.line = 4, __.col = 3;
+            __.push("<a" + ' href="/category/Title"' + ' cat="Title"' + ' class="Title"' + ">" + "Tracks" + "</a>" + "</nav>");
+        }
+    } catch (e) {
+        return cb(__.r.rethrow(e, __));
+    }
+    if (!__.inc) __.r.done(__);
+    cb(null, __.join(""), __);
 },'category.info':function(locals, cb, __) {
     __ = __ || [];
     __.r = __.r || blade.Runtime;
@@ -80,28 +102,6 @@ window.JST = {'category.container':function(locals, cb, __) {
                     __.push("</ul>" + "</div>");
                 }
             }
-        }
-    } catch (e) {
-        return cb(__.r.rethrow(e, __));
-    }
-    if (!__.inc) __.r.done(__);
-    cb(null, __.join(""), __);
-},'category.nav':function(locals, cb, __) {
-    __ = __ || [];
-    __.r = __.r || blade.Runtime;
-    if (!__.func) __.func = {}, __.blocks = {}, __.chunk = {};
-    __.locals = locals || {};
-    __.filename = "/Users/spurcell/code/fun/node_modules/wu/templates/category.nav.blade";
-    try {
-        with (__.locals) {
-            __.line = 1, __.col = 1;
-            __.push("<nav" + ">");
-            __.line = 2, __.col = 3;
-            __.push("<a" + ' href="/category/Artist"' + ' class="active Artist"' + ' cat="Artist"' + ">" + "Artists" + "</a>");
-            __.line = 3, __.col = 3;
-            __.push("<a" + ' href="/category/Album"' + ' cat="Album"' + ' class="Album"' + ">" + "Albums" + "</a>");
-            __.line = 4, __.col = 3;
-            __.push("<a" + ' href="/category/Title"' + ' cat="Title"' + ' class="Title"' + ">" + "Tracks" + "</a>" + "</nav>");
         }
     } catch (e) {
         return cb(__.r.rethrow(e, __));
@@ -277,6 +277,32 @@ window.JST = {'category.container':function(locals, cb, __) {
     }
     if (!__.inc) __.r.done(__);
     cb(null, __.join(""), __);
+},'popup':function(locals, cb, __) {
+    __ = __ || [];
+    __.r = __.r || blade.Runtime;
+    if (!__.func) __.func = {}, __.blocks = {}, __.chunk = {};
+    __.locals = locals || {};
+    __.filename = "/Users/spurcell/code/fun/node_modules/wu/templates/popup.blade";
+    try {
+        with (__.locals) {
+            __.line = 1, __.col = 1;
+            __.push("<div" + ' class="top-box"' + ">");
+            __.line = 2, __.col = 3;
+            __.push("<h1" + ">" + "add to now playing" + "</h1>");
+            __.line = 3, __.col = 3;
+            __.push("<h1" + ">" + "add to ..." + "</h1>");
+            __.line = 4, __.col = 3;
+            __.push("<h1" + ">" + "add to new list" + "</h1>");
+            __.line = 5, __.col = 3;
+            __.push("<span" + ">" + "cancel" + "</span>" + "</div>");
+            __.line = 6, __.col = 1;
+            __.push("<div" + ' class="bottom-box"' + ">" + "</div>");
+        }
+    } catch (e) {
+        return cb(__.r.rethrow(e, __));
+    }
+    if (!__.inc) __.r.done(__);
+    cb(null, __.join(""), __);
 },'player.tab':function(locals, cb, __) {
     __ = __ || [];
     __.r = __.r || blade.Runtime;
@@ -295,6 +321,58 @@ window.JST = {'category.container':function(locals, cb, __) {
             __.push("<i" + ' class="icon-chevron-right next"' + ">" + "</i>");
             __.line = 5, __.col = 3;
             __.push("<div" + ' class="ball"' + ">" + "</div>" + "</div>");
+        }
+    } catch (e) {
+        return cb(__.r.rethrow(e, __));
+    }
+    if (!__.inc) __.r.done(__);
+    cb(null, __.join(""), __);
+},'playlist.dropdown':function(locals, cb, __) {
+    __ = __ || [];
+    __.r = __.r || blade.Runtime;
+    if (!__.func) __.func = {}, __.blocks = {}, __.chunk = {};
+    __.locals = locals || {};
+    __.filename = "/Users/spurcell/code/fun/node_modules/wu/templates/playlist.dropdown.blade";
+    try {
+        with (__.locals) {
+            __.line = 1, __.col = 1;
+            __.push("<ul" + ' class="dropDown closed"' + ">");
+            __.line = 2, __.col = 3;
+            __.push("<li" + ' class="current"' + ">");
+            __.line = 3, __.col = 5;
+            __.push(__.r.escape(currentList.get("name")));
+            __.line = 4, __.col = 5;
+            if (playlists.length > 1) {
+                __.line = 5, __.col = 7;
+                __.push("<i" + ' class="icon-angle-down down"' + ">" + "</i>");
+            }
+            __.push("</li>");
+            __.line = 6, __.col = 3;
+            playlists.each(function(item) {
+                {
+                    __.line = 7, __.col = 5;
+                    var id = item.get("_id");
+                    __.line = 8, __.col = 5;
+                    if (id !== currentList.get("_id")) {
+                        {
+                            __.line = 9, __.col = 7;
+                            __.push("<li" + ' class="option"' + ">");
+                            __.line = 10, __.col = 9;
+                            __.push("<a");
+                            __.r.attrs({
+                                href: {
+                                    v: "/playlist/" + id,
+                                    e: 1
+                                }
+                            }, __);
+                            __.push(">");
+                            __.line = 11, __.col = 11;
+                            __.push(__.r.escape(item.get("name")) + "</a>" + "</li>");
+                        }
+                    }
+                }
+            });
+            __.push("</ul>");
         }
     } catch (e) {
         return cb(__.r.rethrow(e, __));
@@ -418,84 +496,6 @@ window.JST = {'category.container':function(locals, cb, __) {
                 }
             });
             __.push("</ul>" + "</div>");
-        }
-    } catch (e) {
-        return cb(__.r.rethrow(e, __));
-    }
-    if (!__.inc) __.r.done(__);
-    cb(null, __.join(""), __);
-},'playlist.dropdown':function(locals, cb, __) {
-    __ = __ || [];
-    __.r = __.r || blade.Runtime;
-    if (!__.func) __.func = {}, __.blocks = {}, __.chunk = {};
-    __.locals = locals || {};
-    __.filename = "/Users/spurcell/code/fun/node_modules/wu/templates/playlist.dropdown.blade";
-    try {
-        with (__.locals) {
-            __.line = 1, __.col = 1;
-            __.push("<ul" + ' class="dropDown closed"' + ">");
-            __.line = 2, __.col = 3;
-            __.push("<li" + ' class="current"' + ">");
-            __.line = 3, __.col = 5;
-            __.push(__.r.escape(currentList.get("name")));
-            __.line = 4, __.col = 5;
-            if (playlists.length > 1) {
-                __.line = 5, __.col = 7;
-                __.push("<i" + ' class="icon-angle-down down"' + ">" + "</i>");
-            }
-            __.push("</li>");
-            __.line = 6, __.col = 3;
-            playlists.each(function(item) {
-                {
-                    __.line = 7, __.col = 5;
-                    var id = item.get("_id");
-                    __.line = 8, __.col = 5;
-                    if (id !== currentList.get("_id")) {
-                        {
-                            __.line = 9, __.col = 7;
-                            __.push("<li" + ' class="option"' + ">");
-                            __.line = 10, __.col = 9;
-                            __.push("<a");
-                            __.r.attrs({
-                                href: {
-                                    v: "/playlist/" + id,
-                                    e: 1
-                                }
-                            }, __);
-                            __.push(">");
-                            __.line = 11, __.col = 11;
-                            __.push(__.r.escape(item.get("name")) + "</a>" + "</li>");
-                        }
-                    }
-                }
-            });
-            __.push("</ul>");
-        }
-    } catch (e) {
-        return cb(__.r.rethrow(e, __));
-    }
-    if (!__.inc) __.r.done(__);
-    cb(null, __.join(""), __);
-},'popup':function(locals, cb, __) {
-    __ = __ || [];
-    __.r = __.r || blade.Runtime;
-    if (!__.func) __.func = {}, __.blocks = {}, __.chunk = {};
-    __.locals = locals || {};
-    __.filename = "/Users/spurcell/code/fun/node_modules/wu/templates/popup.blade";
-    try {
-        with (__.locals) {
-            __.line = 1, __.col = 1;
-            __.push("<div" + ' class="top-box"' + ">");
-            __.line = 2, __.col = 3;
-            __.push("<h1" + ">" + "add to now playing" + "</h1>");
-            __.line = 3, __.col = 3;
-            __.push("<h1" + ">" + "add to ..." + "</h1>");
-            __.line = 4, __.col = 3;
-            __.push("<h1" + ">" + "add to new list" + "</h1>");
-            __.line = 5, __.col = 3;
-            __.push("<span" + ">" + "cancel" + "</span>" + "</div>");
-            __.line = 6, __.col = 1;
-            __.push("<div" + ' class="bottom-box"' + ">" + "</div>");
         }
     } catch (e) {
         return cb(__.r.rethrow(e, __));
