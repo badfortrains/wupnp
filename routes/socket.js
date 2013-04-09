@@ -3,24 +3,25 @@ var mw = require('../mediaWatcher'),
     Servers = require('../models/servers'),
     Tracks = require('../models/tracks');
 
-exports.registerEmits = function(socketIO){
+exports.registerEmits = function(namespace){
   Renderers.on("rendererAdded",function(event){
-    socketIO.sockets.emit("rendererAdded",event);
+    namespace.emit("rendererAdded",event);
   })
   Renderers.on("rendererRemoved",function(event){
-    socketIO.sockets.emit("rendererRemoved",event);
+    namespace.emit("rendererRemoved",event);
   })
   Renderers.on("stateChange",function(uuid,event){
-    socketIO.sockets.in(uuid).emit("stateChange",event);
+    console.log("STATE CHANGE",uuid,event)
+    namespace.in(uuid).emit("stateChange",event);
   })
   Tracks.on("tracksInserted",function(uuid){
-    socketIO.sockets.emit("tracksInserted",uuid);
+    namespace.emit("tracksInserted",uuid);
   })
   Servers.on("serverAdded",function(server){
-    socketIO.sockets.emit("serverAdded",server);
+    namespace.emit("serverAdded",server);
   })
   Servers.on("serverRemoved",function(server){
-    socketIO.sockets.emit("serverRemoved",server);
+    namespace.emit("serverRemoved",server);
   })
 }
 
