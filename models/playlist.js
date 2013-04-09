@@ -170,7 +170,7 @@ playlist.prototype.findAt = function(position,settings,cb){
 }
 
 playlist.prototype.resourcesAt = function(position,cb){
-  var find = "SELECT Uri,ProtocolInfo FROM playlist_tracks join resources ON (playlist_tracks.track_id = resources.track_id) WHERE position = ? AND list_id = ?";
+  var find = "SELECT resources.track_id,Uri,ProtocolInfo FROM playlist_tracks join resources ON (playlist_tracks.track_id = resources.track_id) WHERE position = ? AND list_id = ?";
   db.all(find,position,this.id,function(err,docs){
     if(err || !docs.length){
       cb(err,null);

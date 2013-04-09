@@ -1,6 +1,7 @@
 var db = require('./db'),
     util = require("util"),
-    EventEmitter = require("events").EventEmitter;
+    EventEmitter = require("events").EventEmitter,
+    IP = (process.env.NODE_ENV == "production") ? "http://50.152.237.177:2000" :  "http://10.10.18.155:2000";
 
 var Tracks = function(){}
 util.inherits(Tracks,EventEmitter);
@@ -82,16 +83,23 @@ Tracks.prototype.getCategory = function(category,filter,cb){
   });
 }
 
+Tracks.prototype.urlById = function(id,cb){
+  console.log("urlById",id);
+  db.get("SELECT Uri FROM resources WHERE track_id = ?",id,cb);
+}
+
 Tracks.prototype.findByUri = function(uri,cb){
   db.get("SELECT * FROM tracks JOIN resources ON track_id = _id WHERE Uri = ?",uri,cb)
 }
 
 var filterToSQL = function(filter){
-  var where = "";
+  var where = "",
+      quote;
   if(typeof(filter) === 'object' && Object.keys(filter).length > 0){
     where = "WHERE "
     for(var column in filter){
-      where += column + "='" + filter[column] + "' AND "; 
+      quote = (filter[column].indexOf("'") === -1) ? "'" : '"';
+      where += column + "=" + quote + filter[column] + quote + " AND " ;  
     }
     where = where.substring(0,where.length - 5);
   }
