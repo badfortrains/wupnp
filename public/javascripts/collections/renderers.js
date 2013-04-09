@@ -8,8 +8,9 @@ Wu.Collections.renderers = Backbone.Collection.extend({
     Socket.on("rendererAdded",function(renderer){
       self.add(renderer);
     })
-    Socket.on("rendererRemoved",function(renderer){
-      self.remove(self.get(renderer.uuid));
+    Socket.on("rendererRemoved",function(event){
+      var renderer = self.get(event.uuid);
+      self.remove(renderer);
     })
   }
 });

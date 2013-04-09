@@ -4,6 +4,9 @@ Wu.Collections.playlists = Backbone.Collection.extend({
     Socket.on("rendererAdded",$.proxy(function(){
       this.fetch();
     },this));
+    Socket.on("rendererRemoved",$.proxy(function(){
+      this.fetch();
+    },this));
   },
   model: Wu.Models.playlist,
   url: '/api/playlists'

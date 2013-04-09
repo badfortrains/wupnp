@@ -1,22 +1,4 @@
-window.JST = {'category.container':function(locals, cb, __) {
-    __ = __ || [];
-    __.r = __.r || blade.Runtime;
-    if (!__.func) __.func = {}, __.blocks = {}, __.chunk = {};
-    __.locals = locals || {};
-    __.filename = "/Users/spurcell/code/fun/node_modules/wu/templates/category.container.blade";
-    try {
-        with (__.locals) {
-            __.line = 1, __.col = 1;
-            __.push("<div" + ' class="popup"' + ">" + "</div>");
-            __.line = 2, __.col = 1;
-            __.push("<div" + ' id="category-container"' + ">" + "</div>");
-        }
-    } catch (e) {
-        return cb(__.r.rethrow(e, __));
-    }
-    if (!__.inc) __.r.done(__);
-    cb(null, __.join(""), __);
-},'category.info':function(locals, cb, __) {
+window.JST = {'category.info':function(locals, cb, __) {
     __ = __ || [];
     __.r = __.r || blade.Runtime;
     if (!__.func) __.func = {}, __.blocks = {}, __.chunk = {};
@@ -80,6 +62,24 @@ window.JST = {'category.container':function(locals, cb, __) {
                     __.push("</ul>" + "</div>");
                 }
             }
+        }
+    } catch (e) {
+        return cb(__.r.rethrow(e, __));
+    }
+    if (!__.inc) __.r.done(__);
+    cb(null, __.join(""), __);
+},'category.container':function(locals, cb, __) {
+    __ = __ || [];
+    __.r = __.r || blade.Runtime;
+    if (!__.func) __.func = {}, __.blocks = {}, __.chunk = {};
+    __.locals = locals || {};
+    __.filename = "/Users/spurcell/code/fun/node_modules/wu/templates/category.container.blade";
+    try {
+        with (__.locals) {
+            __.line = 1, __.col = 1;
+            __.push("<div" + ' class="popup"' + ">" + "</div>");
+            __.line = 2, __.col = 1;
+            __.push("<div" + ' id="category-container"' + ">" + "</div>");
         }
     } catch (e) {
         return cb(__.r.rethrow(e, __));
@@ -2756,6 +2756,9 @@ function(e, t) {
     Socket.on("rendererAdded",$.proxy(function(){
       this.fetch();
     },this));
+    Socket.on("rendererRemoved",$.proxy(function(){
+      this.fetch();
+    },this));
   },
   model: Wu.Models.playlist,
   url: '/api/playlists'
@@ -2771,8 +2774,9 @@ function(e, t) {
     Socket.on("rendererAdded",function(renderer){
       self.add(renderer);
     })
-    Socket.on("rendererRemoved",function(renderer){
-      self.remove(self.get(renderer.uuid));
+    Socket.on("rendererRemoved",function(event){
+      var renderer = self.get(event.uuid);
+      self.remove(renderer);
     })
   }
 });;Wu.Collections.servers = Backbone.Collection.extend({
