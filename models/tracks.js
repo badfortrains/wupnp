@@ -1,7 +1,7 @@
 var db = require('./db'),
     util = require("util"),
     EventEmitter = require("events").EventEmitter,
-    IP = (process.env.NODE_ENV == "production") ? "http://50.152.237.177:2000" :  "http://127.0.0.1:2000";
+    IP = (process.env.NODE_ENV == "production") ? "http://50.152.237.177:2000" :  "http://10.10.18.155:2000";
 
 var Tracks = function(){}
 util.inherits(Tracks,EventEmitter);
@@ -19,7 +19,7 @@ var updateFromObjID = function(){
 }
 
 
-Tracks.prototype.insert = function(data,uuid,baseUrl,cb){
+Tracks.prototype.insert = function(data,uuid,cb){
   var i = 0,
       length = data.length,
       stmt = db.prepare("INSERT OR IGNORE INTO tracks VALUES (NULL,?,?,?,?,?,?)"),
@@ -30,7 +30,7 @@ Tracks.prototype.insert = function(data,uuid,baseUrl,cb){
     stmt.run(item.TrackNumber,item.Title,item.Artist,item.Album,item.Didl,item.oID,function(){
       var lastID = this.lastID;
       item.Resources && item.Resources.forEach(function(resource){
-        resourceInsert.run(resource.Uri.replace(baseUrl,IP+"/"+uuid+"?"),resource.ProtocolInfo,lastID);
+        resourceInsert.run(resource.Uri,resource.ProtocolInfo,lastID);
       });
     })
   })
@@ -81,6 +81,11 @@ Tracks.prototype.getCategory = function(category,filter,cb){
       }
     }
   });
+}
+
+Tracks.prototype.urlById = function(id,cb){
+  console.log("urlById",id);
+  db.get("SELECT Uri FROM resources WHERE track_id = ?",id,cb);
 }
 
 Tracks.prototype.findByUri = function(uri,cb){

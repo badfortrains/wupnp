@@ -8,7 +8,7 @@ var MediaWatcherWeb = function(){
 util.inherits(MediaWatcherWeb,EventEmitter);
 
 MediaWatcherWeb.prototype.testRenderer = function(uuid){
-  if(!this.renderers){
+  if(!this.renderers[uuid]){
     this.emit("rendererRemoved",uuid);
     return false
   }else{
@@ -37,7 +37,8 @@ MediaWatcherWeb.prototype.getTrackPosition = function(uuid,cb){
 
 MediaWatcherWeb.prototype.openAndPlay = function(track,cb){
   if(this.testRenderer(this.renderer) && track.Resources && track.Resources[0]){
-    this.renderers[this.renderer].emit("openAndPlay",track.Resources[0].Uri);
+    //console.log("OPEN AND PLAY","/proxy/"+track.Resources[0].track_id)
+    this.renderers[this.renderer].emit("openAndPlay",track.Resources[0]);
     cb();
   }
 };

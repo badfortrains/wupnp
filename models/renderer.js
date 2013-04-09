@@ -40,6 +40,7 @@ rendy.prototype = {
     self = this;
     this.mw.setRenderer(this.uuid);
     this.playlist.resourcesAt(this.position,function(err,doc){
+      console.log("_playNext",err,doc);
       if(!err && doc){
         self.mw.openAndPlay(doc,function(err){
           typeof(cb) === 'function' && cb(err);

@@ -18,7 +18,7 @@ var onTracksAdded = function(data){
     console.log('Inserting tracks')
     console.log(this.uuid);
 
-    Tracks.insert(data,this.uuid,this.baseUrl,function(){
+    Tracks.insert(data,this.uuid,function(){
       this.status = "inserted"
     }.bind(this));
   }else{

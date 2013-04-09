@@ -1,6 +1,9 @@
 var Playlists = require('../models/playlist').playlist,
     Renderes = require('../models/renderer'),
-    Servers = require('../models/servers')
+    Servers = require('../models/servers'),
+    Tracks = require('../models/tracks'),
+    httpProxy = require('http-proxy'),
+    url = require('url');
 
 exports.index = function(req, res){
   Playlists.prototype.findList({},{name:1},function(err,docs){
@@ -27,4 +30,25 @@ exports.index = function(req, res){
 
 exports.renderer = function(req,res){
   res.render("Wu-renderer",{title: "renderer"})
+}
+
+var proxy = new httpProxy.RoutingProxy();
+exports.proxy = function(req,res){
+  var buffer = httpProxy.buffer(req),
+      id = req.params.id;
+      
+  Tracks.urlById(id,function(err,doc){
+    if(!err && doc){
+      var server_url = url.parse(doc.Uri);
+      req.url = server_url.pathname;
+
+      proxy.proxyRequest(req, res, {
+        host: server_url.hostname,
+        port: server_url.port,
+        buffer: buffer
+      });
+    }else{
+      res.send(404);
+    }
+  })
 }

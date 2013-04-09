@@ -6,9 +6,11 @@ MediaWatcher.prototype.__proto__ = EventEmitter.prototype;
 MediaWatcher.prototype._respond = function (data){
   event = this.pollEvent();
   while(event){
-    if(event.name === "serverAdded")
+    if(event.name === "serverAdded"){
       this.emit('serverAdded',event);
-    else if(event.name === "rendererAdded"){
+    }else if(event.name === "serverRemoved"){
+      this.emit('serverRemoved',event);
+    }else if(event.name === "rendererAdded"){
       this.emit('rendererAdded',event);
     }else if(event.name === "rendererRemoved"){
       this.emit('rendererRemoved',event);

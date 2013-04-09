@@ -20,8 +20,9 @@ $(document).ready(function(){
     getPosition: function(){
       Socket.emit("positionResult",{position: this.audio.currentTime*1000, duration:this.audio.duration*1000});
     },
-    openAndPlay: function(url){
-      this.audioSource.src = url;
+    openAndPlay: function(resource){
+      this.resource = resource;
+      this.audioSource.src = "/proxy/"+resource.track_id;
       this.audio.load();
       this.play();
     },
@@ -36,7 +37,7 @@ $(document).ready(function(){
       var self = this;
       $(this.audio).on("play",function(){
         Socket.emit("stateChange",{name:"TransportState",value:"PLAYING"})
-        Socket.emit("stateChange",{name:"CurrentTrackURI",value:self.audioSource.src})
+        Socket.emit("stateChange",{name:"CurrentTrackURI",value:self.resource.Uri})
       });
       $(this.audio).on("pause",function(){
         if(self.audio.currentTime != self.audio.duration){
