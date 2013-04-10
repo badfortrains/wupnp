@@ -19,6 +19,8 @@
         a(href="/playlist/"+id)
           =item.get("name")
         i.icon-volume-up
+        -if(!item.get("uuid"))
+          i.icon-trash
     -})
   h1 Servers
   ul.playlists.servers

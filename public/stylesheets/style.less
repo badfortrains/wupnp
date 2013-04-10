@@ -306,6 +306,13 @@ body{
       }
     }
   }
+  .playlists{
+    li:hover{
+      i.icon-trash{
+        display:inline-block;
+      }
+    }
+  }
   li{
     i{
       float:right;
@@ -314,6 +321,9 @@ body{
     }
   }
   li.active{
+    i.trash-icon{
+      display:none;
+    }
     i{
       display:inline-block;
     }

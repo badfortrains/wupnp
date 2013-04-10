@@ -41,5 +41,17 @@ module.exports = {
     }else{
       addTracks();
     }
+  },
+  remove: function(req,res){
+    var id = parseFloat(req.params.id),
+        pl = new Playlists(id);
+
+    pl.drop(function(err,doc){
+      if(err){
+        res.send(500,"error deleting playlist");
+      }else{
+        res.send(200,{deleted: true});
+      }
+    });     
   }
 }

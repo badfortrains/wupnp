@@ -61,6 +61,7 @@ app.get('/directory/:uuid/:id', wu.index);
 app.get("/api/playlists",playlists.index);
 app.post("/api/playlists",playlists.new);
 app.put("/api/playlists/:id", playlists.add);
+app.delete("/api/playlists/:id",playlists.remove);
 
 app.get("/api/playlists/:id", playlist_tracks.index)
 app.delete("/api/playlists/:id/:track", playlist_tracks.delete)

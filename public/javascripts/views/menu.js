@@ -3,8 +3,9 @@ Wu.Views.menu = Backbone.View.extend({
   template: JST['menu'],
 
   events:{
-    "click .renderers li"  : "setRenderer",
-    "click .musicLink"     : "gotoMusic", 
+    "click .renderers li"               : "setRenderer",
+    "click .musicLink"                  : "gotoMusic",
+    "click .playlists li .icon-trash"   : "deleteList"
   },
 
   initialize: function(){
@@ -14,7 +15,6 @@ Wu.Views.menu = Backbone.View.extend({
     this.listenTo(Wu.Cache.Collections.playlists,"add remove reset",this.render);
     this.listenTo(this,"hideMusic",this.hideMusic);
     this.listenTo(this,"showMusic",this.showMusic);
-    this.listenTo(this,"inserted",this.setupDrag);
     this.listenTo(Wu.Cache.Models.player,"change:id",this.setActive);
     this.listenTo(Wu.Cache.Models.player,"change:playlist",this.setActive);
     this.listenTo(Wu.Cache.Models.player,"change:TransportState",this.setActive);
@@ -39,15 +39,12 @@ Wu.Views.menu = Backbone.View.extend({
     $("#mask").off("click",$.proxy(this.hide,this));
     this.stopListening();
   },
-  setupDrag: function(){
-    var self = this;
-    Drawer.init({el:this.$el});
-    this.$el.on("left",function(){
-      self.$el.css("left","-100%");
-    });
-    this.$el.on("right",function(){
-      self.$el.css("left","0%");
-    });
+  deleteList: function(e){
+    var id = $(e.currentTarget).parent().attr("id"),
+        lists = Wu.Cache.Collections.playlists,
+        playlist = lists.get(id);
+
+    playlist && playlist.destroy();
   },
   show: function(){
     this.$el.removeClass("hide");
