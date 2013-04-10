@@ -23,7 +23,7 @@ var filterToSQL = function(filter){
  */
 var playlist = function(id,uuid,cb){
   //if uuid, check if a playlist already exists for that uuid otherwise create one
-  if(uuid || typeof(uuid) === 'string'){
+  if(typeof(uuid) === 'string'){
     this.uuid = uuid;
     db.get("SELECT _id FROM lists WHERE uuid = ?",uuid,function(err,doc){
       if(!err && doc){

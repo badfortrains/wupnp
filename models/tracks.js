@@ -83,7 +83,6 @@ Tracks.prototype.getCategory = function(category,filter,cb){
 }
 
 Tracks.prototype.urlById = function(id,cb){
-  console.log("urlById",id);
   db.get("SELECT Uri FROM resources WHERE track_id = ?",id,cb);
 }
 

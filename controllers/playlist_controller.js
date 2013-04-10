@@ -13,16 +13,16 @@ module.exports = {
   new: function(req,res){
     var filter = req.body.filter,
         name = req.body.name;
-
-        pl = new Playlists(name,function(id){
-          if(filter){
-            pl.add(filter,function(err,count){
-              res.send({_id:id,added:count});
-            });
-          }else{
-            res.send({_id:id,added:0});
-          }
+        
+    var pl = new Playlists(name,function(id){
+      if(filter){
+        pl.add(filter,function(err,count){
+          res.send({_id:id,added:count});
         });
+      }else{
+        res.send({_id:id,added:0});
+      }
+    });
   },
   add: function(req,res){
     var filter = req.body.filter || {},

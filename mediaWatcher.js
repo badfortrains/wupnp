@@ -55,11 +55,9 @@ MediaWatcher.prototype.setPosition = function(uuid,position){
 
 MediaWatcher.prototype.getTrackPosition = function(uuid){
   var self = this;
-  console.log('getposition');
   this.setRenderer(uuid);
   this.getPosition(function(result){
     result.uuid = uuid;
-    console.log('gotposition',result);
     self.emit("gotPosition",result);
   })
 }
