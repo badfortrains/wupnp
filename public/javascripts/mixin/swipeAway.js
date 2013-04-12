@@ -71,7 +71,7 @@ Wu.Mixin.swipeAway = {
       }
     }else if(e.propertyName == 'opacity'){
       $(e.currentTarget).parent().hide();
-      this.view.trigger("swipeAway",$(e.currentTarget).parent().attr('id'));
+      this.view.trigger("swipeAway",$(e.currentTarget).parent());
     }
   },
   undo:function(e){

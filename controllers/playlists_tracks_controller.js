@@ -22,12 +22,11 @@ module.exports = {
     });
   },
   delete:function(req,res){
-    var trackId = req.params.track,
+    var position = parseFloat(req.params.track),
         id = parseFloat(req.params.id),
-        filter = {_id: db.bson.ObjectID(trackId)},
         pl = new Playlists(id);
 
-    pl.remove(filter,function(err){
+    pl.remove(position,function(err){
       if(err){
         res.send(500,"failed to remove track");
       }else{

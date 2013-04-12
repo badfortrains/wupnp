@@ -38,8 +38,8 @@ Wu.Views.trackList = Backbone.View.extend({
       Wu.Cache.Models.player.playByPosition(position,this.model.get("_id"));
     }
   },
-  delete:function(id){
-    var track = this.collection.get(id);
+  delete:function($li){
+    var track = this.collection.get($li.attr("position"));
     if(track){
       track.destroy({
         error:function(model,xhr){

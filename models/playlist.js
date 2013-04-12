@@ -78,22 +78,13 @@ playlist.prototype.add = function(filter,callback){
     }
   }.bind(this));
 }
-/**
- * remove all tracks matching filter from playlist
- * @param  {object}   filter   mongodb query object
- * @param  {Function} callback called on completion
- * @return {monogjs cursor}   
- */
-playlist.prototype.remove = function(filter,callback){
-  var WHERE = filter;
-  if(typeof(filter) === "object"){
-    WHERE = filterToSQL(filter) + " AND lists._id = " + this.id;
-  }
 
-  db.run("DELETE FROM playlist_tracks JOIN tracks ON track_id = _id "+WHERE,function(err){
-    var stmt = db.prepare("SELECT track_id FROM playlist_tracks WHERE list_id = ? ORDER BY position",this.id);
-    this.order(stmt,0,callback);
-  }.bind(this));  
+
+playlist.prototype.remove = function(position,callback){
+  var listId = this.id;
+  db.run("DELETE FROM playlist_tracks WHERE list_id = ? AND position = ?",listId,position,function(err){
+    db.run("UPDATE lists SET count = count - ? WHERE _id = ?",this.changes,listId,callback);
+  })
 }
 
 playlist.prototype.removeAfter = function(position,callback){
