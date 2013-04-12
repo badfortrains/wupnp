@@ -15,10 +15,8 @@ module.exports = {
 
     pl.findAt(0,{limit:false, categories:categories},function(err,docs){
       if(err){
-        console.log(err);
         res.send(500,"failed to retrieve tracks");
       }else{
-        console.log(docs);
         res.send(docs);
       }
     });

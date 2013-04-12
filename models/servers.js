@@ -14,7 +14,7 @@ var mw = require('../mediaWatcher')
 
 var onTracksAdded = function(data){
   //add to db;
-  if(data){
+  if(data != 'fail'){
     console.log('Inserting tracks')
     console.log(this.uuid);
 
