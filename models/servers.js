@@ -1,5 +1,4 @@
 var mw = require('../mediaWatcher')
-    ,db = require('mongojs').connect('test', ['tracks','playlist'])
     ,util = require("util")
     ,EventEmitter = require("events").EventEmitter
     ,servers = {}

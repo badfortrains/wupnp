@@ -1,6 +1,4 @@
-var Playlists = require('../models/playlist').playlist,
-    db = require('mongojs').connect('test');
-
+var Playlists = require('../models/playlist').playlist;
 module.exports = {
   index:function(req,res){
     var id = parseFloat(req.params.id),

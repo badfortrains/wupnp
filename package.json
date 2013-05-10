@@ -8,7 +8,10 @@
   "dependencies": {
     "express": "3.0.0rc1",
     "jade": "*",
-    "less-middleware": "*"
+    "sqlite3" : "*",
+    "less-middleware": "*",
+    "http-proxy" : "*",
+    "socket.io" :  "*"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
