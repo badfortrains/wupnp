@@ -9,7 +9,7 @@ var filterToSQL = function(filter){
   if(typeof(filter) === 'object' && Object.keys(filter).length > 0){
     where = "WHERE "
     for(var column in filter){
-      where += column + "='" + filter[column] + "' AND "; 
+      where += column + "='" + filter[column].replace("'","''") + "' AND "; 
     }
     where = where.substring(0,where.length - 5);
   }
