@@ -15,10 +15,20 @@ Youtube: http://www.youtube.com/watch?v=72oVUozqCjE
 Install
 =======
 To install on the raspberry pi
-  1.Install Node.js (and npm)
-  2.Clone wupnp
-  3.install dependencies by executing 'npm install' in the wupnp directory
-  4.start the server with 'NODE_ENV=production node app.js' or 'NODE_ENV=production nohup node app.js&' to run it in the background
-  
+<ol>
+  <li>
+    Install Node.js (and npm)
+  </li>
+  <li>
+    Clone wupnp
+  </li>
+  <li>
+    install dependencies by executing 'npm install' in the wupnp directory
+  </li>
+  <li>
+    start the server with 'NODE_ENV=production node app.js' or 'NODE_ENV=production nohup node app.js&' to run it in the background
+  </li>
+</ol>
+
 This has only been tested on Raspbian “wheezy” hard-float on model B. To run on any other hardware/OS the [media watcher](https://github.com/badfortrains/mediaWatcher) 
 module will probably need to be rebuilt.  I'll try to post instructions on doing that shortly
