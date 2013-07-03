@@ -5,6 +5,9 @@ module.exports = function(grunt) {
   // Project configuration.
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
+    nodeunit: {
+      all: ['tests/*.js']
+    },
     concat: {
       options: {
         separator: ';'
@@ -22,7 +25,7 @@ module.exports = function(grunt) {
         'public/javascripts/mixin/*.js'
         ],
         dest: 'public/build/<%= pkg.name %>.js'
-      }	
+      }
     },
     uglify: {
       build: {
@@ -47,12 +50,14 @@ module.exports = function(grunt) {
     })
   });
 
+  //plugin for running nodeunit
+  grunt.loadNpmTasks('grunt-contrib-nodeunit');
   grunt.loadNpmTasks('grunt-contrib-concat');
 
   // Load the plugin that provides the "uglify" task.
   grunt.loadNpmTasks('grunt-contrib-uglify');
 
   // Default task(s).
-  grunt.registerTask('default', ['build-jst','concat','uglify']);
+  grunt.registerTask('default', ['nodeunit','build-jst','concat','uglify']);
 
 };

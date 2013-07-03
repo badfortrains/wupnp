@@ -277,30 +277,6 @@ window.JST = {'category.container':function(locals, cb, __) {
     }
     if (!__.inc) __.r.done(__);
     cb(null, __.join(""), __);
-},'player.tab':function(locals, cb, __) {
-    __ = __ || [];
-    __.r = __.r || blade.Runtime;
-    if (!__.func) __.func = {}, __.blocks = {}, __.chunk = {};
-    __.locals = locals || {};
-    __.filename = "/Users/spurcell/code/fun/node_modules/wu/templates/player.tab.blade";
-    try {
-        with (__.locals) {
-            __.line = 1, __.col = 1;
-            __.push("<div" + ' class="playing"' + ">");
-            __.line = 2, __.col = 3;
-            __.push("<a" + ' class="title"' + ">" + "Now Playing" + "</a>");
-            __.line = 3, __.col = 3;
-            __.push("<i" + ' class="icon-play play"' + ">" + "</i>");
-            __.line = 4, __.col = 3;
-            __.push("<i" + ' class="icon-chevron-right next"' + ">" + "</i>");
-            __.line = 5, __.col = 3;
-            __.push("<div" + ' class="ball"' + ">" + "</div>" + "</div>");
-        }
-    } catch (e) {
-        return cb(__.r.rethrow(e, __));
-    }
-    if (!__.inc) __.r.done(__);
-    cb(null, __.join(""), __);
 },'menu':function(locals, cb, __) {
     __ = __ || [];
     __.r = __.r || blade.Runtime;
@@ -430,26 +406,24 @@ window.JST = {'category.container':function(locals, cb, __) {
     }
     if (!__.inc) __.r.done(__);
     cb(null, __.join(""), __);
-},'popup':function(locals, cb, __) {
+},'player.tab':function(locals, cb, __) {
     __ = __ || [];
     __.r = __.r || blade.Runtime;
     if (!__.func) __.func = {}, __.blocks = {}, __.chunk = {};
     __.locals = locals || {};
-    __.filename = "/Users/spurcell/code/fun/node_modules/wu/templates/popup.blade";
+    __.filename = "/Users/spurcell/code/fun/node_modules/wu/templates/player.tab.blade";
     try {
         with (__.locals) {
             __.line = 1, __.col = 1;
-            __.push("<div" + ' class="top-box"' + ">");
+            __.push("<div" + ' class="playing"' + ">");
             __.line = 2, __.col = 3;
-            __.push("<h1" + ">" + "add to now playing" + "</h1>");
+            __.push("<a" + ' class="title"' + ">" + "Now Playing" + "</a>");
             __.line = 3, __.col = 3;
-            __.push("<h1" + ">" + "add to ..." + "</h1>");
+            __.push("<i" + ' class="icon-play play"' + ">" + "</i>");
             __.line = 4, __.col = 3;
-            __.push("<h1" + ">" + "add to new list" + "</h1>");
+            __.push("<i" + ' class="icon-chevron-right next"' + ">" + "</i>");
             __.line = 5, __.col = 3;
-            __.push("<span" + ">" + "cancel" + "</span>" + "</div>");
-            __.line = 6, __.col = 1;
-            __.push("<div" + ' class="bottom-box"' + ">" + "</div>");
+            __.push("<div" + ' class="ball"' + ">" + "</div>" + "</div>");
         }
     } catch (e) {
         return cb(__.r.rethrow(e, __));
@@ -502,6 +476,32 @@ window.JST = {'category.container':function(locals, cb, __) {
                 }
             });
             __.push("</ul>");
+        }
+    } catch (e) {
+        return cb(__.r.rethrow(e, __));
+    }
+    if (!__.inc) __.r.done(__);
+    cb(null, __.join(""), __);
+},'popup':function(locals, cb, __) {
+    __ = __ || [];
+    __.r = __.r || blade.Runtime;
+    if (!__.func) __.func = {}, __.blocks = {}, __.chunk = {};
+    __.locals = locals || {};
+    __.filename = "/Users/spurcell/code/fun/node_modules/wu/templates/popup.blade";
+    try {
+        with (__.locals) {
+            __.line = 1, __.col = 1;
+            __.push("<div" + ' class="top-box"' + ">");
+            __.line = 2, __.col = 3;
+            __.push("<h1" + ">" + "add to now playing" + "</h1>");
+            __.line = 3, __.col = 3;
+            __.push("<h1" + ">" + "add to ..." + "</h1>");
+            __.line = 4, __.col = 3;
+            __.push("<h1" + ">" + "add to new list" + "</h1>");
+            __.line = 5, __.col = 3;
+            __.push("<span" + ">" + "cancel" + "</span>" + "</div>");
+            __.line = 6, __.col = 1;
+            __.push("<div" + ' class="bottom-box"' + ">" + "</div>");
         }
     } catch (e) {
         return cb(__.r.rethrow(e, __));

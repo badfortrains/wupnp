@@ -1,15 +1,12 @@
 var db = require('./db');
 
 
-
-
-
 var filterToSQL = function(filter){
   var where = "";
   if(typeof(filter) === 'object' && Object.keys(filter).length > 0){
     where = "WHERE "
     for(var column in filter){
-      where += column + "='" + filter[column].replace("'","''") + "' AND "; 
+      where += column + "='" + filter[column].replace("'","''") + "' AND ";
     }
     where = where.substring(0,where.length - 5);
   }
@@ -19,7 +16,7 @@ var filterToSQL = function(filter){
 
 /**
  * playlist object initalized with an id (existing playlist) or name (new playlist)
- * @param  {id string | objectId | name string } id 
+ * @param  {id string | objectId | name string } id
  */
 var playlist = function(id,uuid,cb){
   //if uuid, check if a playlist already exists for that uuid otherwise create one
@@ -95,7 +92,7 @@ playlist.prototype.removeAfter = function(position,callback){
 }
 /**
  * Delete playlist form list db, and remove all tracks
- * @param  {Function} callback 
+ * @param  {Function} callback
  */
 playlist.prototype.drop = function(callback){
   var id = this.id;
@@ -106,13 +103,13 @@ playlist.prototype.drop = function(callback){
 /**
  * create a new playlist
  * @param  {[type]}   name  : name of playlist
- * @param  {Function} callback 
+ * @param  {Function} callback
  */
 playlist.prototype._create = function(name,cb){
   var self = this;
   db.run("INSERT INTO lists VALUES (NULL,?,?,?)",name,0,this.uuid || null,function(err){
     if(!err){
-      self.id = this.lastID; 
+      self.id = this.lastID;
       if(typeof(cb) == "function")
         cb(self.id,self);
     }
@@ -121,7 +118,7 @@ playlist.prototype._create = function(name,cb){
 
 playlist.prototype.getCount = function(callback){
   db.get("SELECT count FROM lists WHERE _id = ?",this.id,function(err,doc){
-    if(err || doc === null){
+    if(err || !doc){
       err = err || {error: "playlist not found"}
       callback(err);
     }else{
@@ -135,7 +132,7 @@ playlist.prototype.attributes = function(cb){
 }
 
 
-//options: 
+//options:
 // limit: number || false for no limit  : default = 2
 // categories: defualt {}
 playlist.prototype.findAt = function(position,settings,cb){
@@ -165,7 +162,7 @@ playlist.prototype.resourcesAt = function(position,cb){
   db.all(find,position,this.id,function(err,docs){
     if(err || !docs.length){
       cb(err,null);
-    }else{ 
+    }else{
       cb(err,{Resources:docs});
     }
   })
