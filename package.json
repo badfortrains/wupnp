@@ -9,6 +9,9 @@
     "express": "3.0.0rc1",
     "jade": "*",
     "sqlite3": "*",
+    "blade": "*",
+    "connect" : "*",
+    "less"  : "*",
     "less-middleware": "*",
     "http-proxy": "*",
     "socket.io": "*"
