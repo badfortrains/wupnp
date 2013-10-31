@@ -204,6 +204,14 @@ body{
       margin:10px;
       font-size: 17px
     }
+    a{
+      max-width: 70%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: inline-block;
+      vertical-align: middle;
+    }
   }
   .icon-music{
     position: absolute;
@@ -536,6 +544,7 @@ body{
   position:relative;
   display: inline-block;
   overflow: hidden;
+  -webkit-transform: translate3d(0,0,0);
   opacity: 1;
   z-index:2;
 }
