@@ -14,6 +14,11 @@ module.exports = function(grunt) {
       },
       dist: {
         src: [
+        'public/javascripts/fastclick.js',
+        'public/javascripts/zepto.min.js',
+        'public/javascripts/underscore-min.js',
+        'public/javascripts/backbone-min.js',
+        'public/javascripts/*.js',
         'public/javascripts/jst/*.js',
         'public/javascripts/wu/*.js',
         'public/javascripts/views/base/*.js',

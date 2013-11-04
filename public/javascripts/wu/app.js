@@ -39,6 +39,11 @@ Wu = {
   }
 }
 
+
+window.addEventListener('load', function() {
+    FastClick.attach(document.body);
+}, false);
+
 $(document).ready(function(){
   window.Wu = Wu;
   Wu.init();
