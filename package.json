@@ -14,7 +14,8 @@
     "less"  : "*",
     "less-middleware": "*",
     "http-proxy": "*",
-    "socket.io": "*"
+    "socket.io": "*",
+    "mediaWatcher" : "git://github.com/badfortrains/mediaWatcher.git"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
