@@ -1,4 +1,4 @@
-var MediaWatcher = require('./media_watcher').MediaWatcher,
+var MediaWatcher = require('mediaWatcher').MediaWatcher,
     EventEmitter = require("events").EventEmitter;
 
 MediaWatcher.prototype.__proto__ = EventEmitter.prototype;
