@@ -22,6 +22,7 @@ db.serialize(function() {
   db.run("CREATE INDEX album_index ON tracks(Album)");
   db.run("CREATE INDEX title_index ON tracks(Title)");
   db.run("CREATE INDEX uri_index ON resources(uri)");
+  db.run("CREATE  UNIQUE INDEX unique_tracks ON tracks(Artist,Album,Title)");
 
 });
 

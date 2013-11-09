@@ -11,7 +11,6 @@ exports.registerEmits = function(namespace){
     namespace.emit("rendererRemoved",event);
   })
   Renderers.on("stateChange",function(uuid,event){
-    console.log("STATE CHANGE",uuid,event)
     namespace.in(uuid).emit("stateChange",event);
   })
   Tracks.on("tracksInserted",function(uuid){
