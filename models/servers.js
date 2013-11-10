@@ -54,8 +54,24 @@ var remove = function(event){
   server_model.emit("serverRemoved",event)
 }
 
+var tracksChange = function(event){
+  var containers;
+  server = servers[event.uuid];
+  if(server){
+    //only search updated album folders for new tracks
+    //ignore 1$14$342123623 - container for all albums
+    containers = event.value.split(",").filter(function(container){
+      return(/1\$14\$.+/.test(container) && container != '1$14$342123623')
+    });
+    if(containers[0]){
+      mw.getTracks(onTracksAdded.bind(this),server.uuid,containers[0]);
+    }
+  }
+}
+
 //register events
 mw.on("serverAdded",add);
+mw.on("containerUpdate",tracksChange)
 
 var Server = function(){};
 util.inherits(Server,EventEmitter);
