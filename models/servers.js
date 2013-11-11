@@ -72,6 +72,9 @@ var tracksChange = function(event){
 //register events
 mw.on("serverAdded",add);
 mw.on("containerUpdate",tracksChange)
+mw.on("serverRemoved",function(event){
+  Tracks.drop_by_uuid(event.uuid)
+})
 
 var Server = function(){};
 util.inherits(Server,EventEmitter);

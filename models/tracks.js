@@ -17,16 +17,23 @@ var updateFromObjID = function(){
   })
 }
 
+Tracks.prototype.drop_by_uuid = function(uuid,cb){
+  var stmt = "delete FROM tracks WHERE server=?"
+  db.run(stmt,uuid,function(err,docs){
+    this.lastUpdated = Date.now();
+  }.bind(this));
+}
+
 
 Tracks.prototype.insert = function(data,uuid,cb){
   var i = 0,
       length = data.length,
-      stmt = db.prepare("INSERT OR IGNORE INTO tracks VALUES (NULL,?,?,?,?,?,?)"),
+      stmt = db.prepare("INSERT OR IGNORE INTO tracks VALUES (NULL,?,?,?,?,?,?,?)"),
       resourceInsert = db.prepare("INSERT INTO resources VALUES (NULL,?,?,?)");
 
   db.run("BEGIN TRANSACTION");
   data.forEach(function(item){
-    stmt.run(item.TrackNumber,item.Title,item.Artist,item.Album,item.Didl,item.oID,function(){
+    stmt.run(item.TrackNumber,item.Title,item.Artist,item.Album,item.Didl,item.oID,uuid,function(){
       var lastID = this.lastID;
       item.Resources && item.Resources.forEach(function(resource){
         resourceInsert.run(resource.Uri,resource.ProtocolInfo,lastID);
