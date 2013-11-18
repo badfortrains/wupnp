@@ -1,27 +1,9 @@
-window.JST = {'category.container':function(locals, cb, __) {
+window.JST = {'category.info':function(locals, cb, __) {
     __ = __ || [];
     __.r = __.r || blade.Runtime;
     if (!__.func) __.func = {}, __.blocks = {}, __.chunk = {};
     __.locals = locals || {};
-    __.filename = "/Users/spurcell/code/fun/node_modules/wu/templates/category.container.blade";
-    try {
-        with (__.locals) {
-            __.line = 1, __.col = 1;
-            __.push("<div" + ' class="popup"' + ">" + "</div>");
-            __.line = 2, __.col = 1;
-            __.push("<div" + ' id="category-container"' + ">" + "</div>");
-        }
-    } catch (e) {
-        return cb(__.r.rethrow(e, __));
-    }
-    if (!__.inc) __.r.done(__);
-    cb(null, __.join(""), __);
-},'category.info':function(locals, cb, __) {
-    __ = __ || [];
-    __.r = __.r || blade.Runtime;
-    if (!__.func) __.func = {}, __.blocks = {}, __.chunk = {};
-    __.locals = locals || {};
-    __.filename = "/Users/spurcell/code/fun/node_modules/wu/templates/category.info.blade";
+    __.filename = "/Users/spurcell/code/fun/test/wupnp/templates/category.info.blade";
     try {
         with (__.locals) {
             __.line = 1, __.col = 1;
@@ -86,34 +68,12 @@ window.JST = {'category.container':function(locals, cb, __) {
     }
     if (!__.inc) __.r.done(__);
     cb(null, __.join(""), __);
-},'category.nav':function(locals, cb, __) {
-    __ = __ || [];
-    __.r = __.r || blade.Runtime;
-    if (!__.func) __.func = {}, __.blocks = {}, __.chunk = {};
-    __.locals = locals || {};
-    __.filename = "/Users/spurcell/code/fun/node_modules/wu/templates/category.nav.blade";
-    try {
-        with (__.locals) {
-            __.line = 1, __.col = 1;
-            __.push("<nav" + ">");
-            __.line = 2, __.col = 3;
-            __.push("<a" + ' href="/category/Artist"' + ' class="active Artist"' + ' cat="Artist"' + ">" + "Artists" + "</a>");
-            __.line = 3, __.col = 3;
-            __.push("<a" + ' href="/category/Album"' + ' cat="Album"' + ' class="Album"' + ">" + "Albums" + "</a>");
-            __.line = 4, __.col = 3;
-            __.push("<a" + ' href="/category/Title"' + ' cat="Title"' + ' class="Title"' + ">" + "Tracks" + "</a>" + "</nav>");
-        }
-    } catch (e) {
-        return cb(__.r.rethrow(e, __));
-    }
-    if (!__.inc) __.r.done(__);
-    cb(null, __.join(""), __);
 },'category.popup':function(locals, cb, __) {
     __ = __ || [];
     __.r = __.r || blade.Runtime;
     if (!__.func) __.func = {}, __.blocks = {}, __.chunk = {};
     __.locals = locals || {};
-    __.filename = "/Users/spurcell/code/fun/node_modules/wu/templates/category.popup.blade";
+    __.filename = "/Users/spurcell/code/fun/test/wupnp/templates/category.popup.blade";
     try {
         with (__.locals) {
             __.line = 1, __.col = 1;
@@ -148,12 +108,34 @@ window.JST = {'category.container':function(locals, cb, __) {
     }
     if (!__.inc) __.r.done(__);
     cb(null, __.join(""), __);
+},'category.nav':function(locals, cb, __) {
+    __ = __ || [];
+    __.r = __.r || blade.Runtime;
+    if (!__.func) __.func = {}, __.blocks = {}, __.chunk = {};
+    __.locals = locals || {};
+    __.filename = "/Users/spurcell/code/fun/test/wupnp/templates/category.nav.blade";
+    try {
+        with (__.locals) {
+            __.line = 1, __.col = 1;
+            __.push("<nav" + ">");
+            __.line = 2, __.col = 3;
+            __.push("<a" + ' href="/category/Artist"' + ' class="active Artist"' + ' cat="Artist"' + ">" + "Artists" + "</a>");
+            __.line = 3, __.col = 3;
+            __.push("<a" + ' href="/category/Album"' + ' cat="Album"' + ' class="Album"' + ">" + "Albums" + "</a>");
+            __.line = 4, __.col = 3;
+            __.push("<a" + ' href="/category/Title"' + ' cat="Title"' + ' class="Title"' + ">" + "Tracks" + "</a>" + "</nav>");
+        }
+    } catch (e) {
+        return cb(__.r.rethrow(e, __));
+    }
+    if (!__.inc) __.r.done(__);
+    cb(null, __.join(""), __);
 },'category.show':function(locals, cb, __) {
     __ = __ || [];
     __.r = __.r || blade.Runtime;
     if (!__.func) __.func = {}, __.blocks = {}, __.chunk = {};
     __.locals = locals || {};
-    __.filename = "/Users/spurcell/code/fun/node_modules/wu/templates/category.show.blade";
+    __.filename = "/Users/spurcell/code/fun/test/wupnp/templates/category.show.blade";
     try {
         with (__.locals) {
             __.line = 1, __.col = 1;
@@ -217,56 +199,12 @@ window.JST = {'category.container':function(locals, cb, __) {
     }
     if (!__.inc) __.r.done(__);
     cb(null, __.join(""), __);
-},'directory.container':function(locals, cb, __) {
-    __ = __ || [];
-    __.r = __.r || blade.Runtime;
-    if (!__.func) __.func = {}, __.blocks = {}, __.chunk = {};
-    __.locals = locals || {};
-    __.filename = "/Users/spurcell/code/fun/node_modules/wu/templates/directory.container.blade";
-    try {
-        with (__.locals) {
-            __.line = 1, __.col = 1;
-            __.push("<div" + ' class="popup server"' + ">");
-            __.line = 2, __.col = 3;
-            __.push("<h1" + ">" + "Add tracks from current directory?" + "</h1>");
-            __.line = 3, __.col = 3;
-            __.push("<h2" + ' class="ok"' + ">" + "ok" + "</h2>");
-            __.line = 4, __.col = 3;
-            __.push("<h2" + ' class="cancel"' + ">" + "cancel" + "</h2>" + "</div>");
-            __.line = 5, __.col = 1;
-            __.push("<div" + ' id="category-container"' + ">" + "</div>");
-        }
-    } catch (e) {
-        return cb(__.r.rethrow(e, __));
-    }
-    if (!__.inc) __.r.done(__);
-    cb(null, __.join(""), __);
-},'header':function(locals, cb, __) {
-    __ = __ || [];
-    __.r = __.r || blade.Runtime;
-    if (!__.func) __.func = {}, __.blocks = {}, __.chunk = {};
-    __.locals = locals || {};
-    __.filename = "/Users/spurcell/code/fun/node_modules/wu/templates/header.blade";
-    try {
-        with (__.locals) {
-            __.line = 1, __.col = 1;
-            __.push("<div" + ' class="nav-wrap"' + ">");
-            __.line = 2, __.col = 3;
-            __.push("<span" + ' class="menuLink icon-reorder"' + ">" + "</span>");
-            __.line = 3, __.col = 3;
-            __.push("<div" + ' id="subnav"' + ">" + "</div>" + "</div>");
-        }
-    } catch (e) {
-        return cb(__.r.rethrow(e, __));
-    }
-    if (!__.inc) __.r.done(__);
-    cb(null, __.join(""), __);
 },'loader':function(locals, cb, __) {
     __ = __ || [];
     __.r = __.r || blade.Runtime;
     if (!__.func) __.func = {}, __.blocks = {}, __.chunk = {};
     __.locals = locals || {};
-    __.filename = "/Users/spurcell/code/fun/node_modules/wu/templates/loader.blade";
+    __.filename = "/Users/spurcell/code/fun/test/wupnp/templates/loader.blade";
     try {
         with (__.locals) {
             __.line = 1, __.col = 1;
@@ -282,7 +220,7 @@ window.JST = {'category.container':function(locals, cb, __) {
     __.r = __.r || blade.Runtime;
     if (!__.func) __.func = {}, __.blocks = {}, __.chunk = {};
     __.locals = locals || {};
-    __.filename = "/Users/spurcell/code/fun/node_modules/wu/templates/menu.blade";
+    __.filename = "/Users/spurcell/code/fun/test/wupnp/templates/menu.blade";
     try {
         with (__.locals) {
             __.line = 1, __.col = 1;
@@ -406,12 +344,56 @@ window.JST = {'category.container':function(locals, cb, __) {
     }
     if (!__.inc) __.r.done(__);
     cb(null, __.join(""), __);
+},'directory.container':function(locals, cb, __) {
+    __ = __ || [];
+    __.r = __.r || blade.Runtime;
+    if (!__.func) __.func = {}, __.blocks = {}, __.chunk = {};
+    __.locals = locals || {};
+    __.filename = "/Users/spurcell/code/fun/test/wupnp/templates/directory.container.blade";
+    try {
+        with (__.locals) {
+            __.line = 1, __.col = 1;
+            __.push("<div" + ' class="popup server"' + ">");
+            __.line = 2, __.col = 3;
+            __.push("<h1" + ">" + "Add tracks from current directory?" + "</h1>");
+            __.line = 3, __.col = 3;
+            __.push("<h2" + ' class="ok"' + ">" + "ok" + "</h2>");
+            __.line = 4, __.col = 3;
+            __.push("<h2" + ' class="cancel"' + ">" + "cancel" + "</h2>" + "</div>");
+            __.line = 5, __.col = 1;
+            __.push("<div" + ' id="category-container"' + ">" + "</div>");
+        }
+    } catch (e) {
+        return cb(__.r.rethrow(e, __));
+    }
+    if (!__.inc) __.r.done(__);
+    cb(null, __.join(""), __);
+},'header':function(locals, cb, __) {
+    __ = __ || [];
+    __.r = __.r || blade.Runtime;
+    if (!__.func) __.func = {}, __.blocks = {}, __.chunk = {};
+    __.locals = locals || {};
+    __.filename = "/Users/spurcell/code/fun/test/wupnp/templates/header.blade";
+    try {
+        with (__.locals) {
+            __.line = 1, __.col = 1;
+            __.push("<div" + ' class="nav-wrap"' + ">");
+            __.line = 2, __.col = 3;
+            __.push("<span" + ' class="menuLink icon-reorder"' + ">" + "</span>");
+            __.line = 3, __.col = 3;
+            __.push("<div" + ' id="subnav"' + ">" + "</div>" + "</div>");
+        }
+    } catch (e) {
+        return cb(__.r.rethrow(e, __));
+    }
+    if (!__.inc) __.r.done(__);
+    cb(null, __.join(""), __);
 },'player.tab':function(locals, cb, __) {
     __ = __ || [];
     __.r = __.r || blade.Runtime;
     if (!__.func) __.func = {}, __.blocks = {}, __.chunk = {};
     __.locals = locals || {};
-    __.filename = "/Users/spurcell/code/fun/node_modules/wu/templates/player.tab.blade";
+    __.filename = "/Users/spurcell/code/fun/test/wupnp/templates/player.tab.blade";
     try {
         with (__.locals) {
             __.line = 1, __.col = 1;
@@ -435,7 +417,7 @@ window.JST = {'category.container':function(locals, cb, __) {
     __.r = __.r || blade.Runtime;
     if (!__.func) __.func = {}, __.blocks = {}, __.chunk = {};
     __.locals = locals || {};
-    __.filename = "/Users/spurcell/code/fun/node_modules/wu/templates/playlist.dropdown.blade";
+    __.filename = "/Users/spurcell/code/fun/test/wupnp/templates/playlist.dropdown.blade";
     try {
         with (__.locals) {
             __.line = 1, __.col = 1;
@@ -487,7 +469,7 @@ window.JST = {'category.container':function(locals, cb, __) {
     __.r = __.r || blade.Runtime;
     if (!__.func) __.func = {}, __.blocks = {}, __.chunk = {};
     __.locals = locals || {};
-    __.filename = "/Users/spurcell/code/fun/node_modules/wu/templates/popup.blade";
+    __.filename = "/Users/spurcell/code/fun/test/wupnp/templates/popup.blade";
     try {
         with (__.locals) {
             __.line = 1, __.col = 1;
@@ -513,7 +495,7 @@ window.JST = {'category.container':function(locals, cb, __) {
     __.r = __.r || blade.Runtime;
     if (!__.func) __.func = {}, __.blocks = {}, __.chunk = {};
     __.locals = locals || {};
-    __.filename = "/Users/spurcell/code/fun/node_modules/wu/templates/server.menu.blade";
+    __.filename = "/Users/spurcell/code/fun/test/wupnp/templates/server.menu.blade";
     try {
         with (__.locals) {
             __.line = 1, __.col = 1;
@@ -536,12 +518,30 @@ window.JST = {'category.container':function(locals, cb, __) {
     }
     if (!__.inc) __.r.done(__);
     cb(null, __.join(""), __);
+},'category.container':function(locals, cb, __) {
+    __ = __ || [];
+    __.r = __.r || blade.Runtime;
+    if (!__.func) __.func = {}, __.blocks = {}, __.chunk = {};
+    __.locals = locals || {};
+    __.filename = "/Users/spurcell/code/fun/test/wupnp/templates/category.container.blade";
+    try {
+        with (__.locals) {
+            __.line = 1, __.col = 1;
+            __.push("<div" + ' class="popup"' + ">" + "</div>");
+            __.line = 2, __.col = 1;
+            __.push("<div" + ' id="category-container"' + ">" + "</div>");
+        }
+    } catch (e) {
+        return cb(__.r.rethrow(e, __));
+    }
+    if (!__.inc) __.r.done(__);
+    cb(null, __.join(""), __);
 },'track.list':function(locals, cb, __) {
     __ = __ || [];
     __.r = __.r || blade.Runtime;
     if (!__.func) __.func = {}, __.blocks = {}, __.chunk = {};
     __.locals = locals || {};
-    __.filename = "/Users/spurcell/code/fun/node_modules/wu/templates/track.list.blade";
+    __.filename = "/Users/spurcell/code/fun/test/wupnp/templates/track.list.blade";
     try {
         with (__.locals) {
             __.line = 1, __.col = 1;
