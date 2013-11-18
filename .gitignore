@@ -1,3 +1,4 @@
 *.css
 node_modules/
 *.node
+nohup.out
