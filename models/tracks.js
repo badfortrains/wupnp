@@ -24,6 +24,50 @@ Tracks.prototype.drop_by_uuid = function(uuid,cb){
   }.bind(this));
 }
 
+//Simpler insert, assume we're only adding a album container
+//don't emit on insert
+Tracks.prototype.silent_insert = function(data,uuid,cb){
+  var i = 1,
+      length = data.length,
+      stmt = db.prepare("INSERT OR IGNORE INTO tracks VALUES (NULL,?,?,?,?,?,?,?)"),
+      resourceInsert = db.prepare("INSERT INTO resources VALUES (NULL,?,?,?)");
+
+  var compareOID = function(a,b){
+    if (a.oID < b.oID)
+      return -1;
+    else if(a.oID > b.oID)
+      return 1;
+    else
+      return 0;
+  }
+
+  data.sort(compareOID);
+
+  db.run("BEGIN TRANSACTION",function(){
+    data.forEach(function(item){
+      stmt.run(i++,item.Title,item.Artist,item.Album,item.Didl,item.oID,uuid,function(){
+        var lastID = this.lastID;
+        item.Resources && item.Resources.forEach(function(resource){
+          resourceInsert.run(resource.Uri,resource.ProtocolInfo,lastID);
+        });
+      })
+    })
+
+    stmt.finalize(function(err,docs){
+      if(err){     
+        console.log("error inserting initial data into db");
+        console.log(err);
+        this.emit("error","Error inserting tracks "+err);
+      }else{
+        this.lastUpdated = Date.now();
+        typeof(cb) === "function" && cb();
+      }     
+    }.bind(this));
+    db.run("COMMIT")     
+  }.bind(this));
+
+}
+
 
 Tracks.prototype.insert = function(data,uuid,cb){
   var i = 0,

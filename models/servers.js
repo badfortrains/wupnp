@@ -5,25 +5,10 @@ var mw = require('../mediaWatcher')
     ,Tracks = require("./tracks")
     ,KNOWN_PATHS ={ 
       //"e91f16b6-f441-4de4-a65d-d1ed420c10e1"   : "0$3$2",         //ps3Media Server
-      "7076436f-6e65-1063-8074-4ce6766160b7" : "1$268435466",   //Linkstation
+      "7076436f-6e65-1063-8074-4ce6766160b7" : "1$14",   //Linkstation
       //"bc4fab65-9f26-3687-bbfc-1fb761347c74" : "2"              //galaxy s2
     };
 
-
-
-var onTracksAdded = function(data){
-  //add to db;
-  if(data != 'fail'){
-    console.log('Inserting tracks')
-    console.log(this.uuid);
-
-    Tracks.insert(data,this.uuid,function(){
-      this.status = "inserted"
-    }.bind(this));
-  }else{
-    console.log("Error getting tracks from server")
-  }
-}
 
 var MediaServer = function(addEvent){
   this.name = addEvent.value;
@@ -34,12 +19,53 @@ var MediaServer = function(addEvent){
   this.setPath(KNOWN_PATHS[event.uuid]);
 }
 
+MediaServer.prototype.addContainer = function(path){
+  var container,
+      count = 0,
+      lastTime = 0;
+
+  var onInsert = function(){
+    count--;
+    this.status = "inserted";
+    if(count <= 0){
+      Tracks.emit("tracksInserted",this.uuid);
+    }
+  }.bind(this)
+
+  //Request content of any containers,
+  //insert other tracks
+  var onData = function(data){
+    var i = 0,
+        tracks = [],
+        then = Date.now();
+    if(data == 'fail'){
+      console.log("Error getting tracks from server")
+      return;
+    }
+
+    for(i; i<data.length; i++){
+      if(data[i].isContainer){
+        count++;
+        mw.getTracks(onData,this.uuid,data[i].oID)
+      }//ignore the "all" folder in albums
+      else if(data[i].oID != "1$14$342123623"){
+        tracks.push(data[i])
+      }
+    }
+
+    tracks.length && Tracks.silent_insert(tracks,this.uuid,onInsert)
+  }.bind(this)
+
+  mw.getTracks(onData,this.uuid,path)
+}
+
 MediaServer.prototype.setPath = function(path){
   if(path){
     this.path = path
     console.log("get tracks",this.uuid,path)
     this.status = "loading"
-    mw.getTracks(onTracksAdded.bind(this),this.uuid,path);
+    this.addContainer(path);
+    //mw.getTracks(onTracksAdded.bind(this),this.uuid,path);
   }
 }
 
