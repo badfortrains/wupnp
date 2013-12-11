@@ -28,33 +28,39 @@ Tracks.prototype.drop_by_uuid = function(uuid,cb){
 Tracks.prototype.insert = function(data,uuid,cb){
   var i = 0,
       length = data.length,
-      stmt = db.prepare("INSERT OR IGNORE INTO tracks VALUES (NULL,?,?,?,?,?,?,?)"),
+      stmt = db.prepare("INSERT OR IGNORE INTO tracks VALUES (?,?,?,?,?,?,?,?)"),
       resourceInsert = db.prepare("INSERT INTO resources VALUES (NULL,?,?,?)");
 
   db.run("BEGIN TRANSACTION");
-  data.forEach(function(item){
-    stmt.run(item.TrackNumber,item.Title,item.Artist,item.Album,item.Didl,item.oID,uuid,function(){
-      var lastID = this.lastID;
+  db.get("SELECT COUNT (_id) FROM Tracks",function(err,row){
+    if(err){
+      console.log("error getting track count");
+      this.emit("error","Error inserting tracks "+err);
+      return;
+    }
+    id = row['COUNT (_id)'];
+    data.forEach(function(item,index){
+      stmt.run(id+index,item.TrackNumber,item.Title,item.Artist,item.Album,item.Didl,item.oID,uuid)
       item.Resources && item.Resources.forEach(function(resource){
-        resourceInsert.run(resource.Uri,resource.ProtocolInfo,lastID);
+        resourceInsert.run(resource.Uri,resource.ProtocolInfo,id+index);
       });
     })
-  })
 
-  stmt.finalize(function(err,docs){
-    if(err){     
-      console.log("error inserting initial data into db");
-      console.log(err);
-      this.emit("error","Error inserting tracks "+err);
-    }else{
-      updateFromObjID();
-      this.lastUpdated = Date.now();
-      this.emit("tracksInserted",uuid);
-      typeof(cb) === "function" && cb();
-      console.log("tracks inserted");
-    }     
-  }.bind(this));
-  db.run("COMMIT")
+    stmt.finalize(function(err,docs){
+      if(err){     
+        console.log("error inserting initial data into db");
+        console.log(err);
+        this.emit("error","Error inserting tracks "+err);
+      }else{
+        updateFromObjID();
+        this.lastUpdated = Date.now();
+        this.emit("tracksInserted",uuid);
+        typeof(cb) === "function" && cb();
+        console.log("tracks inserted");
+      }     
+    }.bind(this));
+    db.run("COMMIT")
+  }.bind(this))
 }
 
 Tracks.prototype.getCategory = function(category,filter,cb){
