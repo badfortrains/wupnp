@@ -2674,6 +2674,14 @@ if (typeof define !== 'undefined' && define.amd) {
                 }
             });
             __.push("</ul>" + "</div>");
+            __.line = 35, __.col = 1;
+            __.push("<div" + ' class="ir-controls"' + ">");
+            __.line = 36, __.col = 3;
+            __.push("<div" + ' class="icon-off"' + ">" + "</div>");
+            __.line = 37, __.col = 3;
+            __.push("<div" + ' class="icon-volume-down"' + ">" + "</div>");
+            __.line = 38, __.col = 3;
+            __.push("<div" + ' class="icon-volume-up"' + ">" + "</div>" + "</div>");
         }
     } catch (e) {
         return cb(__.r.rethrow(e, __));
@@ -4522,7 +4530,8 @@ function(e, t) {
   events:{
     "click .renderers li"               : "setRenderer",
     "click .musicLink"                  : "gotoMusic",
-    "click .playlists li .icon-trash"   : "deleteList"
+    "click .playlists li .icon-trash"   : "deleteList",
+    "click .ir-controls div"            : "irCommand"
   },
 
   initialize: function(){
@@ -4602,7 +4611,16 @@ function(e, t) {
     this.$("li").removeClass("active");
     playlist && $("#"+playlist)[isPlaying ? "addClass" : "removeClass"]("active");
     renderer && $("#"+renderer).addClass("active");
- }
+  },
+  irCommand:function(e){
+    //take the class name, minus 'icon' as the command
+    command = $(e.currentTarget).attr("class").split("-").splice(1).join("-");
+    Socket.emit("sendIr",command)
+    //wait 2 seconds, then set the source to the rpi
+    setTimeout(function(){
+      Socket.emit("sendIr","set-source")
+    },2000)
+  }
 
 });;Wu.Views.playerTab = Backbone.View.extend({
 

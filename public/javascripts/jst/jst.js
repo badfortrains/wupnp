@@ -400,6 +400,14 @@ window.JST = {'category.container':function(locals, cb, __) {
                 }
             });
             __.push("</ul>" + "</div>");
+            __.line = 35, __.col = 1;
+            __.push("<div" + ' class="ir-controls"' + ">");
+            __.line = 36, __.col = 3;
+            __.push("<div" + ' class="icon-off"' + ">" + "</div>");
+            __.line = 37, __.col = 3;
+            __.push("<div" + ' class="icon-volume-down"' + ">" + "</div>");
+            __.line = 38, __.col = 3;
+            __.push("<div" + ' class="icon-volume-up"' + ">" + "</div>" + "</div>");
         }
     } catch (e) {
         return cb(__.r.rethrow(e, __));
