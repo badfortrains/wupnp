@@ -1,7 +1,8 @@
 var mw = require('../mediaWatcher'),
     Renderers = require('../models/renderer'),
     Servers = require('../models/servers'),
-    Tracks = require('../models/tracks');
+    Tracks = require('../models/tracks'),
+    ir = require("../models/ir");
 
 exports.registerEmits = function(namespace){
   Renderers.on("rendererAdded",function(event){
@@ -51,6 +52,14 @@ exports.onConnect = function(socket) {
       });
     }
   })
+
+  socket.on("sendIr",function(command){
+    ir.sendCommand(command,function(err){
+      if(err){
+        socket.emit("error","ir command '"+command+"' failed")
+      }
+    })
+  })
   var getRenderer = function(cb){
     socket.get("renderer",function(err,uuid){
       var renderer = Renderers.find(uuid);
@@ -82,7 +91,6 @@ exports.onConnect = function(socket) {
     doCommand('playPlaylist',id)
   })
   socket.on("setPosition",function(position){
-    console.log("POSITION",position)
     doCommand('setPosition',position);
   })
 
