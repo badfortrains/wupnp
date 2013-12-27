@@ -5,7 +5,8 @@ Wu.Views.menu = Backbone.View.extend({
   events:{
     "click .renderers li"               : "setRenderer",
     "click .musicLink"                  : "gotoMusic",
-    "click .playlists li .icon-trash"   : "deleteList"
+    "click .playlists li .icon-trash"   : "deleteList",
+    "click .ir-controls div"            : "irCommand"
   },
 
   initialize: function(){
@@ -85,6 +86,15 @@ Wu.Views.menu = Backbone.View.extend({
     this.$("li").removeClass("active");
     playlist && $("#"+playlist)[isPlaying ? "addClass" : "removeClass"]("active");
     renderer && $("#"+renderer).addClass("active");
- }
+  },
+  irCommand:function(e){
+    //take the class name, minus 'icon' as the command
+    command = $(e.currentTarget).attr("class").split("-").splice(1).join("-");
+    Socket.emit("sendIr",command)
+    //wait 2 seconds, then set the source to the rpi
+    setTimeout(function(){
+      Socket.emit("sendIr","set-source")
+    },2000)
+  }
 
 });
