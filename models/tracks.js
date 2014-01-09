@@ -32,13 +32,13 @@ Tracks.prototype.insert = function(data,uuid,cb){
       resourceInsert = db.prepare("INSERT INTO resources VALUES (NULL,?,?,?)");
 
   db.run("BEGIN TRANSACTION");
-  db.get("SELECT COUNT (_id) FROM Tracks",function(err,row){
+  db.get("SELECT MAX (_id) FROM Tracks",function(err,row){
     if(err){
       console.log("error getting track count");
       this.emit("error","Error inserting tracks "+err);
       return;
     }
-    id = row['COUNT (_id)'];
+    id = row['MAX (_id)'];
     data.forEach(function(item,index){
       stmt.run(id+index,item.TrackNumber,item.Title,item.Artist,item.Album,item.Didl,item.oID,uuid)
       item.Resources && item.Resources.forEach(function(resource){

@@ -61,10 +61,10 @@ var tracksChange = function(event){
     //only search updated album folders for new tracks
     //ignore 1$14$342123623 - container for all albums
     containers = event.value.split(",").filter(function(container){
-      return(/1\$14\$.+/.test(container) && container != '1$14$342123623')
+      return(/1\$14\$.+/.test(container) && container != '1$14$342123623') && container != '1$14'
     });
     if(containers[0]){
-      mw.getTracks(onTracksAdded.bind(this),server.uuid,containers[0]);
+      mw.getTracks(onTracksAdded.bind(server),server.uuid,containers[0]);
     }
   }
 }
