@@ -4734,19 +4734,19 @@ function(e, t) {
     .attr("href","/playlist/"+model.get("playlist"));
 
 
-    /*    
+    
     if(track){
       var parser=new DOMParser();
       var xmlDoc = parser.parseFromString(track.Didl,"text/xml");
       var artNode = xmlDoc.getElementsByTagName("albumArtURI")[0]
       if(artNode){
-        var artURI = artNode.childNodes[0].nodeValue;
+        var artURI = artNode.childNodes[0].nodeValue.replace(/160/g,"500");
         if(artURI != this.albumArt){
           $("body").css("background-image","url("+artURI+")");
           this.albumArt = artURI;
         }
       }
-    }*/
+    }
 
   },
   changePlayState:function(model,value){
