@@ -80,7 +80,17 @@ playlist.prototype.add = function(filter,callback){
 playlist.prototype.remove = function(position,callback){
   var listId = this.id;
   db.run("DELETE FROM playlist_tracks WHERE list_id = ? AND position = ?",listId,position,function(err){
-    db.run("UPDATE lists SET count = count - ? WHERE _id = ?",this.changes,listId,callback);
+    if(err){
+      callback(err)
+      return
+    }
+    db.run("UPDATE lists SET count = count - ? WHERE _id = ?",this.changes,listId,function(err){
+      if(err){
+        callback(err)
+        return
+      }
+      db.run("UPDATE playlist_tracks SET position = position - 1 WHERE list_id = ? AND position > ?",listId,position,callback)
+    })
   })
 }
 
