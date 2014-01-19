@@ -115,16 +115,21 @@ Wu.Views.categoryPopup = Backbone.View.extend({
   },
   playNow:function(){
     var id = Wu.Cache.Models.player.get("quickList"),
-        list = this.collection.get(id);
+        list = this.collection.get(id),
+        player = Wu.Cache.Models.player,
+        currentTrack = player.get('currentPlayingTrack'),
+        currentListId = player.get('playlist'),
+        position = (currentTrack) ? currentTrack.position : 1;
 
     if(!list){
       Wu.Cache.Views.toastMaster.error("Must select a media renderer first");
       return;
     }
 
-    list.set("clearAfter",0);
+    list.set("position",position-1);
+    list.set("clearAfter",true);
     this._add(list,function(){
-      Socket.emit("playPlaylist",id);
+      Wu.Cache.Models.player.playByPosition(position,id);
     });
   },
   playNext:function(){
@@ -140,7 +145,7 @@ Wu.Views.categoryPopup = Backbone.View.extend({
       return;
     }
 
-    list.set("clearAfter",position);
+    list.set("position",position);
     this._add(list);
   },
   addToList:function(e){
@@ -166,6 +171,7 @@ Wu.Views.categoryPopup = Backbone.View.extend({
     });
     list.unset('filter');
     list.unset('clearAfter');
+    list.unset('position');
     this.hide();
   }
 

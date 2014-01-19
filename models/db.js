@@ -13,7 +13,7 @@ db.serialize(function() {
   db.run(TABLE);  
   TABLE = "CREATE TABLE IF NOT EXISTS lists (_id INTEGER PRIMARY KEY, name TEXT, count INTEGER, uuid TEXT)";
   db.run(TABLE);
-  TABLE = "CREATE TABLE IF NOT EXISTS playlist_tracks (list_id INTEGER, track_id INTEGER, position INTEGER, FOREIGN KEY(list_id) REFERENCES lists(_id), FOREIGN KEY(track_id) REFERENCES tracks(_id), PRIMARY KEY(list_id,track_id,position))"
+  TABLE = "CREATE TABLE IF NOT EXISTS playlist_tracks (id INTEGER PRIMARY KEY, list_id INTEGER, track_id INTEGER, position INTEGER, FOREIGN KEY(list_id) REFERENCES lists(_id), FOREIGN KEY(track_id) REFERENCES tracks(_id))"
   db.run(TABLE);
   TABLE = "CREATE TABLE IF NOT EXISTS resources (id INTEGER PRIMARY KEY, Uri TEXT, ProtocolInfo TEXT, track_id INTEGER, FOREIGN KEY(track_id) REFERENCES tracks(_id))"
   db.run(TABLE);

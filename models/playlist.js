@@ -76,6 +76,32 @@ playlist.prototype.add = function(filter,callback){
   }.bind(this));
 }
 
+//Add tracks at given position and move all remaining tracks in playlist down
+playlist.prototype.addAt = function(filter,position,callback){
+  var listId = this.id,
+      WHERE = filterToSQL(filter),
+      stmt = db.prepare("SELECT _id FROM tracks "+WHERE+" ORDER BY Album, TrackNumber"),
+      self = this,
+      count;
+
+  db.get("SELECT COUNT(_id) FROM tracks "+WHERE,function(err,docs){
+    if(err){
+      callback(err);
+      return
+    }
+    count = docs["COUNT(_id)"]
+    db.run("UPDATE playlist_tracks SET position = position + "+count+" WHERE list_id = ? AND position > ?",listId,position,function(err){
+      if(err){
+        callback(err);
+        return
+      }
+      self.order(stmt,position,function(err,numberInserted){
+        callback(err,numberInserted)
+      })
+    })
+  })
+}
+
 
 playlist.prototype.remove = function(position,callback){
   var listId = this.id;

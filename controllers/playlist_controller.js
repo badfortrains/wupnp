@@ -28,18 +28,29 @@ module.exports = {
     var filter = req.body.filter || {},
         id = parseFloat(req.params.id),
         pl = new Playlists(id),
-        clearAfter = req.body.clearAfter;
+        clearAfter = req.body.clearAfter,
+        position = req.body.position
 
-    var addTracks  = function(){
-      pl.add(filter,function(err,count){
-        res.send({err:err,added:count});
+    //clearAfter, changed to the index of
+    //where the track should be added (aka current track)
+    var addResult = function(err,count){
+      res.send({err:err,added:count});
+    }
+
+    if(clearAfter && typeof(position) != 'undefined'){
+      console.log("clearAfter")
+      console.log(position)
+      pl.removeAfter(position,function(err){
+        if(err){
+          addResult(err,0)
+        }else{
+          pl.add(filter,addResult);
+        }
       })
-    };
-
-    if(typeof(clearAfter) != 'undefined'){
-      pl.removeAfter(clearAfter,addTracks);
+    }else if(typeof(position) != 'undefined'){
+      pl.addAt(filter,position,addResult);
     }else{
-      addTracks();
+      pl.add(filter,addResult);
     }
   },
   remove: function(req,res){
