@@ -35,6 +35,9 @@ Wu.Views.categoryList = Wu.Views.list.extend({
     if(!this.isCategory || Wu.Cache.Collections.servers.tracksInserted){
       Wu.Views.list.prototype.render.call(this);
       $("#mask").hide();
+      if(this.model.get("current_scroll")){
+        this.el.scrollTop = this.model.get("current_scroll")
+      }
       this.trigger("rendered");
     }else{
       this.infoTemplate({servers: Wu.Cache.Collections.servers},function(err,html){
@@ -51,7 +54,7 @@ Wu.Views.categoryList = Wu.Views.list.extend({
     this.stopListening();
   },
   select: function(e){
-    var category = this.model.filter($(e.target).text(),e.target.id);
+    var category = this.model.filter($(e.target).text(),e.target.id,this.el.scrollTop);
     if(category)
       Backbone.history.navigate(this.url+category,{trigger:true});
     else

@@ -8,6 +8,9 @@ Wu.Models.category = Backbone.Model.extend({
     Socket.on("tracksInserted",function(){
       Wu.Layout.page.trigger("tracksInserted");
     })
+    //stores where the user is scrolled to when they
+    //switch categories
+    this.scroll = {}
   },
 
   fetch: function(options){
@@ -18,7 +21,7 @@ Wu.Models.category = Backbone.Model.extend({
 
   },
 
-  filter: function(value,_id){
+  filter: function(value,_id,scroll_height){
     var filter = this.get("filter") || {},
         id = this.get('id'),
         index = _.indexOf(this.ORDER,id);
@@ -26,6 +29,7 @@ Wu.Models.category = Backbone.Model.extend({
     index++;
     if(index < this.ORDER.length){
       filter[id] = value;
+      scroll[id] = scroll_height
       this.set("filter",filter)
     }else if(id === "Title"){
       filter._id = _id;
@@ -38,8 +42,14 @@ Wu.Models.category = Backbone.Model.extend({
         currentIndex = _.indexOf(this.ORDER,id);
         newIndex = _.indexOf(this.ORDER,category);
     
+    this.set("current_scroll",null)
     while(newIndex <= currentIndex){
-      filter[this.ORDER[currentIndex]] && delete filter[this.ORDER[currentIndex]];
+      if(newIndex == currentIndex){
+        this.set("current_scroll",scroll[this.ORDER[currentIndex]])
+      }
+      filter[this.ORDER[currentIndex]] && delete filter[this.ORDER[currentIndex]]
+      scroll[this.ORDER[currentIndex]] && delete scroll[this.ORDER[currentIndex]]
+
       currentIndex--;
     }
     filter._id &&  delete filter._id;
