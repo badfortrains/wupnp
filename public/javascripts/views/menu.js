@@ -5,7 +5,8 @@ Wu.Views.menu = Backbone.View.extend({
   events:{
     "click .renderers li"               : "setRenderer",
     "click .musicLink"                  : "gotoMusic",
-    "click .playlists li .icon-trash"   : "deleteList"
+    "click .playlists li .icon-trash"   : "deleteList",
+    "swipeLeft"                         : "hide"
   },
 
   initialize: function(){
