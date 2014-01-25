@@ -38,7 +38,7 @@ Tracks.prototype.insert = function(data,uuid,cb){
       this.emit("error","Error inserting tracks "+err);
       return;
     }
-    id = row['MAX (_id)'];
+    id = row['MAX (_id)']+1;
     data.forEach(function(item,index){
       stmt.run(id+index,item.TrackNumber,item.Title,item.Artist,item.Album,item.Didl,item.oID,uuid)
       item.Resources && item.Resources.forEach(function(resource){
