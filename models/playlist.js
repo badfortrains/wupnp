@@ -46,17 +46,24 @@ playlist.prototype.order = function(cursor,count,callback){
   var listId = this.id,
       oldCount = count;
 
-  cursor.each(function(err,doc){
-    if(err){
-      callback(err);
-    }else if(doc !== null){
-      ++count;
-      db.run("INSERT OR REPLACE INTO playlist_tracks (list_id,track_id,position) VALUES (?,?,?)",listId,doc._id || doc.track_id,count);
-    }
-  },function(){
-    db.run("UPDATE lists SET count = ? WHERE _id = ?",count,listId);
-    callback(null,count-oldCount);
-  });
+  try{
+    cursor.each(function(err,doc){
+      if(err){
+        callback(err);
+      }else if(doc !== null){
+        ++count;
+        db.run("INSERT OR REPLACE INTO playlist_tracks (list_id,track_id,position) VALUES (?,?,?)",listId,doc._id || doc.track_id,count);
+      }
+    },function(){
+      db.run("UPDATE lists SET count = ? WHERE _id = ?",count,listId);
+      callback(null,count-oldCount);
+    });
+  }
+  catch(err){
+    console.log("sql querey error")
+    console.log(err)
+    callback(err)
+  }
 },
 
 /**

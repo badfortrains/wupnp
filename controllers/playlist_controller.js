@@ -38,8 +38,6 @@ module.exports = {
     }
 
     if(clearAfter && typeof(position) != 'undefined'){
-      console.log("clearAfter")
-      console.log(position)
       pl.removeAfter(position,function(err){
         if(err){
           addResult(err,0)
