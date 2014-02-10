@@ -142,6 +142,9 @@ rendy.prototype = {
   },
   setPosition: function(position){
     this.mw.setPosition(this.uuid,position);
+  },
+  quickListPosition: function(){
+    return this.state.quickList == this.state.playlist ? this.position : 1
   }
 }
 

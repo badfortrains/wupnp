@@ -1,4 +1,5 @@
-var Playlists = require('../models/playlist').playlist;
+var Playlists = require('../models/playlist').playlist,
+    Renderers = require('../models/renderer');
 
 module.exports = {
   index: function(req,res){
@@ -28,27 +29,38 @@ module.exports = {
     var filter = req.body.filter || {},
         id = parseFloat(req.params.id),
         pl = new Playlists(id),
-        clearAfter = req.body.clearAfter,
-        position = req.body.position
+        offset = req.body.offset,
+        renderer = Renderers.find(req.body.renderer),
+        position;
 
     //clearAfter, changed to the index of
     //where the track should be added (aka current track)
     var addResult = function(err,count){
-      res.send({err:err,added:count});
+      if(err){
+        res.send(500,err)
+      }else{
+        res.send({added:count, position: position});
+      }
     }
-
-    if(clearAfter && typeof(position) != 'undefined'){
-      pl.removeAfter(position,function(err){
+    if(offset == 'undefined'){
+      pl.add(filter,addResult);
+    }
+   else if(offset === 0 && renderer){
+      position = renderer.quickListPosition()
+      pl.removeAfter(renderer.quickListPosition(),function(err){
         if(err){
           addResult(err,0)
         }else{
           pl.add(filter,addResult);
         }
       })
-    }else if(typeof(position) != 'undefined'){
-      pl.addAt(filter,position,addResult);
+    }else if(renderer){
+      //addAt, adds at position + 1.  Need to account for that
+      offset = offset - 1
+      position = renderer.position 
+      pl.addAt(filter,position + offset,addResult);
     }else{
-      pl.add(filter,addResult);
+      addResult("Error playing tracks, renderer not found")
     }
   },
   remove: function(req,res){
