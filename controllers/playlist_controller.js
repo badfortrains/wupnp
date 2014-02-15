@@ -8,7 +8,7 @@ module.exports = {
       if(!err)
         res.send(docs);
       else
-        res.send({err:err});
+        res.send(404,err);
     });
   },
   new: function(req,res){

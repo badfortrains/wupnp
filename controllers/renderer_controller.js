@@ -6,7 +6,7 @@ module.exports = {
         renderer = Renderers.find(uuid);
 
     if(!renderer){
-      res.send(500,"Renderer not found");
+      res.send(404,"Renderer not found");
     }else{
       res.send(renderer.getAttributes());
     }
@@ -16,7 +16,7 @@ module.exports = {
         renderer = Renderers.find(uuid);
 
     if(!renderer){
-      res.send(500,"Renderer not found");
+      res.send(404,"Renderer not found");
     }else{
       if(req.body.playlistId){
         renderer.setPlaylist(req.body.playlistId);
