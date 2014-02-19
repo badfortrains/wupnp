@@ -4250,7 +4250,7 @@ function(e, t) {
   },
   playNow:function(){
     var player = Wu.Cache.Models.player,
-        id = player.get("quicklist"),
+        id = player.get("quickList"),
         list = this.collection.get(id),
         renderer = Wu.Cache.Models.player.get("uuid")
 
@@ -4265,7 +4265,7 @@ function(e, t) {
   },
   playNext:function(){
     var player = Wu.Cache.Models.player,
-        id = player.get("playlist"),
+        id = player.get("playList"),
         list = this.collection.get(id),
         renderer = Wu.Cache.Models.player.get("uuid")
 
