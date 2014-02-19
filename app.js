@@ -41,6 +41,14 @@ app.configure(function(){
   app.use(express.static(path.join(__dirname, 'public'),{ maxAge: process.env.NODE_ENV ? 2592000000 : 0 }));
 });
 
+io.configure('production', function() {
+    io.enable('browser client minification');
+    io.enable('browser client cache');
+    io.enable('browser client etag');  
+    io.enable('browser client gzip');
+    io.set('log level', 3);
+});
+
 app.configure('development', function(){
   app.use(express.errorHandler());
 });
