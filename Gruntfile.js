@@ -9,6 +9,14 @@ module.exports = function(grunt) {
       all: ['tests/*.js']
     },
     clean: ["public/build"],
+    less: {
+      all: {
+        files: {
+          "public/stylesheets/font-awesome.css":"public/stylesheets/font-awesome.less",
+          "public/stylesheets/style.css":"public/stylesheets/style.less"
+        }
+      }
+    },
     concat: {
       options: {
         separator: ';'
@@ -93,12 +101,13 @@ module.exports = function(grunt) {
 
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-cssmin');
-  grunt.loadNpmTasks('grunt-contrib-clean')
+  grunt.loadNpmTasks('grunt-contrib-clean');
+  grunt.loadNpmTasks('grunt-contrib-less');
 
   // Load the plugin that provides the "uglify" task.
   grunt.loadNpmTasks('grunt-contrib-uglify');
 
   // Default task(s).
-  grunt.registerTask('default', ['nodeunit','clean','build-jst','concat','uglify','cssmin','cache-versions']);
+  grunt.registerTask('default', ['nodeunit','less','clean','build-jst','concat','uglify','cssmin','cache-versions']);
 
 };
