@@ -127,10 +127,11 @@ Wu.Views.categoryPopup = Backbone.View.extend({
     list.add(this.model.get("filter"),renderer,0,function(data){
       Wu.Cache.Models.player.playByPosition(data.position,id);
     });
+    this.hide();
   },
   playNext:function(){
     var player = Wu.Cache.Models.player,
-        id = player.get("playList"),
+        id = player.get("playlist"),
         list = this.collection.get(id),
         renderer = Wu.Cache.Models.player.get("uuid")
 
@@ -140,12 +141,14 @@ Wu.Views.categoryPopup = Backbone.View.extend({
     }
 
     list.add(this.model.get("filter"),renderer,1)
+    this.hide();
   },
   addToList:function(e){
     var id = $(e.target).attr('listId'),
         list = this.collection.get(id);
 
     list.add(this.model.get("filter"))
+    this.hide();
   }
 
 });

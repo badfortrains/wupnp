@@ -29,7 +29,7 @@ module.exports = {
     var filter = req.body.filter || {},
         id = parseFloat(req.params.id),
         pl = new Playlists(id),
-        offset = req.body.offset,
+        offset = parseFloat(req.body.offset),
         renderer = Renderers.find(req.body.renderer),
         position;
 
@@ -47,7 +47,8 @@ module.exports = {
     }
    else if(offset === 0 && renderer){
       position = renderer.quickListPosition()
-      pl.removeAfter(renderer.quickListPosition(),function(err){
+      //remove the current track too
+      pl.removeAfter(renderer.quickListPosition()-1,function(err){
         if(err){
           addResult(err,0)
         }else{
