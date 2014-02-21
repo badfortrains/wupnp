@@ -32,6 +32,9 @@ Wu.Views.categoryList = Wu.Views.list.extend({
     var self = this,
         docs = this.model.get("docs");
 
+    if(!docs){
+      return self
+    }
     if(!this.isCategory || Wu.Cache.Collections.servers.tracksInserted){
       Wu.Views.list.prototype.render.call(this);
       $("#mask").hide();

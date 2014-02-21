@@ -21,13 +21,12 @@ Wu.Routers.Categories = Backbone.Router.extend({
       var page = new Wu.Views.categories({
         model: category
       });
+      Wu.Layout.setSubHeader(nav);
+      Wu.Layout.setPage(page);
+      Wu.Layout.state = 'categories';
       Wu.Layout.menu.trigger("hideMusic");
+
       category.fetch({
-        success:function(){
-          Wu.Layout.setSubHeader(nav);
-          Wu.Layout.setPage(page);
-          Wu.Layout.state = 'categories';
-        },
         error:function(){
           Wu.Cache.Views.toastMaster.error("failed to get category");
         }
