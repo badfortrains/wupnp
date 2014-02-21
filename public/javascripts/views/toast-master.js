@@ -43,12 +43,20 @@ Wu.Views.toastMaster = Backbone.View.extend({
     },4000)
   },
   message: function(text){
-    this.messageStack.push({text:text,type:'message'});
-    this._show()
+    if(typeof text === 'string'){
+      this.messageStack.push({text:text,type:'message'});
+      this._show()
+    }else{
+      console.log("ToastMaster: badly formed message",text)
+    }
   },
   error: function(text){
-    this.messageStack.push({text:text,type:'error'});
-    this._show()
+    if(typeof text === 'string'){
+      this.messageStack.push({text:text,type:'error'});
+      this._show()
+    }else{
+      console.log("ToastMaster: badly formed message",text)
+    }
   },
   _add: function(text){
     this.messageStack.push(text);
