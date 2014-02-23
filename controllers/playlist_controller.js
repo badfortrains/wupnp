@@ -42,7 +42,7 @@ module.exports = {
         res.send({added:count, position: position});
       }
     }
-    if(offset == 'undefined'){
+    if(isNaN(offset)){
       pl.add(filter,addResult);
     }
    else if(offset === 0 && renderer){
