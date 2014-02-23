@@ -42,21 +42,24 @@ var playlist = function(id,uuid,cb){
 }
 
 
-playlist.prototype.order = function(cursor,count,callback){
+//Add tracks from cursor to plalist at position
+playlist.prototype.order = function(cursor,position,callback){
   var listId = this.id,
-      oldCount = count;
+      start = position,
+      added;
 
   try{
     cursor.each(function(err,doc){
       if(err){
         callback(err);
       }else if(doc !== null){
-        ++count;
-        db.run("INSERT OR REPLACE INTO playlist_tracks (list_id,track_id,position) VALUES (?,?,?)",listId,doc._id || doc.track_id,count);
+        ++position;
+        db.run("INSERT INTO playlist_tracks (list_id,track_id,position) VALUES (?,?,?)",listId,doc._id || doc.track_id,position);
       }
     },function(){
-      db.run("UPDATE lists SET count = ? WHERE _id = ?",count,listId);
-      callback(null,count-oldCount);
+      added = position - start;
+      db.run("UPDATE lists SET count = count + ? WHERE _id = ?",added,listId);
+      callback(null,added);
     });
   }
   catch(err){
