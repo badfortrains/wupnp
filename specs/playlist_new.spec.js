@@ -1,9 +1,7 @@
-
-
 describe("Playlist",function(){
   var loadModule = require('./helpers/module-loader').loadModule;
   var Q = require("q");
-  var mockDB = require('./mocks/db')
+  var mockDB = require('./mocks/mocks').db
   var test = require('../models/playlist_new')
   var Playlist = loadModule('./models/playlist_new.js',{"./db":mockDB}).playlist
 

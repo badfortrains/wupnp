@@ -1,4 +1,4 @@
-module.exports ={
+var db = {
   run: function(){
     //pretend we ran any command give, and call
     //cb right away
@@ -12,4 +12,18 @@ module.exports ={
   prepare:function(){
     return this
   }
+}
+
+var renderer = {
+  find: function(){}
+}
+
+var playlist = {
+  add: function(){}
+}
+
+module.exports ={
+  db: db,
+  renderer: renderer,
+  playlist: playlist
 }

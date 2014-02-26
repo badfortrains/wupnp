@@ -1,31 +1,42 @@
-var Renderers = require('../models/renderer');
+var Renderers = require('../models/renderer'),
+    Playlist = require('../models/playlist_new')
 
 module.exports = {
-  show:function(req,res){
+  _find_renderer: function(req,res,next){
     var uuid = req.params.id,
         renderer = Renderers.find(uuid);
 
     if(!renderer){
-      res.send(404,"Renderer not found");
+      res.send(404,"Renderer not found")
     }else{
-      res.send(renderer.getAttributes());
+      req.renderer = renderer
+      next()
     }
   },
-  update:function(req,res){
-    var uuid = req.params.id,
-        renderer = Renderers.find(uuid);
+  show:function(req,res){
+    res.send(req.renderer.getAttributes());
+  },
+  playNow: function(req,res){
+    var filter = req.body.filter || {},
+        renderer = req.renderer,
+        position = renderer.quickList(),
+        pl = new Playlist(renderer.state.quickList)
 
-    if(!renderer){
-      res.send(404,"Renderer not found");
-    }else{
-      if(req.body.playlistId){
-        renderer.setPlaylist(req.body.playlistId);
-      }
-      if(req.body.trackId){
-        renderer.playById(req.body.trackId)
-      }
-      res.send(renderer.getAttributes());
-    }
+    pl.add(filter,position)
+    .done(function(count){
+      res.send({added:count, position: position})
+    })
+  },
+  playNext: function(req,res){
+    var filter = req.body.filter || {},
+        renderer = req.renderer,
+        position = renderer.position+1,
+        pl = new Playlist(renderer.playlist)
+
+    pl.add(filter,position)
+    .done(function(count){
+      res.send({added:count})
+    })
   },
   index: function(req,res){
    res.send(Renderers.all());
