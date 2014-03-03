@@ -3,7 +3,7 @@ describe("Playlist",function(){
   var Q = require("q");
   var mockDB = require('./mocks/mocks').db
   var test = require('../models/playlist_new')
-  var Playlist = loadModule('./models/playlist_new.js',{"./db":mockDB}).playlist
+  var Playlist = loadModule('./models/playlist_new.js',{"./db":mockDB}).Playlist
 
   describe("Constructor",function(){
     it("creates a new playlist when given a name",function(){
@@ -48,11 +48,13 @@ describe("Playlist",function(){
   })
   describe("#add",function(){
     beforeEach(function(){
-      tracks = [
-        {_id:1},
-        {_id:2},
-        {_id:3}
-      ]
+      tracks = Q.fcall(function(){
+        return [
+          {_id:1},
+          {_id:2},
+          {_id:3}
+        ]
+      })
       pl = new Playlist({id:1})
     });
 

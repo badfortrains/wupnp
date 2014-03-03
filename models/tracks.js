@@ -1,6 +1,7 @@
 var db = require('./db'),
     util = require("util"),
-    EventEmitter = require("events").EventEmitter;
+    EventEmitter = require("events").EventEmitter,
+    Q = require("q");
 
 var Tracks = function(){}
 util.inherits(Tracks,EventEmitter);
@@ -24,43 +25,65 @@ Tracks.prototype.drop_by_uuid = function(uuid,cb){
   }.bind(this));
 }
 
+/**
+ * Return a promise that fufills to a list of tracks
+ * 
+ * @param  {object} filter
+ * @return {promise} 
+ */
+Tracks.prototype.find = function(filter){
+  var where = filterToSQL(filter),
+      stmt = db.prepare("SELECT _id FROM tracks "+where+" ORDER BY Album, TrackNumber");
+
+  return Q.npost(stmt,"all")
+}
 
 Tracks.prototype.insert = function(data,uuid,cb){
   var i = 0,
       length = data.length,
-      stmt = db.prepare("INSERT OR IGNORE INTO tracks VALUES (?,?,?,?,?,?,?,?)"),
-      resourceInsert = db.prepare("INSERT INTO resources VALUES (NULL,?,?,?)");
+      self = this;
 
-  db.run("BEGIN TRANSACTION");
   db.get("SELECT MAX (_id) FROM Tracks",function(err,row){
+    var id;
     if(err){
       console.log("error getting track count");
       this.emit("error","Error inserting tracks "+err);
       return;
     }
-    id = row['MAX (_id)']+1;
-    data.forEach(function(item,index){
-      stmt.run(id+index,item.TrackNumber,item.Title,item.Artist,item.Album,item.Didl,item.oID,uuid)
-      item.Resources && item.Resources.forEach(function(resource){
-        resourceInsert.run(resource.Uri,resource.ProtocolInfo,id+index);
-      });
-    })
 
-    stmt.finalize(function(err,docs){
-      if(err){     
-        console.log("error inserting initial data into db");
-        console.log(err);
-        this.emit("error","Error inserting tracks "+err);
-      }else{
-        updateFromObjID();
-        this.lastUpdated = Date.now();
-        this.emit("tracksInserted",uuid);
-        typeof(cb) === "function" && cb();
-        console.log("tracks inserted");
-      }     
-    }.bind(this));
-    db.run("COMMIT")
-  }.bind(this))
+    id = row['MAX (_id)']+1;
+
+    db.serialize(function(){
+      db.run("BEGIN TRANSACTION");
+
+      //need these here, where statements are prepared determines where they are executed
+      var stmt = db.prepare("INSERT OR IGNORE INTO tracks VALUES (?,?,?,?,?,?,?,?)"),
+          resourceInsert = db.prepare("INSERT INTO resources VALUES (NULL,?,?,?)");
+
+      data.forEach(function(item,index){
+        stmt.run(id+index,item.TrackNumber,item.Title,item.Artist,item.Album,item.Didl,item.oID,uuid)
+        item.Resources && item.Resources.forEach(function(resource){
+          resourceInsert.run(resource.Uri,resource.ProtocolInfo,id+index);
+        });
+      })
+
+      stmt.finalize();
+
+      db.run("COMMIT",function(err,res){
+        if(err){     
+          console.log("error inserting initial data into db");
+          console.log(err);
+          self.emit("error","Error inserting tracks "+err);
+        }else{
+          updateFromObjID();
+          self.lastUpdated = Date.now();
+          self.emit("tracksInserted",uuid);
+          typeof(cb) === "function" && cb();
+          console.log("tracks inserted");
+        }     
+      })
+    }) 
+  })
 }
 
 Tracks.prototype.getCategory = function(category,filter,cb){
