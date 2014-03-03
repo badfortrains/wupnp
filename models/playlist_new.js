@@ -2,7 +2,7 @@ var db = require('./db'),
     Q = require("q");
 
 
-db.qSerialize = Q.denodeify(db.serialize)
+db.qSerialize = Q.nbind(db.serialize,db)
 
 var playlist = function(options){
   if(options.id){
@@ -57,43 +57,51 @@ playlist.prototype._getCount = function(){
  * @param {boolean} deleteAfter : true to delete tracks after position, false to move their
  * position back equal to the number of tracks inserted
  */
-playlist.prototype.add = function(tracks,position,deleteAfter){
-  var listId = this.id;
+playlist.prototype.add = function(trackPromise,position,deleteAfter){
+  var listId = this.id,
+      getPosition,
+      length;
 
-  return Q.fcall(function(){
+  getPosition = Q.fcall(function(){
     //insert at end of list if we don't have a given position
     return typeof position === "number" ? position : this._getCount()
   }.bind(this))
-  .then(function(startPosition){
-    //overwite the position argument, so we can access this value later
-    position = startPosition
-    return
-  })
-  .then(db.qSerialize())
-  .then(function(){
-    var insert = db.prepare("INSERT INTO playlist_tracks (list_id,track_id,position) VALUES (?,?,?)");
-    db.run("BEGIN")
 
-    
-    if(deleteAfter){
-      //remove all tracks after our insertion point
-      db.run("DELETE playlist_tracks WHERE list_id = ? AND position >= ?",listId,position)
-    }else{
-      //move all tracks after position down by the number of tracks we're inserting
-      db.run("UPDATE playlist_tracks SET position = position + ? WHERE list_id = ? AND position >= ?",tracks.length,listId,position)
-    }
+  return Q.all([getPosition,trackPromise])
+  .spread(function(position,tracks){
+    var deferred = Q.defer();
+    db.serialize(function(){
+      var insert;
+      db.run("BEGIN")
 
-    tracks.forEach(function(track){
-      insert.run(listId,track._id,position++)
+      if(deleteAfter){
+        //remove all tracks after our insertion point
+        db.run("DELETE FROM playlist_tracks WHERE list_id = ? AND position >= ?",listId,position)
+      }else{
+        //move all tracks after position down by the number of tracks we're inserting
+        db.run("UPDATE playlist_tracks SET position = position + ? WHERE list_id = ? AND position >= ?",tracks.length,listId,position)
+      }
+
+      //Need to prepare this here, since only db calls are serialized, not statement calls;
+      //Thus a statement is run in the order that it was prepared, not run.
+      insert = db.prepare("INSERT INTO playlist_tracks (list_id,track_id,position) VALUES (?,?,?)");
+      for(var i=0;i<tracks.length;i++){
+        insert.run(listId,tracks[i]._id,position++)
+      }
+      insert.finalize();
+
+      //update count of list
+      db.run("UPDATE lists SET count = count + ? WHERE _id = ?",tracks.length,listId);
+
+      db.run("COMMIT",function(err){
+        if(err){
+          deferred.reject(err)
+        }else{
+          deferred.resolve(tracks.length)
+        }
+      })
     })
-
-    //update count of list
-    db.run("UPDATE lists SET count = count + ? WHERE _id = ?",tracks.length,listId);
-
-    return Q.ninvoke(db,"run","COMMIT")
-  })
-  .then(function(){
-    return tracks.length
+    return deferred.promise
   })
 }
 

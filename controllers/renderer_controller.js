@@ -1,5 +1,6 @@
 var Renderers = require('../models/renderer'),
-    Playlist = require('../models/playlist_new')
+    Playlist = require('../models/playlist_new').playlist,
+    Tracks = require('../models/tracks')
 
 module.exports = {
   _find_renderer: function(req,res,next){
@@ -19,11 +20,13 @@ module.exports = {
   playNow: function(req,res){
     var filter = req.body.filter || {},
         renderer = req.renderer,
-        position = renderer.quickList(),
-        pl = new Playlist(renderer.state.quickList)
+        position = renderer.quickListPosition(),
+        pl = new Playlist({id:renderer.state.quickList})
 
-    pl.add(filter,position)
+
+    pl.add(Tracks.find(filter),position,true)
     .done(function(count){
+      renderer.playAt(position)
       res.send({added:count, position: position})
     })
   },
@@ -31,9 +34,9 @@ module.exports = {
     var filter = req.body.filter || {},
         renderer = req.renderer,
         position = renderer.position+1,
-        pl = new Playlist(renderer.playlist)
+        pl = new Playlist({id:renderer.playlist.id})
 
-    pl.add(filter,position)
+    pl.add(Tracks.find(filter),position)
     .done(function(count){
       res.send({added:count})
     })

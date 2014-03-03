@@ -75,6 +75,8 @@ app.delete("/api/playlists/:id/:track", playlist_tracks.delete)
 
 app.get("/api/renderers", renderers.index);
 app.get("/api/renderers/:id",renderers._find_renderer,renderers.show);
+app.put("/api/renderers/:id/playNow",renderers._find_renderer,renderers.playNow);
+app.put("/api/renderers/:id/playNext",renderers._find_renderer,renderers.playNext);
 
 app.get('/api/categories/:category', categories.show);
 

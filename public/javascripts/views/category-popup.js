@@ -116,31 +116,31 @@ Wu.Views.categoryPopup = Backbone.View.extend({
   playNow:function(){
     var player = Wu.Cache.Models.player,
         id = player.get("quickList"),
-        list = this.collection.get(id),
         renderer = Wu.Cache.Models.player.get("uuid")
 
-    if(!list){
+    renderer = Wu.Cache.Collections.renderers.get(renderer)
+
+    if(!renderer){
       Wu.Cache.Views.toastMaster.error("Must select a media renderer first");
       return;
     }
 
-    list.add(this.model.get("filter"),renderer,0,function(data){
-      Wu.Cache.Models.player.playByPosition(data.position,id);
-    });
+    renderer.playNow(this.model.get("filter"))
     this.hide();
   },
   playNext:function(){
     var player = Wu.Cache.Models.player,
         id = player.get("playlist"),
-        list = this.collection.get(id),
         renderer = Wu.Cache.Models.player.get("uuid")
 
-    if(!list){
+    renderer = Wu.Cache.Collections.renderers.get(renderer)
+
+    if(!renderer){
       Wu.Cache.Views.toastMaster.error("Must select a media renderer first");
       return;
     }
 
-    list.add(this.model.get("filter"),renderer,1)
+    renderer.playNext(this.model.get("filter"))
     this.hide();
   },
   addToList:function(e){
