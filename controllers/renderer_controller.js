@@ -1,5 +1,5 @@
 var Renderers = require('../models/renderer'),
-    Playlist = require('../models/playlist_new').playlist,
+    Playlist = require('../models/playlist_new').Playlist,
     Tracks = require('../models/tracks')
 
 module.exports = {

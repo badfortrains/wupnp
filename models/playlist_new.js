@@ -4,7 +4,7 @@ var db = require('./db'),
 
 db.qSerialize = Q.nbind(db.serialize,db)
 
-var playlist = function(options){
+var Playlist = function(options){
   if(options.id){
     this.id = options.id
   }
@@ -48,6 +48,33 @@ playlist.prototype._getCount = function(){
   })
 }
 
+/**
+ * Delete playlist form list db, and remove all tracks
+ * returns a promise, fufills when delete is complete
+ */
+playlist.prototype.drop = function(){
+  var listId = this.id,
+      deferred = Q.defer()
+
+  db.serialize(function(){
+    db.run("BEGIN")
+    db.run("DELETE FROM playlist_tracks WHERE list_id = ?",listId);
+    db.run("DELETE FROM lists WHERE _id = ?",listId);
+    db.run("COMMIT",function(err,res){
+      if(err){
+        deferred.reject(err)
+      }else{
+        deferred.resolve(res)
+      }
+    })
+  })
+  
+  return deferred
+}
+
+playlist.prototype.all = function(){
+  return Q.npost(db,"all",["SELECT name FROM lists"])
+}
 
 /**
  * Add tracks to playlist.  Returns a promise, resolving to number of tracks inserted
@@ -105,4 +132,4 @@ playlist.prototype.add = function(trackPromise,position,deleteAfter){
   })
 }
 
-exports.playlist = playlist
+exports.Playlist = Playlist
