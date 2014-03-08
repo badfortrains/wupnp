@@ -76,6 +76,15 @@ playlist.prototype.all = function(){
   return Q.npost(db,"all",["SELECT name FROM lists"])
 }
 
+//get all tracks in the playlist
+//return a promise for the list of tracks
+playlist.prototype.tracks = function(){
+  var columns = ["Artist","Album","Title","_id","position"],
+      query = "SELECT "+columns+" FROM tracks JOIN playlist_tracks ON (track_id = _id) WHERE playlist_tracks.list_id = ? ORDER BY playlist_tracks.position"
+
+  return Q.npost(db,"all",[query,this.id])
+}
+
 /**
  * Add tracks to playlist.  Returns a promise, resolving to number of tracks inserted
  * on success.

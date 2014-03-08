@@ -2,22 +2,15 @@ var Playlists = require('../models/playlist').playlist;
 module.exports = {
   index:function(req,res){
     var id = parseFloat(req.params.id),
-        pl = new Playlists(id),
-        categories = {
-          Artist: 1,
-          Album:  1,
-          Title:  1,
-          _id: 1,
-          position: 1
-        };
+        pl = new Playlists(id);
 
-    pl.findAt(0,{limit:false, categories:categories},function(err,docs){
-      if(err){
-        res.send(500,"failed to retrieve tracks");
-      }else{
-        res.send(docs);
-      }
-    });
+    pl.tracks()
+    .then(function(docs){
+      res.send(docs);
+    })
+    .fail(function(err){
+      res.send(500,"failed to retrieve tracks");
+    })
   },
   delete:function(req,res){
     var position = parseFloat(req.params.track),
