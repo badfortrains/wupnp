@@ -85,12 +85,14 @@ exports.onConnect = function(socket) {
     console.log("POSITION",position)
     doCommand('setPosition',position);
   })
-  socket.on('playByPosition',function(position,playlistId){
+
+  socket.on('playListTrack',function(playlistTrackId,playlistId){
     getRenderer(function(renderer){
-      if(playlistId){
-        renderer.setPlaylist(playlistId);
-      }
-      renderer.playAt(position);
+      renderer.playListTrack(position,playlistId)
+      .fail(function(err){
+        console.log("Play playlist track failed",err)
+        socket.emit("error","Play playlist track failed")
+      });
     })
   })
 };

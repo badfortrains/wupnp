@@ -1,6 +1,6 @@
 var mw = require('../mediaWatcher'),
     mwb = require('../mediaWatcherWeb').mwb,
-    Playlist = require("./playlist").playlist,
+    Playlist = require("./playlist_new").Playlist,
     Tracks = require("./tracks"),
     socketIO = require('socket.io'),
     util = require("util"),
@@ -14,7 +14,7 @@ var rendy = function(name,uuid,type){
   this.name = name;
   this.state = {};
   this.mw = (type === "WebRenderer") ? mwb : mw;
-  this.playlist = new Playlist(name +" quickList",uuid,function(id){
+  this.playlist = new Playlist({name:name +" quickList",uuid:uuid},function(id){
     self.id = id;
     self.state.quickList = id;
     self.state.playlist = id;
@@ -124,6 +124,14 @@ rendy.prototype = {
       this.mw.stop(function(res){
       });
     }
+  },
+  //return a promise
+  playListTrack: function(playlistTrackId,playlistId){
+    return Playlist.prototype.getTrackPosition(playlistTrackId)
+    .then(function(position){
+      this.setPlaylist(playlistId)
+      this.playAt(position)
+    }.bind(this))
   },
   playAt: function(position){
     this.position = position;

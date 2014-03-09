@@ -11,9 +11,10 @@ module.exports = {
     .fail(function(err){
       res.send(500,"failed to retrieve tracks");
     })
+
   },
   delete:function(req,res){
-    var position = parseFloat(req.params.track),
+    var listTrackId = parseFloat(req.params.track),
         id = parseFloat(req.params.id),
         pl = new Playlists(id);
 

@@ -79,10 +79,17 @@ playlist.prototype.all = function(){
 //get all tracks in the playlist
 //return a promise for the list of tracks
 playlist.prototype.tracks = function(){
-  var columns = ["Artist","Album","Title","_id","position"],
+  var columns = ["Artist","Album","Title","_id","position","id"],
       query = "SELECT "+columns+" FROM tracks JOIN playlist_tracks ON (track_id = _id) WHERE playlist_tracks.list_id = ? ORDER BY playlist_tracks.position"
 
   return Q.npost(db,"all",[query,this.id])
+}
+
+playlist.prototype.getTrackPosition = function(id){
+  return Q.npost(db,"get",["SELECT position FROM playlist_tracks WHERE id = ?",id])
+  .then(function(row){
+    return row.position
+  })
 }
 
 /**

@@ -3,7 +3,7 @@
 .track-list
   ul
     foreach docs as item
-      li(id=item._id,position=item.position)
+      li(id=item.id)
         .swipeEl
           .track-info
             .track-title=item.Title
