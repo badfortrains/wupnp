@@ -5,6 +5,9 @@ var db = require('./db'),
 db.qSerialize = Q.nbind(db.serialize,db)
 
 var Playlist = function(options){
+  if(typeof options != "object"){
+    throw "Bad playlist arguments"
+  }
   if(options.id){
     this.id = options.id
   }
@@ -26,11 +29,25 @@ var Playlist = function(options){
   }
 }
 
+
+//rewrite 
+Playlist.prototype.resourcesAt = function(position,cb){
+  var find = "SELECT resources.track_id,Uri,ProtocolInfo FROM playlist_tracks join resources ON (playlist_tracks.track_id = resources.track_id) WHERE position = ? AND list_id = ?";
+  db.all(find,position,this.id,function(err,docs){
+    if(err || !docs.length){
+      cb(err,null);
+    }else{
+      cb(err,{Resources:docs});
+    }
+  })
+}
+
+
 /**HACK, add actual error handling
  * create a new playlist for current playlist obj
  * @param  {Function} callback
  */
-playlist.prototype._create = function(cb){
+Playlist.prototype._create = function(cb){
   var self = this;
   db.run("INSERT INTO lists VALUES (NULL,?,?,?)",this.name,0,this.uuid,function(err){
     if(!err){
@@ -41,7 +58,7 @@ playlist.prototype._create = function(cb){
   });
 }
 
-playlist.prototype._getCount = function(){
+Playlist.prototype._getCount = function(){
   return Q.npost(db,"get",["SELECT count FROM lists WHERE _id = ?",this.id])
   .then(function(row){
     return row.count
@@ -52,7 +69,7 @@ playlist.prototype._getCount = function(){
  * Delete playlist form list db, and remove all tracks
  * returns a promise, fufills when delete is complete
  */
-playlist.prototype.drop = function(){
+Playlist.prototype.drop = function(){
   var listId = this.id,
       deferred = Q.defer()
 
@@ -69,26 +86,52 @@ playlist.prototype.drop = function(){
     })
   })
   
-  return deferred
+  return deferred.promise
 }
 
-playlist.prototype.all = function(){
-  return Q.npost(db,"all",["SELECT name FROM lists"])
+Playlist.prototype.all = function(){
+  return Q.npost(db,"all",["SELECT name, _id FROM lists"])
 }
 
 //get all tracks in the playlist
 //return a promise for the list of tracks
-playlist.prototype.tracks = function(){
+Playlist.prototype.tracks = function(){
   var columns = ["Artist","Album","Title","_id","position","id"],
-      query = "SELECT "+columns+" FROM tracks JOIN playlist_tracks ON (track_id = _id) WHERE playlist_tracks.list_id = ? ORDER BY playlist_tracks.position"
+      query = "SELECT "+columns.join()+" FROM tracks JOIN playlist_tracks ON (track_id = _id) WHERE playlist_tracks.list_id = ? ORDER BY playlist_tracks.position"
 
+  console.log(query)
   return Q.npost(db,"all",[query,this.id])
 }
 
-playlist.prototype.getTrackPosition = function(id){
+Playlist.prototype.getTrackPosition = function(id){
   return Q.npost(db,"get",["SELECT position FROM playlist_tracks WHERE id = ?",id])
   .then(function(row){
     return row.position
+  })
+}
+
+//Remove track with give playlist_tracks id
+//return 
+Playlist.prototype.remove = function(id){
+  var listId = this.id;
+
+  return this.getTrackPosition(id)
+  .then(function(position){
+    var deferred = Q.defer()
+    db.serialize(function(){
+      db.run("BEGIN")
+      db.run("DELETE FROM playlist_tracks WHERE list_id = ? AND position = ?",listId,position)
+      db.run("UPDATE lists SET count = count - 1 WHERE _id = ?",listId)
+      db.run("UPDATE playlist_tracks SET position = position - 1 WHERE list_id = ? AND position > ?",listId,position)
+      db.run("COMMIT",function(err){
+        if(err){
+          deferred.reject(err)
+        }else{
+          deferred.resolve(this)
+        }
+      })
+    })
+    return deferred.promise
   })
 }
 
@@ -100,7 +143,7 @@ playlist.prototype.getTrackPosition = function(id){
  * @param {boolean} deleteAfter : true to delete tracks after position, false to move their
  * position back equal to the number of tracks inserted
  */
-playlist.prototype.add = function(trackPromise,position,deleteAfter){
+Playlist.prototype.add = function(trackPromise,position,deleteAfter){
   var listId = this.id,
       getPosition,
       length;

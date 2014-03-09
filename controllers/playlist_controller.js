@@ -27,7 +27,7 @@ module.exports = {
   add: function(req,res){
     var filter = req.body.filter || {},
         id = parseFloat(req.params.id),
-        pl = new Playlists(id);
+        pl = new Playlists({id:id});
 
 
     pl.add(Tracks.find(filter))

@@ -1,8 +1,8 @@
-var Playlists = require('../models/playlist').playlist;
+var Playlists = require('../models/playlist_new').Playlist;
 module.exports = {
   index:function(req,res){
     var id = parseFloat(req.params.id),
-        pl = new Playlists(id);
+        pl = new Playlists({id:id});
 
     pl.tracks()
     .then(function(docs){
@@ -16,14 +16,13 @@ module.exports = {
   delete:function(req,res){
     var listTrackId = parseFloat(req.params.track),
         id = parseFloat(req.params.id),
-        pl = new Playlists(id);
+        pl = new Playlists({id:id});
 
-    pl.remove(position,function(err){
-      if(err){
-        res.send(500,"failed to remove track");
-      }else{
-        res.send(200,{deleted:true});
-      }
+    pl.remove(listTrackId)
+    .then(function(){
+      res.send(200,{deleted:true});
+    }).fail(function(err){
+      res.send(500,"failed to remove track");
     })
   }
 }
