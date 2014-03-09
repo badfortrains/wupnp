@@ -1,4 +1,4 @@
-var Playlists = require('../models/playlist_new').Playlist,
+var Playlists = require('../models/playlist').Playlist,
     Renderers = require('../models/renderer'),
     Tracks = require('../models/tracks')
 

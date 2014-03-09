@@ -1,4 +1,4 @@
-var Playlists = require('../models/playlist').playlist,
+var Playlists = require('../models/playlist').Playlist,
     Renderes = require('../models/renderer'),
     Servers = require('../models/servers'),
     Tracks = require('../models/tracks'),
@@ -6,13 +6,13 @@ var Playlists = require('../models/playlist').playlist,
     url = require('url');
 
 exports.index = function(req, res){
-  Playlists.prototype.findList({},{name:1},function(err,docs){
+  Playlists.prototype.all()
+  .done(function(docs){
     var lists = "",
         renderers = "var bootstrapRenderers =" + JSON.stringify(Renderes.all()),
         servers = "var bootstrapServers =" + JSON.stringify(Servers.all()),
         template = (process.env.NODE_ENV === 'production') ? 'Wu-prod' : 'Wu'; 
 
-    console.log(process.env.NODE_ENV)
     if(!err && docs){
       lists = "var bootstrapPlaylists = " + JSON.stringify(docs);
     }else{

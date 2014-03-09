@@ -2,8 +2,8 @@ describe("Playlist",function(){
   var loadModule = require('./helpers/module-loader').loadModule;
   var Q = require("q");
   var mockDB = require('./mocks/mocks').db
-  var test = require('../models/playlist_new')
-  var Playlist = loadModule('./models/playlist_new.js',{"./db":mockDB}).Playlist
+  var test = require('../models/playlist')
+  var Playlist = loadModule('./models/playlist.js',{"./db":mockDB}).Playlist
 
   describe("Constructor",function(){
     it("creates a new playlist when given a name",function(){

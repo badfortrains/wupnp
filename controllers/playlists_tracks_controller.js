@@ -1,4 +1,4 @@
-var Playlists = require('../models/playlist_new').Playlist;
+var Playlists = require('../models/playlist').Playlist;
 module.exports = {
   index:function(req,res){
     var id = parseFloat(req.params.id),

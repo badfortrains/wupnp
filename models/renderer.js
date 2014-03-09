@@ -1,6 +1,6 @@
 var mw = require('../mediaWatcher'),
     mwb = require('../mediaWatcherWeb').mwb,
-    Playlist = require("./playlist_new").Playlist,
+    Playlist = require("./playlist").Playlist,
     Tracks = require("./tracks"),
     socketIO = require('socket.io'),
     util = require("util"),
