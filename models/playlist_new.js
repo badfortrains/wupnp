@@ -99,7 +99,6 @@ Playlist.prototype.tracks = function(){
   var columns = ["Artist","Album","Title","_id","position","id"],
       query = "SELECT "+columns.join()+" FROM tracks JOIN playlist_tracks ON (track_id = _id) WHERE playlist_tracks.list_id = ? ORDER BY playlist_tracks.position"
 
-  console.log(query)
   return Q.npost(db,"all",[query,this.id])
 }
 

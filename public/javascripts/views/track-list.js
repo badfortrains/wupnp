@@ -34,12 +34,12 @@ Wu.Views.trackList = Backbone.View.extend({
     if($(e.currentTarget).parent().hasClass("transition")){
       return;
     }else{
-      var id = $(e.currentTarget).parent().parent().attr('id');
+      var id = $(e.currentTarget).parent().parent().attr('listTrack');
       Wu.Cache.Models.player.playListTrack(id,this.model.get("_id"));
     }
   },
   delete:function($li){
-    var track = this.collection.get($li.attr("id"));
+    var track = this.collection.get($li.attr("listTrack"));
     if(track){
       track.destroy({
         error:function(model,xhr){

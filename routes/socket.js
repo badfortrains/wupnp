@@ -88,7 +88,7 @@ exports.onConnect = function(socket) {
 
   socket.on('playListTrack',function(playlistTrackId,playlistId){
     getRenderer(function(renderer){
-      renderer.playListTrack(position,playlistId)
+      renderer.playListTrack(playlistTrackId,playlistId)
       .fail(function(err){
         console.log("Play playlist track failed",err)
         socket.emit("error","Play playlist track failed")
