@@ -90,7 +90,7 @@ Playlist.prototype.drop = function(){
 }
 
 Playlist.prototype.all = function(){
-  return Q.npost(db,"all",["SELECT name, _id FROM lists"])
+  return Q.npost(db,"all",["SELECT * FROM lists"])
 }
 
 //get all tracks in the playlist
