@@ -143,18 +143,15 @@ Playlist.prototype.remove = function(id){
  * position back equal to the number of tracks inserted
  */
 Playlist.prototype.add = function(trackPromise,position,deleteAfter){
-  var listId = this.id,
-      getPosition,
-      length;
+  var listId = this.id;
 
-  getPosition = Q.fcall(function(){
-    //insert at end of list if we don't have a given position
-    return typeof position === "number" ? position : this._getCount()
-  }.bind(this))
-
-  return Q.all([getPosition,trackPromise])
-  .spread(function(position,tracks){
+  return Q.all([this._getCount(),trackPromise])
+  .spread(function(count,tracks){
     var deferred = Q.defer();
+         
+    //insert at end of list if we don't have a given position
+    position = typeof position === "number" ? position : count + 1
+
     db.serialize(function(){
       var insert;
       db.run("BEGIN")
@@ -162,6 +159,8 @@ Playlist.prototype.add = function(trackPromise,position,deleteAfter){
       if(deleteAfter){
         //remove all tracks after our insertion point
         db.run("DELETE FROM playlist_tracks WHERE list_id = ? AND position >= ?",listId,position)
+        //deleted all tracks after position, tracks are zero indexed so count is now = position
+        count = position
       }else{
         //move all tracks after position down by the number of tracks we're inserting
         db.run("UPDATE playlist_tracks SET position = position + ? WHERE list_id = ? AND position >= ?",tracks.length,listId,position)
@@ -176,7 +175,7 @@ Playlist.prototype.add = function(trackPromise,position,deleteAfter){
       insert.finalize();
 
       //update count of list
-      db.run("UPDATE lists SET count = count + ? WHERE _id = ?",tracks.length,listId);
+      db.run("UPDATE lists SET count = ? WHERE _id = ?",count+tracks.length,listId);
 
       db.run("COMMIT",function(err){
         if(err){
