@@ -114,64 +114,40 @@ Wu.Views.categoryPopup = Backbone.View.extend({
     }
   },
   playNow:function(){
-    var id = Wu.Cache.Models.player.get("quickList"),
-        list = this.collection.get(id),
-        player = Wu.Cache.Models.player,
-        currentTrack = player.get('currentPlayingTrack'),
-        currentListId = player.get('playlist'),
-        position = (currentTrack) ? currentTrack.position : 1;
+    var player = Wu.Cache.Models.player,
+        id = player.get("quickList"),
+        renderer = Wu.Cache.Models.player.get("uuid")
 
-    if(!list){
+    renderer = Wu.Cache.Collections.renderers.get(renderer)
+
+    if(!renderer){
       Wu.Cache.Views.toastMaster.error("Must select a media renderer first");
       return;
     }
 
-    list.set("position",position-1);
-    list.set("clearAfter",true);
-    this._add(list,function(){
-      Wu.Cache.Models.player.playByPosition(position,id);
-    });
+    renderer.playNow(this.model.get("filter"))
+    this.hide();
   },
   playNext:function(){
     var player = Wu.Cache.Models.player,
-        id = player.get("quickList"),
-        list = this.collection.get(id),
-        currentTrack = player.get('currentPlayingTrack'),
-        currentListId = player.get('playlist'),
-        position = (currentTrack) ? currentTrack.position : 0;
+        id = player.get("playlist"),
+        renderer = Wu.Cache.Models.player.get("uuid")
 
-    if(!list){
+    renderer = Wu.Cache.Collections.renderers.get(renderer)
+
+    if(!renderer){
       Wu.Cache.Views.toastMaster.error("Must select a media renderer first");
       return;
     }
 
-    list.set("position",position);
-    this._add(list);
+    renderer.playNext(this.model.get("filter"))
+    this.hide();
   },
   addToList:function(e){
     var id = $(e.target).attr('listId'),
         list = this.collection.get(id);
-    this._add(list);
-  },
 
-  _add: function(list,cb){
-    var filter = this.model.get("filter");
-
-    list.set("filter",filter);
-    list.save(null,{
-      success:function(model){
-        var message = model.get("added")+' tracks added to "'+list.get('name')+'" playlist';
-        Wu.Cache.Views.toastMaster.message(message);
-        typeof(cb) === 'function' && cb();
-       },
-      error:function(model,xhr){
-        var message = xhr.responseText;
-        Wu.Cache.Views.toastMaster.error(message);
-      }
-    });
-    list.unset('filter');
-    list.unset('clearAfter');
-    list.unset('position');
+    list.add(this.model.get("filter"))
     this.hide();
   }
 

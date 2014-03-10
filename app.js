@@ -37,8 +37,16 @@ app.configure(function(){
   app.use(express.cookieParser('your secret here'));
   app.use(express.session());
   app.use(app.router);
-  app.use(require('less-middleware')({ src: __dirname + '/public' }));
-  app.use(express.static(path.join(__dirname, 'public')));
+  app.use(require('less-middleware')(path.join(__dirname, '/public')));
+  app.use(express.static(path.join(__dirname, 'public'),{ maxAge: process.env.NODE_ENV ? 2592000000 : 0 }));
+});
+
+io.configure('production', function() {
+    io.enable('browser client minification');
+    io.enable('browser client cache');
+    io.enable('browser client etag');  
+    io.enable('browser client gzip');
+    io.set('log level', 3);
 });
 
 app.configure('development', function(){
@@ -66,13 +74,15 @@ app.get("/api/playlists/:id", playlist_tracks.index)
 app.delete("/api/playlists/:id/:track", playlist_tracks.delete)
 
 app.get("/api/renderers", renderers.index);
-app.get("/api/renderers/:id", renderers.show);
+app.get("/api/renderers/:id",renderers._find_renderer,renderers.show);
+app.put("/api/renderers/:id/playNow",renderers._find_renderer,renderers.playNow);
+app.put("/api/renderers/:id/playNext",renderers._find_renderer,renderers.playNext);
 
 app.get('/api/categories/:category', categories.show);
 
 app.get('/api/directory/:ms/:id',servers.browse);
-app.get('/api/servers/',servers.all);
-app.get('/api/servers/:id',servers.find)
+app.get('/api/servers/',servers.index);
+app.get('/api/servers/:id',servers.show)
 app.put('/api/servers/:id',servers.setPath)
 
 app.get('/JST.js', function(req,res){

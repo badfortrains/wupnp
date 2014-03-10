@@ -1,35 +1,28 @@
-var Playlists = require('../models/playlist').playlist;
+var Playlists = require('../models/playlist').Playlist;
 module.exports = {
   index:function(req,res){
     var id = parseFloat(req.params.id),
-        pl = new Playlists(id),
-        categories = {
-          Artist: 1,
-          Album:  1,
-          Title:  1,
-          _id: 1,
-          position: 1
-        };
+        pl = new Playlists({id:id});
 
-    pl.findAt(0,{limit:false, categories:categories},function(err,docs){
-      if(err){
-        res.send(500,"failed to retrieve tracks");
-      }else{
-        res.send(docs);
-      }
-    });
+    pl.tracks()
+    .then(function(docs){
+      res.send(docs);
+    })
+    .fail(function(err){
+      res.send(500,"failed to retrieve tracks");
+    })
+
   },
   delete:function(req,res){
-    var position = parseFloat(req.params.track),
+    var listTrackId = parseFloat(req.params.track),
         id = parseFloat(req.params.id),
-        pl = new Playlists(id);
+        pl = new Playlists({id:id});
 
-    pl.remove(position,function(err){
-      if(err){
-        res.send(500,"failed to remove track");
-      }else{
-        res.send(200,{deleted:true});
-      }
+    pl.remove(listTrackId)
+    .then(function(){
+      res.send(200,{deleted:true});
+    }).fail(function(err){
+      res.send(500,"failed to remove track");
     })
   }
 }

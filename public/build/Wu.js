@@ -4080,6 +4080,9 @@ function(e, t) {
     if(!this.isCategory || Wu.Cache.Collections.servers.tracksInserted){
       Wu.Views.list.prototype.render.call(this);
       $("#mask").hide();
+      if(this.model.get("current_scroll")){
+        this.el.scrollTop = this.model.get("current_scroll")
+      }
       this.trigger("rendered");
     }else{
       this.infoTemplate({servers: Wu.Cache.Collections.servers},function(err,html){
@@ -4096,7 +4099,7 @@ function(e, t) {
     this.stopListening();
   },
   select: function(e){
-    var category = this.model.filter($(e.target).text(),e.target.id);
+    var category = this.model.filter($(e.target).text(),e.target.id,this.el.scrollTop);
     if(category)
       Backbone.history.navigate(this.url+category,{trigger:true});
     else
@@ -4246,59 +4249,38 @@ function(e, t) {
     }
   },
   playNow:function(){
-    var id = Wu.Cache.Models.player.get("quickList"),
-        list = this.collection.get(id);
+    var player = Wu.Cache.Models.player,
+        id = player.get("quickList"),
+        list = this.collection.get(id),
+        renderer = Wu.Cache.Models.player.get("uuid")
 
     if(!list){
       Wu.Cache.Views.toastMaster.error("Must select a media renderer first");
       return;
     }
 
-    list.set("clearAfter",0);
-    this._add(list,function(){
-      Socket.emit("playPlaylist",id);
+    list.add(this.model.get("filter"),renderer,0,function(data){
+      Wu.Cache.Models.player.playByPosition(data.position,id);
     });
   },
   playNext:function(){
     var player = Wu.Cache.Models.player,
-        id = player.get("quickList"),
+        id = player.get("playList"),
         list = this.collection.get(id),
-        currentTrack = player.get('currentPlayingTrack'),
-        currentListId = player.get('playlist'),
-        position = (currentTrack) ? currentTrack.position : 0;
+        renderer = Wu.Cache.Models.player.get("uuid")
 
     if(!list){
       Wu.Cache.Views.toastMaster.error("Must select a media renderer first");
       return;
     }
 
-    list.set("clearAfter",position);
-    this._add(list);
+    list.add(this.model.get("filter"),renderer,1)
   },
   addToList:function(e){
     var id = $(e.target).attr('listId'),
         list = this.collection.get(id);
-    this._add(list);
-  },
 
-  _add: function(list,cb){
-    var filter = this.model.get("filter");
-
-    list.set("filter",filter);
-    list.save(null,{
-      success:function(model){
-        var message = model.get("added")+' tracks added to "'+list.get('name')+'" playlist';
-        Wu.Cache.Views.toastMaster.message(message);
-        typeof(cb) === 'function' && cb();
-       },
-      error:function(model,xhr){
-        var message = xhr.responseText;
-        Wu.Cache.Views.toastMaster.error(message);
-      }
-    });
-    list.unset('filter');
-    list.unset('clearAfter');
-    this.hide();
+    list.add(this.model.get("filter"))
   }
 
 });;Wu.Views.directories = Backbone.View.extend({
@@ -4522,7 +4504,8 @@ function(e, t) {
   events:{
     "click .renderers li"               : "setRenderer",
     "click .musicLink"                  : "gotoMusic",
-    "click .playlists li .icon-trash"   : "deleteList"
+    "click .playlists li .icon-trash"   : "deleteList",
+    "swipeLeft"                         : "hide"
   },
 
   initialize: function(){
@@ -4915,6 +4898,9 @@ function(e, t) {
     Socket.on("tracksInserted",function(){
       Wu.Layout.page.trigger("tracksInserted");
     })
+    //stores where the user is scrolled to when they
+    //switch categories
+    this.scroll = {}
   },
 
   fetch: function(options){
@@ -4925,7 +4911,7 @@ function(e, t) {
 
   },
 
-  filter: function(value,_id){
+  filter: function(value,_id,scroll_height){
     var filter = this.get("filter") || {},
         id = this.get('id'),
         index = _.indexOf(this.ORDER,id);
@@ -4933,6 +4919,7 @@ function(e, t) {
     index++;
     if(index < this.ORDER.length){
       filter[id] = value;
+      scroll[id] = scroll_height
       this.set("filter",filter)
     }else if(id === "Title"){
       filter._id = _id;
@@ -4945,8 +4932,14 @@ function(e, t) {
         currentIndex = _.indexOf(this.ORDER,id);
         newIndex = _.indexOf(this.ORDER,category);
     
+    this.set("current_scroll",null)
     while(newIndex <= currentIndex){
-      filter[this.ORDER[currentIndex]] && delete filter[this.ORDER[currentIndex]];
+      if(newIndex == currentIndex){
+        this.set("current_scroll",scroll[this.ORDER[currentIndex]])
+      }
+      filter[this.ORDER[currentIndex]] && delete filter[this.ORDER[currentIndex]]
+      scroll[this.ORDER[currentIndex]] && delete scroll[this.ORDER[currentIndex]]
+
       currentIndex--;
     }
     filter._id &&  delete filter._id;
@@ -5017,7 +5010,26 @@ function(e, t) {
   }
 });;Wu.Models.playlist = Backbone.Model.extend({
   urlRoot: '/api/playlists',
-  idAttribute: "_id"
+  idAttribute: "_id",
+  add: function(filter,renderer,offset,cb){
+    //renderer: uuid of renderer, used to find current track 
+    //offset, add tracks offset number after currently
+    //playing track.  If none set, add to end of playlist
+    $.ajax({
+      type: "put",
+      data: {filter: filter, offset: offset, renderer:renderer},
+      url: this.urlRoot + "/" +this.get("_id"),
+      success: $.proxy(function(response){
+        var message = response.added +' tracks added to "'+this.get('name')+'" playlist';
+        Wu.Cache.Views.toastMaster.message(message);
+        typeof(cb) === 'function' && cb(response);
+      },this),
+      error:function(xhr){
+        var message = xhr.responseText;
+        Wu.Cache.Views.toastMaster.error(message);
+      }
+    })
+  }
 
 });;Wu.Models.renderer = Backbone.Model.extend({
 

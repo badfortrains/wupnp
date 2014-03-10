@@ -1,6 +1,6 @@
 var mw = require('../mediaWatcher'),
     mwb = require('../mediaWatcherWeb').mwb,
-    Playlist = require("./playlist").playlist,
+    Playlist = require("./playlist").Playlist,
     Tracks = require("./tracks"),
     socketIO = require('socket.io'),
     util = require("util"),
@@ -9,15 +9,19 @@ var mw = require('../mediaWatcher'),
 
 var rendy = function(name,uuid,type){
   var self = this;
-  this.position = 1;
+  this.position = 0;
   this.uuid = uuid;
   this.name = name;
   this.state = {};
   this.mw = (type === "WebRenderer") ? mwb : mw;
-  this.playlist = new Playlist(name +" quickList",uuid,function(id){
-    self.id = id;
-    self.state.quickList = id;
-    self.state.playlist = id;
+  this.playlist = new Playlist({
+    name: name +" quickList",
+    uuid: uuid,
+    cb: function(id){
+      self.id = id;
+      self.state.quickList = id;
+      self.state.playlist = id;
+    }
   })
 
   setInterval(this._getPosition.bind(this),1000);
@@ -45,7 +49,7 @@ rendy.prototype = {
           typeof(cb) === 'function' && cb(err);
         });
       }else{
-        self.position = 1;
+        self.position = 0;
         self.setState({name:"currentPlayingTrack",vale:{}});
       }     
     })
@@ -55,7 +59,7 @@ rendy.prototype = {
     this._playTrack();
   },
   previous: function(cb){
-    if(this.position === 1){
+    if(this.position === 0){
       cb("No previous track");
       return;
     }else{
@@ -65,7 +69,7 @@ rendy.prototype = {
   },
   setPlaylist: function(id){
     this.playlist.id = id;
-    this.position = 1;
+    this.position = 0;
     this.setState({name:"playlist",value:id});
   },
   playPlaylist: function(id){
@@ -125,6 +129,14 @@ rendy.prototype = {
       });
     }
   },
+  //return a promise
+  playListTrack: function(playlistTrackId,playlistId){
+    return Playlist.prototype.getTrackPosition(playlistTrackId)
+    .then(function(position){
+      this.setPlaylist(playlistId)
+      this.playAt(position)
+    }.bind(this))
+  },
   playAt: function(position){
     this.position = position;
     this._playTrack();
@@ -142,6 +154,9 @@ rendy.prototype = {
   },
   setPosition: function(position){
     this.mw.setPosition(this.uuid,position);
+  },
+  quickListPosition: function(){
+    return this.state.quickList == this.state.playlist ? this.position : 0
   }
 }
 
