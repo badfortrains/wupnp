@@ -5,9 +5,6 @@ module.exports = function(grunt) {
   // Project configuration.
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
-    nodeunit: {
-      all: ['tests/*.js']
-    },
     clean: ["public/build"],
     less: {
       all: {
@@ -108,6 +105,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-uglify');
 
   // Default task(s).
-  grunt.registerTask('default', ['nodeunit','less','clean','build-jst','concat','uglify','cssmin','cache-versions']);
+  grunt.registerTask('default', ['less','clean','build-jst','concat','uglify','cssmin','cache-versions']);
 
 };
