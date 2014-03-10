@@ -37,7 +37,7 @@ app.configure(function(){
   app.use(express.cookieParser('your secret here'));
   app.use(express.session());
   app.use(app.router);
-  app.use(require('less-middleware')({ src: __dirname + '/public' }));
+  app.use(require('less-middleware')(path.join(__dirname, '/public')));
   app.use(express.static(path.join(__dirname, 'public'),{ maxAge: process.env.NODE_ENV ? 2592000000 : 0 }));
 });
 
@@ -81,8 +81,8 @@ app.put("/api/renderers/:id/playNext",renderers._find_renderer,renderers.playNex
 app.get('/api/categories/:category', categories.show);
 
 app.get('/api/directory/:ms/:id',servers.browse);
-app.get('/api/servers/',servers.all);
-app.get('/api/servers/:id',servers.find)
+app.get('/api/servers/',servers.index);
+app.get('/api/servers/:id',servers.show)
 app.put('/api/servers/:id',servers.setPath)
 
 app.get('/JST.js', function(req,res){

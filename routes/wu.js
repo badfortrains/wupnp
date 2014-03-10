@@ -13,7 +13,7 @@ exports.index = function(req, res){
         servers = "var bootstrapServers =" + JSON.stringify(Servers.all()),
         template = (process.env.NODE_ENV === 'production') ? 'Wu-prod' : 'Wu'; 
 
-    if(!err && docs){
+    if(docs){
       lists = "var bootstrapPlaylists = " + JSON.stringify(docs);
     }else{
       lists = "var bootstrapPlaylists = [];"
