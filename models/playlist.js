@@ -150,7 +150,7 @@ Playlist.prototype.add = function(trackPromise,position,deleteAfter){
     var deferred = Q.defer();
          
     //insert at end of list if we don't have a given position
-    position = typeof position === "number" ? position : count + 1
+    position = typeof position === "number" ? position : count
 
     db.serialize(function(){
       var insert;
