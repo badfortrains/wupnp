@@ -17,7 +17,10 @@ var onTracksAdded = function(data){
     console.log('Inserting tracks')
     console.log(this.uuid);
 
-    Tracks.insert(data,this.uuid,function(){
+    //hack to make linkstation get the correct track numbers
+    var updateFromId = this.uuid == "7076436f-6e65-1063-8074-4ce6766160b7" && this.status != "inserted"
+
+    Tracks.insert(data,this.uuid,updateFromId,function(){
       this.status = "inserted"
     }.bind(this));
   }else{

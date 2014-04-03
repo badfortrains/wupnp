@@ -7,6 +7,8 @@ var Tracks = function(){}
 util.inherits(Tracks,EventEmitter);
 
 
+//linkstation doesn't send track numbers, we can fix this by grouping by album and sorting by
+//object id.
 var updateFromObjID = function(){
   var getAlbum = db.prepare("SELECT _id FROM tracks WHERE Artist = ? AND Album = ? ORDER BY oID"),
       updateTrack = db.prepare("UPDATE tracks SET TrackNumber = ? WHERE _id = ?");
@@ -38,7 +40,7 @@ Tracks.prototype.find = function(filter){
   return Q.npost(stmt,"all")
 }
 
-Tracks.prototype.insert = function(data,uuid,cb){
+Tracks.prototype.insert = function(data,uuid,updateById,cb){
   var i = 0,
       length = data.length,
       self = this;
@@ -61,10 +63,14 @@ Tracks.prototype.insert = function(data,uuid,cb){
           resourceInsert = db.prepare("INSERT INTO resources VALUES (NULL,?,?,?)");
 
       data.forEach(function(item,index){
-        stmt.run(id+index,item.TrackNumber,item.Title,item.Artist,item.Album,item.Didl,item.oID,uuid)
-        item.Resources && item.Resources.forEach(function(resource){
-          resourceInsert.run(resource.Uri,resource.ProtocolInfo,id+index);
-        });
+        stmt.run(id+index,item.TrackNumber,item.Title,item.Artist,item.Album,item.Didl,item.oID,uuid,function(err,res){
+          if(!err && this.changes == 1){
+            var track_id = this.lastID
+            item.Resources && item.Resources.forEach(function(resource){
+              resourceInsert.run(resource.Uri,resource.ProtocolInfo,track_id);
+            });
+          }
+        })
       })
 
       stmt.finalize();
@@ -75,7 +81,8 @@ Tracks.prototype.insert = function(data,uuid,cb){
           console.log(err);
           self.emit("error","Error inserting tracks "+err);
         }else{
-          updateFromObjID();
+          if(updateById)
+            updateFromObjID();
           self.lastUpdated = Date.now();
           self.emit("tracksInserted",uuid);
           typeof(cb) === "function" && cb();
