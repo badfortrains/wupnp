@@ -63,7 +63,7 @@ Tracks.prototype.insert = function(data,uuid,updateById,cb){
           resourceInsert = db.prepare("INSERT INTO resources VALUES (NULL,?,?,?)");
 
       data.forEach(function(item,index){
-        stmt.run(id+index,item.TrackNumber,item.Title,item.Artist,item.Album,item.Didl,item.oID,uuid,function(err,res){
+        stmt.run(id+index,item.TrackNumber || index,item.Title,item.Artist,item.Album,item.Didl,item.oID,uuid,function(err,res){
           if(!err && this.changes == 1){
             var track_id = this.lastID
             item.Resources && item.Resources.forEach(function(resource){
