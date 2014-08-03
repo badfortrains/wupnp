@@ -10,7 +10,7 @@
     "jade": "*",
     "sqlite3": "2.2.*",
     "blade": "*",
-    "connect": "*",
+    "connect": "2.14.5",
     "less": "*",
     "less-middleware": "0.2.*",
     "http-proxy": "0.8.7",
