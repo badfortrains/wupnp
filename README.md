@@ -10,7 +10,7 @@ Demo
 ======
 Youtube: http://www.youtube.com/watch?v=72oVUozqCjE
 
-![On pc and ipbone](https://raw.github.com/badfortrains/wupnp/master/public/images/screen.png)
+![On pc and iphone](https://raw.github.com/badfortrains/wupnp/master/public/images/screen.png)
 
 Install
 =======
@@ -24,11 +24,11 @@ To install on the raspberry pi
   </li>
   <li>
     install dependencies by executing 'npm install' in the wupnp directory
+    Note: requires scons(http://www.scons.org/) to build the mediaWatcher module
   </li>
   <li>
     start the server with 'NODE_ENV=production node app.js' or 'NODE_ENV=production nohup node app.js&' to run it in the background
   </li>
 </ol>
 
-This has only been tested on Raspbian “wheezy” hard-float on model B. To run on any other hardware/OS the [media watcher](https://github.com/badfortrains/mediaWatcher) 
-module will probably need to be rebuilt.  I'll try to post instructions on doing that shortly
+This has only been tested on Raspbian pi model B (with arch and wheezy), and on an osx laptop.  mediaWatcher relies on a small bash script for building so windows is currently unsupported.
