@@ -40,9 +40,9 @@ module.exports = {
   },
   remove: function(req,res){
     var id = parseFloat(req.params.id),
-        pl = new Playlists(id);
+        pl = new Playlists({id:id});
 
-    pl.drop.done(function(result){
+    pl.drop().done(function(result){
       res.send(200,{deleted: true});
     });     
   }
