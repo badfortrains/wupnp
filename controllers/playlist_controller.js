@@ -14,13 +14,16 @@ module.exports = {
     var filter = req.body.filter,
         name = req.body.name;
         
-    var pl = new Playlists({name:name},function(id){
-      if(filter){
-        pl.add(Tracks.find(filter)).done(function(count){
-          res.send({_id:id,added:count});
-        });
-      }else{
-        res.send({_id:id,added:0});
+    var pl = new Playlists({
+      name:name,
+      cb: function(id){
+        if(filter){
+          pl.add(Tracks.find(filter)).done(function(count){
+            res.send({_id:id,added:count});
+          });
+        }else{
+          res.send({_id:id,added:0});
+        }
       }
     });
   },
