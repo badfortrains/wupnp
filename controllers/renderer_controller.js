@@ -26,6 +26,7 @@ module.exports = {
 
     pl.add(Tracks.find(filter),position,true)
     .done(function(count){
+      renderer.setPlaylist(renderer.state.quickList)
       renderer.playAt(position)
       res.send({added:count, position: position})
     })
