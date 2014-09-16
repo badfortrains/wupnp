@@ -191,7 +191,7 @@ Renderer.prototype.remove = function(event){
     return;
   }
   this.emit("rendererRemoved",{name:this.renderers[uuid].name,uuid:uuid})
-  this.renderers[uuid].playlist.drop();
+  this.renderers[uuid].state.quickList.drop();
   delete this.renderers[uuid];
 }
 Renderer.prototype.stateChange = function(event){
