@@ -7,7 +7,12 @@ var express = require('express'),
     server = require('http').createServer(app),
     http = require('http'),
     path = require('path'),
-    io = require('socket.io').listen(server),
+    io = require('socket.io')(server,{
+      'browser client minification': true,  // Send minified client
+      'browser client etag': true,          // Apply etag caching logic based on version number
+      'browser client gzip': true,          // Gzip the file
+      'browser client expires': true        // Adds Cache-Control: private, x-gzip-ok="", max-age=31536000 header
+    }),
     wu = require('./routes/wu.js'),
     socketRoutes = require('./routes/socket'),
     playlists = require('./controllers/playlist_controller.js'),
@@ -39,14 +44,6 @@ app.configure(function(){
   app.use(app.router);
   app.use(require('less-middleware')(path.join(__dirname, '/public')));
   app.use(express.static(path.join(__dirname, 'public'),{ maxAge: process.env.NODE_ENV ? 2592000000 : 0 }));
-});
-
-io.configure('production', function() {
-    io.enable('browser client minification');
-    io.enable('browser client cache');
-    io.enable('browser client etag');  
-    io.enable('browser client gzip');
-    io.set('log level', 3);
 });
 
 app.configure('development', function(){

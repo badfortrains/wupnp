@@ -14,7 +14,7 @@
     "less": "*",
     "less-middleware": "0.2.*",
     "http-proxy": "0.8.7",
-    "socket.io": "0.9.16",
+    "socket.io": "1.*.*",
     "mediaWatcher": "git://github.com/badfortrains/mediaWatcher.git",
     "q": "~1.0.0"
   },
