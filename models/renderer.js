@@ -185,13 +185,16 @@ Renderer.prototype.add = function(event){
   this.emit("rendererAdded",{name:name,uuid:uuid})
 }
 Renderer.prototype.remove = function(event){
-  var uuid = event.uuid;
+  var uuid = event.uuid,
+      quickList;
 
   if(!this.exists(uuid)){
     return;
   }
+
   this.emit("rendererRemoved",{name:this.renderers[uuid].name,uuid:uuid})
-  this.renderers[uuid].state.quickList.drop();
+  quickList = new Playlist({id: this.renderers[uuid].state.quickList})
+  quickList.drop();
   delete this.renderers[uuid];
 }
 Renderer.prototype.stateChange = function(event){
