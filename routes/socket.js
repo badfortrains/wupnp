@@ -28,7 +28,7 @@ exports.registerEmits = function(namespace){
 exports.onConnect = function(socket) {
   socket.join(Renderers.getOne());
   //Set current renderer
-  socket.set("renderer",Renderers.getOne());
+  socket.wuRenderer =  Renderers.getOne();
   if(Renderers.getOne()){
     socket.emit("setRendererResult",null,Renderers.getOne());
   }
@@ -38,28 +38,26 @@ exports.onConnect = function(socket) {
     if(!renderer){
       socket.emit("setRendererResult","Renderer no longer exists");
     }else {
-      socket.get("renderer",function(err,oldUUID){
-        if(oldUUID === uuid){
-          return
-        }else{
-          socket.set("renderer",uuid);
-          socket.leave(oldUUID);
-          socket.emit("setRendererResult",null,uuid);
-          socket.join(uuid);
-          
-        }
-      });
+      var oldUUID = socket.wuRenderer
+      if(oldUUID === uuid){
+        return
+      }else{
+        socket.wuRenderer = uuid ;
+        socket.leave(oldUUID);
+        socket.emit("setRendererResult",null,uuid);
+        socket.join(uuid);
+        
+      }
     }
   })
   var getRenderer = function(cb){
-    socket.get("renderer",function(err,uuid){
-      var renderer = Renderers.find(uuid);
-      if(err || !renderer){
-        socket.emit("error","renderer not found");
-      }else{
-        cb(renderer);
-      }
-    })
+    var uuid = socket.wuRenderer
+    var renderer = Renderers.find(uuid);
+    if(!renderer){
+      socket.emit("error","renderer not found");
+    }else{
+      cb(renderer);
+    }
   }
   var doCommand = function(command){
     var args = Array.prototype.slice.call(arguments,1);
