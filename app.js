@@ -27,28 +27,35 @@ var express = require('express'),
     connect = require('connect'),
     server_model = require("./models/servers");
 
+var bodyParser = require('body-parser')
+var methodOverride = require('method-override')
+var cookieParser = require('cookie-parser')
+var session = require('express-session')
+var errorhandler = require('errorhandler')
+
     //tracks.removeAll(function(){
       mw.listen();
     //})
-app.configure(function(){
-  app.set('port', process.env.PORT || 3000);
+  app.set('port', process.env.PORT || 2080);
   app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');
   app.use(connect.compress());
-  app.use(express.favicon());
-  app.use(express.logger('dev'));
-  app.use(express.bodyParser());
-  app.use(express.methodOverride());
-  app.use(express.cookieParser('your secret here'));
-  app.use(express.session());
-  app.use(app.router);
+  // parse application/x-www-form-urlencoded
+  app.use(bodyParser.urlencoded({ extended: true }))
+  // parse application/json
+  app.use(bodyParser.json())
+  app.use(methodOverride());
+  app.use(cookieParser());
+  app.use(session({
+    secret: "our secret"
+  }));
   app.use(require('less-middleware')(path.join(__dirname, '/public')));
   app.use(express.static(path.join(__dirname, 'public'),{ maxAge: process.env.NODE_ENV ? 2592000000 : 0 }));
-});
 
-app.configure('development', function(){
-  app.use(express.errorHandler());
-});
+// development only
+if ('development' == app.get('env')) {
+  app.use(errorhandler());
+}
 
 /*proxy web based track streams*/
 app.get('/proxy/:id',wu.proxy);
