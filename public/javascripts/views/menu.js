@@ -20,8 +20,10 @@ Wu.Views.menu = Backbone.View.extend({
     this.listenTo(Wu.Cache.Models.player,"change:id",this.setActive);
     this.listenTo(Wu.Cache.Models.player,"change:playlist",this.setActive);
     this.listenTo(Wu.Cache.Models.player,"change:TransportState",this.setActive);
+    this.listenTo(Wu.Cache.Models.player,"change:Volume",this.setVolume);
     this.listenTo(Wu.Cache.Collections.servers,"change:status",this.setStatus);
     this.$el.on("click","a",$.proxy(this.hide,this));
+    this.setVolume();
   },
   render: function(){
     var self = this;
@@ -88,14 +90,19 @@ Wu.Views.menu = Backbone.View.extend({
     playlist && $("#"+playlist)[isPlaying ? "addClass" : "removeClass"]("active");
     renderer && $("#"+renderer).addClass("active");
   },
+  setVolume: function(){
+    var volume = Wu.Cache.Models.player.get("Volume")
+    if(volume)
+      this.$(".volume-number").html(volume)
+  },
   irCommand:function(e){
     //take the class name, minus 'icon' as the command
     command = $(e.currentTarget).attr("class").split("-").splice(1).join("-");
-    Socket.emit("sendIr",command)
+    Socket.emit(command)
     //wait 2 seconds, then set the source to the rpi
-    setTimeout(function(){
-      Socket.emit("sendIr","set-source")
-    },2000)
+    // setTimeout(function(){
+    //   Socket.emit("sendIr","set-source")
+    // },2000)
   }
 
 });

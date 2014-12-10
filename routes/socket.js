@@ -75,6 +75,14 @@ exports.onConnect = function(socket) {
       renderer[command].apply(renderer,args);
     })
   }
+  socket.on("volume-up",function(){
+    doCommand('volumeUp')
+  })
+
+  socket.on("volume-down",function(){
+    doCommand('volumeDown')
+  })
+
   socket.on('pause',function(){
     doCommand('pause');
   })

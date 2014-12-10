@@ -152,6 +152,18 @@ rendy.prototype = {
   getAttributes: function(){
     return this.state;
   },
+  volumeDown: function(){
+    if(this.state.Volume && this.state.Volume > 0)
+      this.setVolume(parseInt(this.state.Volume,10) - 1)
+  },
+  volumeUp: function(){
+    if(this.state.Volume)
+      this.setVolume(parseInt(this.state.Volume,10) + 1)
+  },
+  setVolume: function(volume){
+    this.mw.setRenderer(this.uuid);
+    this.mw.setVolume(function(){},volume)
+  },
   setPosition: function(position){
     this.mw.setPosition(this.uuid,position);
   },
