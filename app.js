@@ -36,7 +36,7 @@ var errorhandler = require('errorhandler')
     //tracks.removeAll(function(){
       mw.listen();
     //})
-  app.set('port', process.env.PORT || 2080);
+  app.set('port', process.env.PORT || 3000);
   app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');
   app.use(connect.compress());
