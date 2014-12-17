@@ -54,6 +54,19 @@ rendy.prototype = {
       }     
     })
   },
+  setupNextTrack: function(){
+    console.log("setting next track")
+    this.playlist.resourcesAt(this.position + 1,function(err,doc){
+
+      console.log("got resource",doc)
+      if(!err && doc){
+        this.queuedUri = doc.Resources.map(function(r){return r.Uri});//store list of possible next uris 
+        this.mw.openNext(function(){
+          console.log('back from open next',arguments)
+        },doc)
+      }
+    }.bind(this))
+  },
   next: function(cb){
     this.position++;
     this._playTrack();
@@ -78,13 +91,7 @@ rendy.prototype = {
   },
   setState: function(event){
     if(this.state[event.name] !== event.value){
-      //TODO: make this not supper ugly / hacky
-      if( this.isPlaying && (event.value === "NO_MEDIA_PRESENT" || event.value === "STOPPED") && this.state.TransportState !== "TRANSITIONING" && this.state.TransportState !== "STOPPED"){
-        this.state[event.name] = event.value;
-        this.next();
-      }else{
-        this.state[event.name] = event.value;
-      }
+      this.state[event.name] = event.value;
       //HACK: emiting on renderer obj, not this
       renderer.emit("stateChange",this.uuid,event);
     }
@@ -99,6 +106,10 @@ rendy.prototype = {
     Tracks.findByUri(uri,function(err,doc){
       if(!err && doc){
         self.state.currentPlayingTrack = doc;
+        if(self.queuedUri && self.queuedUri.indexOf(uri) != -1){
+          self.position++;
+        }
+        self.setupNextTrack();
         doc.position = self.position;
         //HACK: emiting on renderer obj, not this
         renderer.emit("stateChange",self.uuid,{
@@ -112,21 +123,15 @@ rendy.prototype = {
   _playTrack:function(){
     var self = this;
     this.mw.setRenderer(this.uuid);
-    if(!this.isPlaying){
+    if(this.isPlaying && (this.state.TransportState === "STOPPED" || this.state.TransportState === "NO_MEDIA_PRESENT")){
+      self._playNext();
+      this.isPlaying = true;
+    }else{
       this.mw.stop(function(){
         self._playNext(function(){
           self.isPlaying = true;
         });
       })
-    }else if(this.state.TransportState === "STOPPED" || this.state.TransportState === "NO_MEDIA_PRESENT"){
-      self._playNext();
-      this.isPlaying = true;
-    }else{
-      this.isPlaying = true;
-      //HACK stop will go to next track, need to offset that
-      this.position--;
-      this.mw.stop(function(res){
-      });
     }
   },
   //return a promise
