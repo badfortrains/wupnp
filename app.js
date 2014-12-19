@@ -47,7 +47,9 @@ var errorhandler = require('errorhandler')
   app.use(methodOverride());
   app.use(cookieParser());
   app.use(session({
-    secret: "our secret"
+    secret: "our secret",
+    resave: true,
+    saveUninitialized: true
   }));
   app.use(require('less-middleware')(path.join(__dirname, '/public')));
   app.use(express.static(path.join(__dirname, 'public'),{ maxAge: process.env.NODE_ENV ? 2592000000 : 0 }));
