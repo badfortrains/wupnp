@@ -1,8 +1,12 @@
 var db = require('./db'),
-    Q = require("q");
+    Q = require("q"),
+    EventEmitter = require("events").EventEmitter;
 
 
 db.qSerialize = Q.nbind(db.serialize,db)
+
+//Event bridge for listening to global changes to playlists.
+var PlaylistEmitter = new EventEmitter();
 
 var Playlist = function(options){
   if(typeof options != "object"){
@@ -81,6 +85,7 @@ Playlist.prototype.drop = function(){
       if(err){
         deferred.reject(err)
       }else{
+        PlaylistEmitter.emit("drop",listId)
         deferred.resolve(res)
       }
     })
@@ -126,6 +131,7 @@ Playlist.prototype.remove = function(id){
         if(err){
           deferred.reject(err)
         }else{
+          PlaylistEmitter.emit("remove",listId,position)
           deferred.resolve(this)
         }
       })
@@ -181,6 +187,7 @@ Playlist.prototype.add = function(trackPromise,position,deleteAfter){
         if(err){
           deferred.reject(err)
         }else{
+          PlaylistEmitter.emit("add",listId,position)
           deferred.resolve(tracks.length)
         }
       })
@@ -189,4 +196,7 @@ Playlist.prototype.add = function(trackPromise,position,deleteAfter){
   })
 }
 
-exports.Playlist = Playlist
+module.exports = {
+  Playlist: Playlist,
+  PlaylistEmitter: PlaylistEmitter
+}

@@ -1,6 +1,7 @@
 var mw = require('../mediaWatcher'),
     mwb = require('../mediaWatcherWeb').mwb,
     Playlist = require("./playlist").Playlist,
+    PlaylistEmitter =  require("./playlist").PlaylistEmitter
     Tracks = require("./tracks"),
     socketIO = require('socket.io'),
     util = require("util"),
@@ -55,15 +56,10 @@ rendy.prototype = {
     })
   },
   setupNextTrack: function(){
-    console.log("setting next track")
     this.playlist.resourcesAt(this.position + 1,function(err,doc){
-
-      console.log("got resource",doc)
       if(!err && doc){
         this.queuedUri = doc.Resources.map(function(r){return r.Uri});//store list of possible next uris 
-        this.mw.openNext(function(){
-          console.log('back from open next',arguments)
-        },doc)
+        this.mw.openNext(function(){},doc)
       }
     }.bind(this))
   },
@@ -179,11 +175,26 @@ rendy.prototype = {
 
 var Renderer = function(){
   this.renderers = {};
+  PlaylistEmitter.on('drop',this.checkNext.bind(this))
+  PlaylistEmitter.on('add',this.checkNext.bind(this))
+  PlaylistEmitter.on('remove',this.checkNext.bind(this))
+
 }
 util.inherits(Renderer,EventEmitter);
 Renderer.prototype.find = function(uuid){
   return this.renderers[uuid];
 }
+Renderer.prototype.checkNext = function(listId){
+  var renderers = this.all().map(function(r){
+    return this.find(r.uuid)
+  },this);
+
+  renderers.forEach(function(r){
+    if(r.playlist.id == listId)
+      r.setupNextTrack();
+  })
+}
+
 Renderer.prototype.all = function(){
   return mw.getRenderers().concat(mwb.getRenderers());
 }
