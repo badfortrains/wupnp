@@ -15,12 +15,12 @@
     "http-proxy": "0.8.7",
     "jade": "*",
     "less": "*",
-    "less-middleware": "0.2.*",
-    "mediaWatcher": "git://github.com/badfortrains/mediaWatcher.git",
+    "less-middleware": "0.2",
+    "mediaWatcher": "git://github.com/badfortrains/mediaWatcher",
     "method-override": "^2.3.0",
     "q": "~1.0.0",
     "socket.io": "1.*.*",
-    "sqlite3": "2.2.*"
+    "sqlite3": "3.0.*"
   },
   "devDependencies": {
     "grunt": "~0.4.1",

@@ -15,7 +15,7 @@ module.exports = {
     res.send(servers.all());
   },
   browse: function(req,res){
-    servers.browse(req.params.ms,req.params.id,function(dir){
+    servers.browse(req.params.ms,req.params.id,function(err,dir){
       if(dir)
         res.send({docs:dir});
       else

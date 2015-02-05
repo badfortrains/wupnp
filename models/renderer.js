@@ -59,7 +59,7 @@ rendy.prototype = {
     this.playlist.resourcesAt(this.position + 1,function(err,doc){
       if(!err && doc){
         this.queuedUri = doc.Resources.map(function(r){return r.Uri});//store list of possible next uris 
-        this.mw.openNext(function(){},doc)
+        this.mw.openNextTrack(doc)
       }
     }.bind(this))
   },
@@ -144,11 +144,11 @@ rendy.prototype = {
   },
   pause:function(){
     this.mw.setRenderer(this.uuid);
-    this.mw.pause(function(){});
+    this.mw.pause();
   },
   play:function(){
     this.mw.setRenderer(this.uuid);
-    this.mw.play(function(){});
+    this.mw.play();
   },
   getAttributes: function(){
     return this.state;
@@ -163,7 +163,7 @@ rendy.prototype = {
   },
   setVolume: function(volume){
     this.mw.setRenderer(this.uuid);
-    this.mw.setVolume(function(){},volume)
+    this.mw.setVolume(volume)
   },
   setPosition: function(position){
     this.mw.setPosition(this.uuid,position);
@@ -206,7 +206,7 @@ Renderer.prototype.exists = function(id){
 }
 Renderer.prototype.add = function(event){
   var uuid = event.uuid,
-      name = event.value
+      name = event.name
       type = event.rendererType;
 
   this.renderers[uuid] = new rendy(name,uuid,type)
