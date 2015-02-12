@@ -33,9 +33,6 @@ var cookieParser = require('cookie-parser')
 var session = require('express-session')
 var errorhandler = require('errorhandler')
 
-    //tracks.removeAll(function(){
-      mw.listen();
-    //})
   app.set('port', process.env.PORT || 3000);
   app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');

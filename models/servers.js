@@ -11,9 +11,9 @@ var mw = require('../mediaWatcher')
 
 
 
-var onTracksAdded = function(data){
+var onTracksAdded = function(err,data){
   //add to db;
-  if(data != 'fail'){
+  if(!err){
     console.log('Inserting tracks')
     console.log(this.uuid);
 
@@ -24,17 +24,17 @@ var onTracksAdded = function(data){
       this.status = "inserted"
     }.bind(this));
   }else{
-    console.log("Error getting tracks from server")
+    console.log("Error getting tracks from server",err)
   }
 }
 
 var MediaServer = function(addEvent){
-  this.name = addEvent.value;
+  this.name = addEvent.name;
   this.uuid = addEvent.uuid;
   this.iconUrl = addEvent.iconUrl;
   this.baseUrl = addEvent.baseUrl;
 
-  this.setPath(KNOWN_PATHS[event.uuid]);
+  this.setPath(KNOWN_PATHS[addEvent.uuid]);
 }
 
 MediaServer.prototype.setPath = function(path){
@@ -42,7 +42,7 @@ MediaServer.prototype.setPath = function(path){
     this.path = path
     console.log("get tracks",this.uuid,path)
     this.status = "loading"
-    mw.getTracks(onTracksAdded.bind(this),this.uuid,path);
+    mw.getTracks(this.uuid,path,onTracksAdded.bind(this));
   }
 }
 
@@ -67,7 +67,7 @@ var tracksChange = function(event){
       return(/1\$14\$.+/.test(container) && container != '1$14$342123623') && container != '1$14'
     });
     if(containers[0]){
-      mw.getTracks(onTracksAdded.bind(server),server.uuid,containers[0]);
+      mw.getTracks(server.uuid,containers[0],onTracksAdded.bind(server));
     }
   }
 }
@@ -92,7 +92,7 @@ Server.prototype.all = function(){
   return serverObjs;
 };
 Server.prototype.browse = function(uuid,id,cb){
-  mw.doBrowse(cb,uuid,id);
+  mw.browse(uuid,id,cb);
 }
 
 var server_model = new Server();
