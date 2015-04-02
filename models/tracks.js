@@ -93,6 +93,49 @@ Tracks.prototype.insert = function(data,uuid,updateById,cb){
   })
 }
 
+Tracks.prototype.getAlbumTracks = function(filter){
+  var WHERE = filterToSQL(filter),
+      statement;
+
+  statement = "SELECT Title,_id,Album FROM tracks " + WHERE + " ORDER BY Album, TrackNumber";
+  return Q.npost(db,"all",[statement])
+  .then(function(tracks){
+    var tracksByAlbum = {};
+    tracks.forEach(function(t){
+      if(!tracksByAlbum[t.Album])
+        tracksByAlbum[t.Album] = {};
+
+      tracksByAlbum[t.Album][t._id] = {_id: t._id, Title: t.Title};
+    })
+    return tracksByAlbum;
+  })
+}
+
+Tracks.prototype.getAlbumDetails = function(filter){
+  var WHERE = filterToSQL(filter),
+      statement;
+
+  statement = "SELECT album_image.album, url FROM tracks JOIN album_image ON(tracks.Artist=album_image.Artist) " + WHERE + " GROUP BY album_image.album";
+  
+  return Q.spread([Q.npost(db,"all",[statement]),this.getAlbumTracks(filter)],
+            function(images,tracks){
+              return {
+                tracks: tracks,
+                images: images
+              }
+            }  
+          )
+
+}
+
+Tracks.prototype.getArtistDetails = function(filter){
+  var WHERE = filterToSQL(filter),
+      statement;
+
+  statement = "SELECT Artist, thumb FROM tracks JOIN artist ON(tracks.Artist=artist.title) " + WHERE + " GROUP BY tracks.Artist";
+  return Q.npost(db,"all",[statement])
+}
+
 Tracks.prototype.getCategory = function(category,filter,cb){
   var WHERE = filterToSQL(filter),
       statement;
@@ -140,7 +183,7 @@ var filterToSQL = function(filter){
     where = "WHERE "
     for(var column in filter){
       quote = (filter[column].indexOf("'") === -1) ? "'" : '"';
-      where += column + "=" + quote + filter[column] + quote + " AND " ;  
+      where += "tracks."+column + "=" + quote + filter[column] + quote + " AND " ;  
     }
     where = where.substring(0,where.length - 5);
   }

@@ -81,7 +81,9 @@ app.get("/api/renderers/:id",renderers._find_renderer,renderers.show);
 app.put("/api/renderers/:id/playNow",renderers._find_renderer,renderers.playNow);
 app.put("/api/renderers/:id/playNext",renderers._find_renderer,renderers.playNext);
 
+app.get('/api/categories/details/:category',categories.showDetails)
 app.get('/api/categories/:category', categories.show);
+
 
 app.get('/api/directory/:ms/:id',servers.browse);
 app.get('/api/servers/',servers.index);
