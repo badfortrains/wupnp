@@ -23,7 +23,6 @@ module.exports = {
         position = renderer.quickListPosition(),
         pl = new Playlist({id:renderer.state.quickList})
 
-
     pl.add(Tracks.find(filter),position,true)
     .done(function(count){
       renderer.setPlaylist(renderer.state.quickList)
