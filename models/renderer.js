@@ -51,7 +51,7 @@ rendy.prototype = {
         });
       }else{
         self.position = 0;
-        self.setState({name:"currentPlayingTrack",vale:{}});
+        self.setState({name:"currentPlayingTrack",value:{}});
       }     
     })
   },
@@ -99,27 +99,28 @@ rendy.prototype = {
   },
   _onTrackChange:function(uri){
     var self = this;
-    Tracks.findByUri(uri,function(err,doc){
-      if(!err && doc){
-        self.state.currentPlayingTrack = doc;
-        if(self.queuedUri && self.queuedUri.indexOf(uri) != -1){
-          self.position++;
-        }
-        self.setupNextTrack();
-        doc.position = self.position;
-        //HACK: emiting on renderer obj, not this
-        renderer.emit("stateChange",self.uuid,{
-          name:"currentPlayingTrack",
-          value:doc
-        })
+    Tracks.getCurrentTrackByUri(uri).then(function(doc){
+      self.state.currentPlayingTrack = doc;
+      if(self.queuedUri && self.queuedUri.indexOf(uri) != -1){
+        self.position++;
       }
-
+      self.setupNextTrack();
+      doc.position = self.position;
+      //HACK: emiting on renderer obj, not this
+      renderer.emit("stateChange",self.uuid,{
+        name:"currentPlayingTrack",
+        value:doc
+      })
+    })
+    .catch(function(e){
+      if(e)
+        console.log("getCurrentTrackByUri err",e);
     })
   },
   _playTrack:function(){
     var self = this;
     this.mw.setRenderer(this.uuid);
-    if(this.isPlaying && (this.state.TransportState === "STOPPED" || this.state.TransportState === "NO_MEDIA_PRESENT")){
+    if(this.isPlaying && (this.state.TransportState === "STOPPED" || this.state.TransportState === "NO_MEDIA_PRESENT" || this.state.TransportState === "PLAYING")){
       self._playNext();
       this.isPlaying = true;
     }else{
@@ -149,6 +150,10 @@ rendy.prototype = {
   play:function(){
     this.mw.setRenderer(this.uuid);
     this.mw.play();
+  },
+  stop:function(){
+    this.mw.setRenderer(this.uuid);
+    this.mw.stop();
   },
   getAttributes: function(){
     return this.state;

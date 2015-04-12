@@ -111,13 +111,16 @@ Tracks.prototype.getAlbumTracks = function(filter){
   })
 }
 
-Tracks.prototype.getAlbumDetails = function(filter){
+Tracks.prototype.getAlbumArt = function(filter){
   var WHERE = filterToSQL(filter),
       statement;
 
-  statement = "SELECT filename, size, album_image.album, url FROM tracks JOIN album_image ON(tracks.Artist=album_image.Artist) " + WHERE + " GROUP BY album_image.album";
+  statement = "SELECT filename, size, album_image.album, url FROM tracks JOIN album_image ON(tracks.Artist=album_image.Artist AND tracks.Album=album_image.Album) " + WHERE + " GROUP BY album_image.album";
+  return Q.npost(db,"all",[statement]);
+}
 
-  return Q.spread([Q.npost(db,"all",[statement]),this.getAlbumTracks(filter)],
+Tracks.prototype.getAlbumDetails = function(filter){
+  return Q.spread([this.getAlbumArt(filter),this.getAlbumTracks(filter)],
             function(images,tracks){
               return {
                 tracks: tracks,
@@ -125,7 +128,6 @@ Tracks.prototype.getAlbumDetails = function(filter){
               }
             }  
           )
-
 }
 
 Tracks.prototype.getArtistDetails = function(filter){
@@ -174,6 +176,25 @@ Tracks.prototype.urlById = function(id,cb){
 
 Tracks.prototype.findByUri = function(uri,cb){
   db.get("SELECT * FROM tracks JOIN resources ON track_id = _id WHERE Uri = ?",uri,cb)
+}
+
+Tracks.prototype.getCurrentTrackByUri = function(uri){
+  var deferred = Q.defer();
+
+  this.findByUri(uri,function(err,doc){
+    if(!err && doc){
+      this.getAlbumArt({_id: doc._id+""}).then(function(images){
+        doc.images = images;
+        deferred.resolve(doc);
+      }).catch(function(e){
+        deferred.reject(e);
+      })
+    }else{
+      deferred.reject(err)
+    }
+  }.bind(this))
+
+  return deferred.promise
 }
 
 var filterToSQL = function(filter){

@@ -87,6 +87,10 @@ exports.onConnect = function(socket) {
     doCommand('pause');
   })
 
+  socket.on('stop', function(){
+    doCommand('stop');
+  })
+
   socket.on('play', function(){
     doCommand('play');
   })
