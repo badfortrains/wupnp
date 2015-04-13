@@ -3,6 +3,7 @@ var mw = require('../mediaWatcher'),
     Servers = require('../models/servers'),
     Tracks = require('../models/tracks'),
     ir = require("../models/ir");
+    denon = require("../models/denon");
 
 exports.registerEmits = function(namespace){
   Renderers.on("rendererAdded",function(event){
@@ -22,6 +23,9 @@ exports.registerEmits = function(namespace){
   })
   Servers.on("serverRemoved",function(server){
     namespace.emit("serverRemoved",server);
+  })
+  denon.on("stateChange",function(state){
+    namespace.emit("avrStateChange",state)
   })
 }
 
@@ -59,6 +63,15 @@ exports.onConnect = function(socket) {
       }
     })
   })
+
+  socket.on("avrCommand",function(command,arg){
+    denon.sendCommand(command,arg);
+  })
+
+  socket.on("avrState",function(){
+    socket.emit("avrStateChange",denon.getState())
+  })
+
   var getRenderer = function(cb){
     var uuid = socket.wuRenderer
     var renderer = Renderers.find(uuid);

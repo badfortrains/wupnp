@@ -21,6 +21,11 @@ Wu.Models.player = Backbone.Model.extend({
         self.clear();
       }
     });
+    Socket.on("avrStateChange",function(state){
+      self.set("avrState",state)
+    })
+
+    Socket.emit("avrState");
   },
   playListTrack: function(id,playlistId){
     Socket.emit("playListTrack",id,playlistId);

@@ -20,7 +20,7 @@ Wu.Views.menu = Backbone.View.extend({
     this.listenTo(Wu.Cache.Models.player,"change:id",this.setActive);
     this.listenTo(Wu.Cache.Models.player,"change:playlist",this.setActive);
     this.listenTo(Wu.Cache.Models.player,"change:TransportState",this.setActive);
-    this.listenTo(Wu.Cache.Models.player,"change:Volume",this.setVolume);
+    this.listenTo(Wu.Cache.Models.player,"change:avrState",this.setVolume);
     this.listenTo(Wu.Cache.Collections.servers,"change:status",this.setStatus);
     this.$el.on("click","a",$.proxy(this.hide,this));
     this.setVolume();
@@ -91,18 +91,32 @@ Wu.Views.menu = Backbone.View.extend({
     renderer && $("#"+renderer).addClass("active");
   },
   setVolume: function(){
-    var volume = Wu.Cache.Models.player.get("Volume")
-    if(volume)
-      this.$(".volume-number").html(volume)
+    var avrState = Wu.Cache.Models.player.get("avrState");
+
+    if(avrState){
+      this.$(".zone1 .volume-number").html(avrState.z1Volume)
+      this.$(".zone2 .volume-number").html(avrState.z2Volume)
+
+      avrState.z1Power ? $(".zone1").addClass("isOn") : $(".zone1").removeClass("isOn")
+      avrState.z2Power ? $(".zone2").addClass("isOn") : $(".zone2").removeClass("isOn")
+    }
   },
   irCommand:function(e){
     //take the class name, minus 'icon' as the command
-    command = $(e.currentTarget).attr("class").split("-").splice(1).join("-");
-    Socket.emit(command)
-    //wait 2 seconds, then set the source to the rpi
-    // setTimeout(function(){
-    //   Socket.emit("sendIr","set-source")
-    // },2000)
+    var button = $(e.currentTarget);
+    var zone = button.parent().hasClass("zone1") ? "z1" : "z2";
+    var className = button.attr("class");
+    var command;
+
+    if(className == "icon-volume-up")
+      command = "VolumeUp";
+    else if(className == "icon-volume-down")
+      command = "VolumeDown";
+    else if(className == "icon-off")
+      command = "Power";
+
+
+    Socket.emit("avrCommand",zone+command)
   }
 
 });
