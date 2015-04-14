@@ -9,7 +9,8 @@ module.exports = {
       res.send(docs);
     })
     .fail(function(err){
-      res.send(500,"failed to retrieve tracks");
+      console.log(err)
+      res.send(500,err);
     })
 
   },

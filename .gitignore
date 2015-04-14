@@ -5,3 +5,4 @@ nohup.out
 *.DS_Store
 cache/
 build/
+data/

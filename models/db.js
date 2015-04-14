@@ -1,5 +1,5 @@
 var sqlite3 = (process.env.NODE_ENV == "development") ? require('sqlite3').verbose() : require('sqlite3'),
-    db = new sqlite3.Database('/tmp/db');
+    db = new sqlite3.Database('./data/db');
 
 db.serialize(function() {
   db.run("PRAGMA synchronous = OFF");
