@@ -115,7 +115,7 @@ Tracks.prototype.getAlbumArt = function(filter){
   var WHERE = filterToSQL(filter),
       statement;
 
-  statement = "SELECT filename, size, album_image.album, url FROM tracks JOIN album_image ON(tracks.Artist=album_image.Artist AND tracks.Album=album_image.Album) " + WHERE + " GROUP BY album_image.album";
+  statement = "SELECT filename, size, album_image.album, url FROM tracks JOIN album_image ON(tracks.Artist=album_image.Artist AND tracks.Album=album_image.Album) " + WHERE + " GROUP BY album_image.album,size";
   return Q.npost(db,"all",[statement]);
 }
 
