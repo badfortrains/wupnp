@@ -134,7 +134,7 @@ Tracks.prototype.getArtistDetails = function(filter){
   var WHERE = filterToSQL(filter),
       statement;
 
-  statement = "SELECT Artist, thumb FROM tracks JOIN artist ON(tracks.Artist=artist.title) " + WHERE + " GROUP BY tracks.Artist";
+  statement = "SELECT Artist, thumb FROM tracks LEFT JOIN artist ON(tracks.Artist=artist.title) " + WHERE + " GROUP BY tracks.Artist";
   return Q.npost(db,"all",[statement])
 }
 
