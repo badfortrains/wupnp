@@ -36,12 +36,12 @@ var Playlist = function(options){
 
 //rewrite 
 Playlist.prototype.resourcesAt = function(position,cb){
-  var find = "SELECT resources.track_id,Uri,ProtocolInfo FROM playlist_tracks join resources ON (playlist_tracks.track_id = resources.track_id) WHERE position = ? AND list_id = ?";
+  var find = "SELECT resources.track_id,Uri,ProtocolInfo,Didl FROM playlist_tracks join resources ON (playlist_tracks.track_id = resources.track_id) join tracks ON (playlist_tracks.track_id == tracks._id) WHERE position = ? AND list_id = ?";
   db.all(find,position,this.id,function(err,docs){
     if(err || !docs.length){
       cb(err,null);
     }else{
-      cb(err,{Resources:docs});
+      cb(err,{Resources:docs,Didl:docs[0].Didl});
     }
   })
 }
