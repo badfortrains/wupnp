@@ -102,7 +102,7 @@ Playlist.prototype.all = function(){
 //return a promise for the list of tracks
 Playlist.prototype.tracks = function(){
   var columns = ["tracks.Artist","tracks.Album","tracks.Title","_id","position","playlist_tracks.id","filename"],
-      query = 'SELECT '+columns.join()+' FROM tracks JOIN playlist_tracks ON (track_id = _id) JOIN album_image ON(tracks.Artist=album_image.artist AND tracks.Album=album_image.Album and size="large") WHERE playlist_tracks.list_id = ? ORDER BY playlist_tracks.position'
+      query = 'SELECT '+columns.join()+' FROM tracks JOIN playlist_tracks ON (track_id = _id) LEFT JOIN album_image ON(tracks.Artist=album_image.artist AND tracks.Album=album_image.Album and size="large") WHERE playlist_tracks.list_id = ? ORDER BY playlist_tracks.position'
 
   return Q.npost(db,"all",[query,this.id])
 }
