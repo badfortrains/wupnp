@@ -3,6 +3,8 @@ var util = require("util");
 var events = require("events");
 
 var DenonRemote = function(port,host){
+	var waitDelay = 500;
+	var isWaiting = false;
 	this.state = {
 		z1Power: null,
 		z1Volume: null,
@@ -15,27 +17,36 @@ var DenonRemote = function(port,host){
 
 	this.socket.on("error",function(err){
 		console.log("SOCKET ERR",err)
-	})
+		if(!isWaiting){
+			isWaiting = true;
+			setTimeout(function(){
+				isWaiting = false;
+			},waitDelay)
+			this.socket.connect(port,host,this.initializeConnection.bind(this));
+		}
+	}.bind(this))
 
 	this.socket.on('data',function(buffer){
 		var response = buffer.toString().trim();
 		this._parseResponse(response);
 	}.bind(this))
 
-	this.socket.connect(port,host,function(){
-		console.log("connected to denon server")
-
-		//get initial state
-		var stateRequests = ["ZM?","MV?","Z2?"]
-		stateRequests.forEach(function(cmd,i){
-			setTimeout(function(){
-				this.socket.write(cmd+"\r")
-			}.bind(this),i*1000)
-		},this);
-	}.bind(this));
+	this.socket.connect(port,host,this.initializeConnection.bind(this));
 }
 
 util.inherits(DenonRemote, events.EventEmitter);
+
+DenonRemote.prototype.initializeConnection = function(){
+	console.log("connected to denon server")
+
+	//get initial state
+	var stateRequests = ["ZM?","MV?","Z2?"]
+	stateRequests.forEach(function(cmd,i){
+		setTimeout(function(){
+			this.socket.write(cmd+"\r")
+		}.bind(this),i*1000)
+	},this);	
+}
 
 DenonRemote.prototype.getState = function(){
 	return this.state;
