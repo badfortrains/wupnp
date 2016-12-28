@@ -3,7 +3,7 @@ window.JST = {'category.container':function(locals, cb, __) {
     __.r = __.r || blade.Runtime;
     if (!__.func) __.func = {}, __.blocks = {}, __.chunk = {};
     __.locals = locals || {};
-    __.filename = "/Users/spurcell/code/fun/test/wupnp/templates/category.container.blade";
+    __.filename = "/home/pi/wupnp/templates/category.container.blade";
     try {
         with (__.locals) {
             __.line = 1, __.col = 1;
@@ -21,7 +21,7 @@ window.JST = {'category.container':function(locals, cb, __) {
     __.r = __.r || blade.Runtime;
     if (!__.func) __.func = {}, __.blocks = {}, __.chunk = {};
     __.locals = locals || {};
-    __.filename = "/Users/spurcell/code/fun/test/wupnp/templates/category.info.blade";
+    __.filename = "/home/pi/wupnp/templates/category.info.blade";
     try {
         with (__.locals) {
             __.line = 1, __.col = 1;
@@ -91,7 +91,7 @@ window.JST = {'category.container':function(locals, cb, __) {
     __.r = __.r || blade.Runtime;
     if (!__.func) __.func = {}, __.blocks = {}, __.chunk = {};
     __.locals = locals || {};
-    __.filename = "/Users/spurcell/code/fun/test/wupnp/templates/category.nav.blade";
+    __.filename = "/home/pi/wupnp/templates/category.nav.blade";
     try {
         with (__.locals) {
             __.line = 1, __.col = 1;
@@ -113,7 +113,7 @@ window.JST = {'category.container':function(locals, cb, __) {
     __.r = __.r || blade.Runtime;
     if (!__.func) __.func = {}, __.blocks = {}, __.chunk = {};
     __.locals = locals || {};
-    __.filename = "/Users/spurcell/code/fun/test/wupnp/templates/category.popup.blade";
+    __.filename = "/home/pi/wupnp/templates/category.popup.blade";
     try {
         with (__.locals) {
             __.line = 1, __.col = 1;
@@ -153,7 +153,7 @@ window.JST = {'category.container':function(locals, cb, __) {
     __.r = __.r || blade.Runtime;
     if (!__.func) __.func = {}, __.blocks = {}, __.chunk = {};
     __.locals = locals || {};
-    __.filename = "/Users/spurcell/code/fun/test/wupnp/templates/category.show.blade";
+    __.filename = "/home/pi/wupnp/templates/category.show.blade";
     try {
         with (__.locals) {
             __.line = 1, __.col = 1;
@@ -222,7 +222,7 @@ window.JST = {'category.container':function(locals, cb, __) {
     __.r = __.r || blade.Runtime;
     if (!__.func) __.func = {}, __.blocks = {}, __.chunk = {};
     __.locals = locals || {};
-    __.filename = "/Users/spurcell/code/fun/test/wupnp/templates/directory.container.blade";
+    __.filename = "/home/pi/wupnp/templates/directory.container.blade";
     try {
         with (__.locals) {
             __.line = 1, __.col = 1;
@@ -246,7 +246,7 @@ window.JST = {'category.container':function(locals, cb, __) {
     __.r = __.r || blade.Runtime;
     if (!__.func) __.func = {}, __.blocks = {}, __.chunk = {};
     __.locals = locals || {};
-    __.filename = "/Users/spurcell/code/fun/test/wupnp/templates/header.blade";
+    __.filename = "/home/pi/wupnp/templates/header.blade";
     try {
         with (__.locals) {
             __.line = 1, __.col = 1;
@@ -266,7 +266,7 @@ window.JST = {'category.container':function(locals, cb, __) {
     __.r = __.r || blade.Runtime;
     if (!__.func) __.func = {}, __.blocks = {}, __.chunk = {};
     __.locals = locals || {};
-    __.filename = "/Users/spurcell/code/fun/test/wupnp/templates/loader.blade";
+    __.filename = "/home/pi/wupnp/templates/loader.blade";
     try {
         with (__.locals) {
             __.line = 1, __.col = 1;
@@ -282,7 +282,7 @@ window.JST = {'category.container':function(locals, cb, __) {
     __.r = __.r || blade.Runtime;
     if (!__.func) __.func = {}, __.blocks = {}, __.chunk = {};
     __.locals = locals || {};
-    __.filename = "/Users/spurcell/code/fun/test/wupnp/templates/menu.blade";
+    __.filename = "/home/pi/wupnp/templates/menu.blade";
     try {
         with (__.locals) {
             __.line = 1, __.col = 1;
@@ -400,6 +400,26 @@ window.JST = {'category.container':function(locals, cb, __) {
                 }
             });
             __.push("</ul>" + "</div>");
+            __.line = 35, __.col = 1;
+            __.push("<div" + ' class="ir-controls zone1"' + ">");
+            __.line = 36, __.col = 3;
+            __.push("<div" + ' class="icon-off"' + ">" + "</div>");
+            __.line = 37, __.col = 3;
+            __.push("<div" + ' class="icon-volume-down"' + ">" + "</div>");
+            __.line = 38, __.col = 3;
+            __.push("<span" + ' class="volume-number"' + ">" + "</span>");
+            __.line = 39, __.col = 3;
+            __.push("<div" + ' class="icon-volume-up"' + ">" + "</div>" + "</div>");
+            __.line = 40, __.col = 1;
+            __.push("<div" + ' class="ir-controls zone2"' + ">");
+            __.line = 41, __.col = 3;
+            __.push("<div" + ' class="icon-off"' + ">" + "</div>");
+            __.line = 42, __.col = 3;
+            __.push("<div" + ' class="icon-volume-down"' + ">" + "</div>");
+            __.line = 43, __.col = 3;
+            __.push("<span" + ' class="volume-number"' + ">" + "</span>");
+            __.line = 44, __.col = 3;
+            __.push("<div" + ' class="icon-volume-up"' + ">" + "</div>" + "</div>");
         }
     } catch (e) {
         return cb(__.r.rethrow(e, __));
@@ -411,7 +431,7 @@ window.JST = {'category.container':function(locals, cb, __) {
     __.r = __.r || blade.Runtime;
     if (!__.func) __.func = {}, __.blocks = {}, __.chunk = {};
     __.locals = locals || {};
-    __.filename = "/Users/spurcell/code/fun/test/wupnp/templates/player.tab.blade";
+    __.filename = "/home/pi/wupnp/templates/player.tab.blade";
     try {
         with (__.locals) {
             __.line = 1, __.col = 1;
@@ -435,7 +455,7 @@ window.JST = {'category.container':function(locals, cb, __) {
     __.r = __.r || blade.Runtime;
     if (!__.func) __.func = {}, __.blocks = {}, __.chunk = {};
     __.locals = locals || {};
-    __.filename = "/Users/spurcell/code/fun/test/wupnp/templates/playlist.dropdown.blade";
+    __.filename = "/home/pi/wupnp/templates/playlist.dropdown.blade";
     try {
         with (__.locals) {
             __.line = 1, __.col = 1;
@@ -487,7 +507,7 @@ window.JST = {'category.container':function(locals, cb, __) {
     __.r = __.r || blade.Runtime;
     if (!__.func) __.func = {}, __.blocks = {}, __.chunk = {};
     __.locals = locals || {};
-    __.filename = "/Users/spurcell/code/fun/test/wupnp/templates/popup.blade";
+    __.filename = "/home/pi/wupnp/templates/popup.blade";
     try {
         with (__.locals) {
             __.line = 1, __.col = 1;
@@ -513,7 +533,7 @@ window.JST = {'category.container':function(locals, cb, __) {
     __.r = __.r || blade.Runtime;
     if (!__.func) __.func = {}, __.blocks = {}, __.chunk = {};
     __.locals = locals || {};
-    __.filename = "/Users/spurcell/code/fun/test/wupnp/templates/server.menu.blade";
+    __.filename = "/home/pi/wupnp/templates/server.menu.blade";
     try {
         with (__.locals) {
             __.line = 1, __.col = 1;
@@ -541,7 +561,7 @@ window.JST = {'category.container':function(locals, cb, __) {
     __.r = __.r || blade.Runtime;
     if (!__.func) __.func = {}, __.blocks = {}, __.chunk = {};
     __.locals = locals || {};
-    __.filename = "/Users/spurcell/code/fun/test/wupnp/templates/track.list.blade";
+    __.filename = "/home/pi/wupnp/templates/track.list.blade";
     try {
         with (__.locals) {
             __.line = 1, __.col = 1;
@@ -559,8 +579,8 @@ window.JST = {'category.container':function(locals, cb, __) {
                         v: item._id,
                         e: 1
                     },
-                    position: {
-                        v: item.position,
+                    listTrack: {
+                        v: item.id,
                         e: 1
                     }
                 }, __);
