@@ -102,6 +102,6 @@ DenonRemote.prototype._parseResponse = function(response){
 	}
 };
 
-var remote = new DenonRemote(23,"192.168.1.128");
+var remote = new DenonRemote(23,"192.168.1.48");
 module.exports = remote;
 
