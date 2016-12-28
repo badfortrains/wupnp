@@ -11,7 +11,9 @@ var express = require('express'),
       'browser client minification': true,  // Send minified client
       'browser client etag': true,          // Apply etag caching logic based on version number
       'browser client gzip': true,          // Gzip the file
-      'browser client expires': true        // Adds Cache-Control: private, x-gzip-ok="", max-age=31536000 header
+      'browser client expires': true,        // Adds Cache-Control: private, x-gzip-ok="", max-age=31536000 header
+      pingInterval: 3000,
+      pingTimeout: 6000,
     }),
     wu = require('./routes/wu.js'),
     socketRoutes = require('./routes/socket'),
